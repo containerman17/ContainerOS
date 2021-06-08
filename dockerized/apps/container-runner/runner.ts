@@ -1,8 +1,8 @@
 import syncContainersList from "./syncContainersList"
 
-function start(): void {
+async function start(): Promise<void> {
     console.log('Runner is running')
-    syncContainersList([
+    const result = await syncContainersList([
         {
             name: 'test1',
             Image: 'nginx:1.21-perl'
@@ -16,6 +16,7 @@ function start(): void {
             Image: 'nginx:alpine-perl'
         },
     ])
+    console.log('result', result)
 }
 
 

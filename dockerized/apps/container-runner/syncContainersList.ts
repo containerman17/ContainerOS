@@ -2,19 +2,27 @@ import Dockerode from "dockerode"
 
 const docker = new Dockerode()
 
-export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<void> {
+export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
     await deleteChangedContainers(containersToStart)
-    await createAbsentContainers(containersToStart)
+    return await createAbsentContainers(containersToStart)
 }
 
-async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<void> {
+interface CreateContainerResult {
+    [key: string]: Promise<void>
+}
+
+async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
     const containersOnHost = await docker.listContainers({ all: true });
+
+    const promises: CreateContainerResult = {}
 
     for (let container of containersToStart) {
         if (!hostHasContainer(containersOnHost, container.name!)) {
-            await runContainer(container);
+            promises[container.name!] = runContainer(container);
         }
     }
+
+    return promises
 }
 async function deleteChangedContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<void> {
     const containersOnHost = await docker.listContainers({ all: true });
