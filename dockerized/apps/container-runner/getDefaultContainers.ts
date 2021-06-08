@@ -10,8 +10,10 @@ export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
 
     let consulDataFolder = '/var/consul'
     if (OS_TYPE === POSSIBLE_OS_TYPES.Darwin) {
-        consulDataFolder = path.join(os.homedir(), 'tmp', 'consul-data')
+        consulDataFolder = path.join(os.homedir(), 'consul-data')
     }
+
+    //TODO mkdir /var/consul; chmod 777 /var/consul or something like that
 
     return [
         {
@@ -23,7 +25,7 @@ export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
                 RestartPolicy: {
                     Name: 'always'
                 },
-                Binds: [`${consulDataFolder}:/data`]
+                Binds: [`/var/consul:/data`]
             },
         }
     ]
