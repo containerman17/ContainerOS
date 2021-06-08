@@ -1,4 +1,5 @@
 import Dockerode from "dockerode"
+import { UNTOUCHABLE_CONTAINERS } from "../../config"
 
 const docker = new Dockerode()
 
@@ -28,6 +29,9 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
     const containersOnHost = await docker.listContainers({ all: true });
     // delete changed and absent containers
     for (let containerOnHost of containersOnHost) {
+        if (UNTOUCHABLE_CONTAINERS.indexOf(containerOnHost.Names[0]) !== -1) {
+            continue;
+        }
         let shouldBeDeleted = true
         for (let containerToStart of containersToStart) {
             //should not be deleted only if specs are the same
@@ -45,12 +49,20 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
 }
 
 function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, existingContainer: Dockerode.ContainerInfo) {
+    console.log('newContainer', newContainer)
+    console.log('existingContainer', existingContainer)
     if ('/' + newContainer.name !== existingContainer.Names[0]) {
         return true // this has to be the first comparison
     }
     if (newContainer.Image !== existingContainer.Image) {
         return true
     }
+    if (newContainer?.HostConfig?.NetworkMode !== existingContainer?.HostConfig?.NetworkMode) {
+        return true
+    }
+
+    //TODO check cmd
+    //TODO check env
     return false
 }
 
