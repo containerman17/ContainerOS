@@ -1,11 +1,9 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "module": "commonjs",
-        "rootDir": "./",
-        "outDir": "./build",
-        "esModuleInterop": true,
-        "strict": true,
-        "watch": true,
+        "outDir": "build",
+        "sourceMap": true,
+        "esModuleInterop": true
     }
 }

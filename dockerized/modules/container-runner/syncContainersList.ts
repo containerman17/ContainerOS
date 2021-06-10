@@ -50,8 +50,6 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
 }
 
 function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, existingContainer: Dockerode.ContainerInfo) {
-    console.log('newContainer', newContainer)
-    console.log('existingContainer', existingContainer)
     if ('/' + newContainer.name !== existingContainer.Names[0]) {
         return true // this has to be the first comparison
     }

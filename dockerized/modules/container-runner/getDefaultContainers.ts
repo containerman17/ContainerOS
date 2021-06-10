@@ -6,7 +6,6 @@ import path from "path"
 
 export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
     const defaultNetworkInterface = await getDefaultNetworkInterface();
-    console.log('defaultNetworkInterface', defaultNetworkInterface)
 
     let consulDataFolder = '/var/consul'
     if (OS_TYPE === POSSIBLE_OS_TYPES.Darwin) {
@@ -18,7 +17,8 @@ export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
     return [
         {
             Image: 'consul:1.9.1',
-            Cmd: `agent -server -data-dir=/data -datacenter=main -encrypt=${CONSUL_ENCRYPTION_KEY} --bootstrap -ui -client 0.0.0.0 --bind ${defaultNetworkInterface.ip_address}`.split(' '),
+            // Cmd: `agent -server -data-dir=/data -datacenter=main -encrypt=${CONSUL_ENCRYPTION_KEY} --bootstrap -ui -client 0.0.0.0 --bind ${defaultNetworkInterface.ip_address}`.split(' '),
+            Cmd: `agent -dev`.split(' '),
             name: `consul`,
             HostConfig: {
                 NetworkMode: "host",
