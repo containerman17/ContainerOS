@@ -10,9 +10,13 @@ export default async function (req: express.Request, res: express.Response) {
 
     await database.safePatch(`deployments/${validatedBody.name}`, (oldDeployment): object => {
         oldDeployment.currentConfig = validatedBody
+
+        //TODO do not clear currentPodNames only if scale changed
+
         oldDeployment.currentPodNames = []
         return oldDeployment
     })
+
 
     return res.send({
         success: true,
