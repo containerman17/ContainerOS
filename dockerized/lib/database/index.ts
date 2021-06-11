@@ -14,6 +14,14 @@ export async function deletePath(path: string) {
     return await consulInstance.kv.del(path)
 }
 
+
+export async function setPath(path: string, data: any) {
+    return await consulInstance.kv.set({
+        key: path,
+        value: JSON.stringify(data, null, 2)
+    })
+}
+
 export default {
-    listenForUpdates, safePatch, getPath, deletePath
+    listenForUpdates, safePatch, getPath, deletePath, setPath
 }

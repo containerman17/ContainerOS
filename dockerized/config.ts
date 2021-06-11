@@ -19,3 +19,4 @@ export const CONSUL_ENCRYPTION_KEY = "vBgJsqVuwFbAeYjgptEOf2kVIEmfuSLhslGj3Lqm03
 export const API_PORT = 8000;
 
 export const DEPLOYMENT_MAX_SCALING = 5;
+export const NODE_HEALTH_INTERVAL = 5000;

@@ -28,6 +28,7 @@
         "express": "^4.17.1",
         "express-async-handler": "^1.1.4",
         "network": "^0.5.0",
+        "os-utils": "0.0.14",
         "randomstring": "^1.2.1",
         "superstruct": "^0.15.2",
         "underscore": "^1.13.1"
