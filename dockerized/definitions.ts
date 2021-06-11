@@ -18,6 +18,15 @@ export interface keyable<TypeName> {
     [key: string]: TypeName
 }
 
+export interface NodeHealth {
+    cpuUtilization: number,
+    cpuBooking: number,
+    RamUtilization: number,
+    RamBooking: number,
+    lastUpdatedUTC: string,
+    lastUpdatedTs: number,
+}
+
 export interface StoredPod {
     name: string,
     containers: Container[]

@@ -20,3 +20,8 @@ export const API_PORT = 8000;
 
 export const DEPLOYMENT_MAX_SCALING = 5;
 export const NODE_HEALTH_INTERVAL = 5000;
+
+export const SCHEDULE_DELAY = 3000;
+
+export const RAM_OVERBOOKING_RATE = 3;
+export const CPU_OVERBOOKING_RATE = 3;

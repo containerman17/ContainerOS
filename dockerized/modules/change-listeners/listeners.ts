@@ -2,6 +2,7 @@ import database from "../../lib/database"
 import manageDeploymentPods from "./manageDeploymentPods"
 import assignPodsToNodes from "./assignPodsToNodes"
 import { keyable, StoredPod, StoredDeployment } from "../../definitions"
+import { gotNewHealthData } from "./serverHealthManager"
 import delay from "delay"
 
 let deploymentList: keyable<StoredDeployment> = null
@@ -21,6 +22,8 @@ async function start(): Promise<void> {
         dirty = true
     })
 
+    database.listenForUpdates("nodeHealth", gotNewHealthData) //special case, does not depend on main change loop
+
     while (true) {
         await delay(100) // TODO: It's got to be a better way to not run parallel updates
         if (dirty === false) continue
@@ -30,7 +33,6 @@ async function start(): Promise<void> {
 }
 
 const updateListener = async function () {
-
     if (deploymentList !== null) {
         await manageDeploymentPods(deploymentList)
     }
