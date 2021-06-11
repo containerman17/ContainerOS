@@ -1,3 +1,8 @@
+export interface StoredDeployment {
+    currentConfig: DeploymentUpdate,
+    currentPodNames: String[]
+}
+
 export interface DeploymentUpdate {
     name: string,
     image: string,
@@ -7,9 +12,8 @@ export interface DeploymentUpdate {
     memLimit: string,
     cpus: number,
     env: string[],
-    scale: number,
-    dirty?: boolean
+    scale: number
 }
-export interface keyable {
-    [key: string]: any
+export interface keyable<TypeName> {
+    [key: string]: TypeName
 }

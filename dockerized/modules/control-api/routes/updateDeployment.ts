@@ -8,7 +8,11 @@ export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, DeploymentUpdate)
     assert(validatedBody.scale, ScaleCheck)
 
-    await database.upsertDeployment(req.body)
+    await database.safePatch(`deployments/${validatedBody.name}`, (oldDeployment): object => {
+        oldDeployment.currentConfig = validatedBody
+        oldDeployment.currentPodNames = []
+        return oldDeployment
+    })
 
     return res.send({
         success: true,

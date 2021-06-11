@@ -1,5 +1,5 @@
 diff --git a/node_modules/@types/consul/index.d.ts b/node_modules/@types/consul/index.d.ts
-index 18355be..2504c85 100644
+index 18355be..e9e9712 100644
 --- a/node_modules/@types/consul/index.d.ts
 +++ b/node_modules/@types/consul/index.d.ts
 @@ -12,6 +12,16 @@ import { IncomingMessage as HttpIncomingMessage } from "http";
@@ -30,7 +30,15 @@ index 18355be..2504c85 100644
          };
  
          /**
-@@ -1008,6 +1018,9 @@ declare namespace Consul {
+@@ -956,6 +966,7 @@ declare namespace Consul {
+         
+         interface WatchOptions {
+             key?: string;
++            recurse?: boolean;
+         }
+ 
+         interface Options {
+@@ -1008,6 +1019,9 @@ declare namespace Consul {
          kv: Kv;
          session: Session;
          status: Status;

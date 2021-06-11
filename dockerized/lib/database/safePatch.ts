@@ -1,10 +1,10 @@
 import consul from "./consulInstance"
 import Consul from "consul";
 import delay from "delay"
-import { keyable } from "./defenitions"
+import { keyable } from "../../definitions"
 
 
-export default async function safePatch(key: string, patch: (oldValue: keyable) => keyable, defaultStringValue = '{}',): Promise<void> {
+export default async function safePatch(key: string, patch: (oldValue: any) => any, defaultStringValue = '{}',): Promise<void> {
     for (let i = 0; i < 1000; i++) {
         try {
             const beforeModification = await consul.kv.get(key) || {

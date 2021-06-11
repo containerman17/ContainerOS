@@ -1,5 +1,6 @@
-import upsertDeployment from "./upsertDeployment"
+import listenForUpdates from "./listenForUpdates"
+import safePatch from "./safePatch"
 
 export default {
-    upsertDeployment
+    listenForUpdates, safePatch
 }
