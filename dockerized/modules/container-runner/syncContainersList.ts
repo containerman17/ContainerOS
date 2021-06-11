@@ -60,8 +60,8 @@ function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, exist
         return true
     }
 
-    //TODO check cmd
-    //TODO check env
+    //TODO: check cmd
+    //TODO: check env
     return false
 }
 

@@ -12,7 +12,7 @@ export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
         consulDataFolder = path.join(os.homedir(), 'consul-data')
     }
 
-    //TODO mkdir /var/consul; chmod 777 /var/consul or something like that
+    //TODO: mkdir /var/consul; chmod 777 /var/consul or something like that
 
     return [
         {

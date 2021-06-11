@@ -2,25 +2,16 @@ import { keyable, StoredDeployment } from "../../definitions"
 import database from "../../lib/database"
 import randomstring from "randomstring"
 
-//TODO use locks
-
 export default async function (deployments: keyable<StoredDeployment>) {
     for (let deploymentKey in deployments) {
         const deployment = deployments[deploymentKey]
 
-        await spinCurrentPods(deploymentKey, deployment)
+        if (deployment.currentPodNames.length === deployment.currentConfig.scale) {
+            continue
+        }
+
+        await database.safePatch(deploymentKey, spinCurrentPodsPatcher)
     }
-}
-
-async function spinCurrentPods(deploymentKey: string, deployment: StoredDeployment) {
-    //naive update controller
-
-    if (deployment.currentPodNames.length === deployment.currentConfig.scale) {
-        return
-    }
-
-    console.log('deployment', deploymentKey, deployment)
-    await database.safePatch(deploymentKey, spinCurrentPodsPatcher)
 }
 
 const spinCurrentPodsPatcher = (oldDeployment: StoredDeployment): object => {

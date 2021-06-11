@@ -1,7 +1,7 @@
 import consul from "./consulInstance"
 import { keyable } from "../../definitions"
 
-export default function (key: string, callback: (result: keyable) => void) {
+export default function (key: string, callback: (result: keyable<any>) => void) {
     var watch = consul.watch({
         method: consul.kv.get,
         options: { key, recurse: true },
@@ -10,9 +10,11 @@ export default function (key: string, callback: (result: keyable) => void) {
     });
 
     watch.on('change', function (data, res) {
-        const result: keyable = {}
-        for (let item of data || []) {
-            result[item.Key] = JSON.parse(item.Value)
+        const result: keyable<any> = {}
+        if (data !== undefined) {
+            for (let item of data || []) {
+                result[item.Key] = JSON.parse(item.Value)
+            }
         }
         callback(result)
     });
