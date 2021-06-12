@@ -5,10 +5,10 @@ export const DeploymentUpdate = object({
     name: pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/),
     image: string(),
     httpPorts: defaulted(object(), {}),
-    memLimit: defaulted(string(), "1000m"),
+    memLimit: defaulted(number(), 1000 * 1000 * 1000), //1GB
     cpus: defaulted(number(), 1),
     env: defaulted(array(string()), []),
-    scale: defaulted(number(), () => 2)
+    scale: defaulted(number(), () => 1)
 })
 
 export const ScaleCheck = refine(

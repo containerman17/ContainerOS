@@ -1,5 +1,6 @@
 import Dockerode from "dockerode"
 import { UNTOUCHABLE_CONTAINERS } from "../../config"
+import { containerStatus, keyable } from "../../definitions"
 
 const docker = new Dockerode()
 
@@ -8,23 +9,33 @@ export default async function sync(containersToStart: Array<Dockerode.ContainerC
     return await createAbsentContainers(containersToStart)
 }
 
-interface CreateContainerResult {
-    [key: string]: Promise<void>
-}
+type CreateContainerResult = keyable<containerStatus>
 
 async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
     const containersOnHost = await docker.listContainers({ all: true });
 
-    const promises: CreateContainerResult = {}
+    const results: CreateContainerResult = {}
 
     for (let container of containersToStart) {
         if (!hostHasContainer(containersOnHost, container.name!)) {
-            promises[container.name!] = runContainer(container);
+            try {
+                await runContainer(container);
+                results[container.name] = "ok"
+            } catch (e) {
+                if (e instanceof ContainerPullingError) {
+                    results[container.name] = "error_pulling"
+                } else {
+                    throw e //something goes sideways. it's better to die actually
+                }
+            }
         }
     }
 
-    return promises
+    return results
 }
+
+class ContainerPullingError extends Error { }
+
 async function deleteChangedContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<void> {
     const containersOnHost = await docker.listContainers({ all: true });
     // delete changed and absent containers
@@ -41,10 +52,21 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
             }
         }
         if (shouldBeDeleted) {
-            throw 'shouldBeDeleted = true ' + containerOnHost.Names[0]
             const containerToDelete = await docker.getContainer(containerOnHost.Id)
-            await containerToDelete.stop()
-            await containerToDelete.remove()
+            try {
+                await containerToDelete.stop()
+            } catch (e) {
+                if (e.reason !== 'container already stopped') {
+                    throw e
+                }
+            }
+            try {
+                await containerToDelete.remove()
+            } catch (e) {
+                if (!String(e?.json?.message).endsWith("is already in progress")) {
+                    throw e
+                }
+            }
         }
     }
 }
@@ -68,10 +90,12 @@ function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, exist
 async function dockerPull(image: string): Promise<void> {
     return new Promise((resolve, reject) => {
         docker.pull(image, function (err: any, stream: any) {
+            if (err) reject(new ContainerPullingError("ContainerPullingError"))
+
             docker.modem.followProgress(stream, onFinished, () => null);
 
             function onFinished(err: any, output: any) {
-                if (err) reject(err)
+                if (err) reject(new ContainerPullingError("ContainerPullingError"))
                 else resolve(output)
             }
         });

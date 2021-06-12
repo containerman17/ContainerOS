@@ -1,10 +1,10 @@
 import { CONSUL_ENCRYPTION_KEY, OS_TYPE, POSSIBLE_OS_TYPES } from "../../config";
-import Dockerode from "dockerode"
+import { ContainerCreateOptions } from "dockerode"
 import getDefaultNetworkInterface from '../../lib/system/getDefaultNetworkInterface'
 import os from "os"
 import path from "path"
 
-export default async function (): Promise<Dockerode.ContainerCreateOptions[]> {
+export default async function (): Promise<ContainerCreateOptions[]> {
     const defaultNetworkInterface = await getDefaultNetworkInterface();
 
     let consulDataFolder = '/var/consul'

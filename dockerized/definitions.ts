@@ -9,7 +9,7 @@ export interface DeploymentUpdate {
     httpPorts: {
         [key: number]: string;
     },
-    memLimit: string,
+    memLimit: number,
     cpus: number,
     env: string[],
     scale: number
@@ -38,7 +38,9 @@ export interface Container {
     httpPorts: {
         [key: number]: string;
     },
-    memLimit: string,
+    memLimit: number,
     cpus: number,
     env: string[],
 }
+
+export type containerStatus = "error_pulling" | "ok"

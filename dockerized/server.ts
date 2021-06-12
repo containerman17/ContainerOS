@@ -11,8 +11,7 @@ runner.start();
 api.start();
 reporter.start();
 
-process.on('unhandledRejection', error => {
-    // Will print "unhandledRejection err is not defined"
-    console.log('unhandledRejection', error.message);
+process.on('unhandledRejection', (error: Error) => {
+    console.log('unhandledRejection', error);
     process.exit(1)
 });

@@ -1,5 +1,5 @@
 import { keyable, NodeHealth } from "../../definitions";
-import { SCHEDULE_DELAY, NODE_HEALTH_INTERVAL, RAM_OVERBOOKING_RATE, CPU_OVERBOOKING_RATE } from "../../config";
+import { NODE_HEALTH_INTERVAL, RAM_OVERBOOKING_RATE, CPU_OVERBOOKING_RATE } from "../../config";
 import delay from "delay"
 
 let healthData: TransformedHealthReport[] = null
@@ -35,15 +35,25 @@ export function gotNewHealthData(newHealthData: keyable<NodeHealth>) {
 }
 
 let lastDelay = Promise.resolve()
+
 export async function getLeastBusyServer() {
     await waitForHealthData()
     //wait 3 seconds between schedule next container
     await lastDelay
-    lastDelay = delay(SCHEDULE_DELAY)
+    lastDelay = delay(NODE_HEALTH_INTERVAL)
 
-    const result = healthData
-        .filter(server => server.alive === true)
-        .sort((x, y) => x.utilizationPercent < y.utilizationPercent ? 1 : -1)[0]
+    let result;
+
+    for (let i = 0; i < 3; i++) {
+        result = healthData.filter(server => server.alive === true)
+            .sort((x, y) => x.utilizationPercent < y.utilizationPercent ? 1 : -1)[0]
+
+        if (result) {
+            break
+        } else {
+            await delay(NODE_HEALTH_INTERVAL)
+        }
+    }
 
     if (!result) {
         throw "No alive servers to schedule"
