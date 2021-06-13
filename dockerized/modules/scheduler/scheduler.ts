@@ -5,8 +5,12 @@ import { NODE_NAME } from "../../config"
 import { keyable, StoredPod } from "../../definitions"
 import { ContainerCreateOptions } from "dockerode"
 
+async function init() {
+    const defaultContainers = await getDefaultContainers();
+    await syncContainersList(defaultContainers)
+}
 
-async function start(): Promise<void> {
+async function start() {
     console.log('Runner is running')
     const defaultContainers = await getDefaultContainers();
 
@@ -19,11 +23,12 @@ async function start(): Promise<void> {
                     name: containerFromConfig.name,
                     Image: containerFromConfig.image,
                     Env: containerFromConfig.env,
-                    ExposedPorts: containerFromConfig.httpPorts,
+                    ExposedPorts: { "80/tcp": {} },//TODO: containerFromConfig.httpPorts,
                     HostConfig: {
                         RestartPolicy: {
                             Name: 'always'
                         },
+                        PortBindings: { '80/tcp': [{ HostPort: '5000' }] },//TODO: containerFromConfig.httpPorts,
                         Memory: containerFromConfig.memLimit,
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
@@ -36,7 +41,7 @@ async function start(): Promise<void> {
         await syncContainersList(containersToBeDeployed)
     })
 }
-export default { start }
+export default { start, init }
 
 if (require.main === module) {
     start();
