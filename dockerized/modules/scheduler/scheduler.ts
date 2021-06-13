@@ -28,6 +28,7 @@ async function start(): Promise<void> {
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
                     },
+                    Labels: { "pod": pod.name }
                 })
             }
         }
