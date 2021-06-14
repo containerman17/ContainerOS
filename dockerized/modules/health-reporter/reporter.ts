@@ -1,22 +1,15 @@
+
+import reportNodeHealth from "./reportNodeHealth"
+import onContainerStatusChanged from "./onContainerStatusChanged"
+import { NODE_HEALTH_INTERVAL } from "../../config"
 import database from "../../lib/database"
-import { NodeHealth } from "../../definitions"
-
-import getSmoothedCpuUtlization from "../../lib/system/getSmoothedCpuUtlization"
-
-import { NODE_HEALTH_INTERVAL, NODE_NAME } from "../../config"
+import { StoredContainerStatus } from "../../definitions"
 
 async function start(): Promise<void> {
-    setInterval(() => {
-        const health: NodeHealth = {
-            cpuUtilization: getSmoothedCpuUtlization(),
-            cpuBooking: 0, //TODO: summ all container limits
-            RamUtilization: 0,
-            RamBooking: 0,//TODO: summ all container limits
-            lastUpdatedUTC: new Date().toUTCString(),
-            lastUpdatedTs: Number(new Date()),
-        }
-        database.setPath(`nodeHealth/${NODE_NAME}`, health)
-    }, NODE_HEALTH_INTERVAL)
+    setInterval(reportNodeHealth, NODE_HEALTH_INTERVAL)
+    onContainerStatusChanged(function (podStatus: StoredContainerStatus) {
+        database.setWithDelay(`podHealth/${podStatus.podName}/${podStatus.containerName}`, podStatus)
+    })
 }
 
 export default { start }

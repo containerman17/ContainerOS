@@ -43,4 +43,13 @@ export interface Container {
     env: string[],
 }
 
-export type containerStatus = "error_pulling" | "ok"
+export interface StoredContainerStatus {
+    status: containerStatusValues,
+    time: Number,
+    containerName: string,
+    podName: string,
+    nodeName: string
+}
+
+
+export type containerStatusValues = "error_pulling" | "started" | "starting" | "dead"

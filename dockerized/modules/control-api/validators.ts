@@ -14,5 +14,5 @@ export const DeploymentUpdate = object({
 export const ScaleCheck = refine(
     number(),
     'min 1, max ' + DEPLOYMENT_MAX_SCALING,
-    v => v >= 1 && v <= DEPLOYMENT_MAX_SCALING
+    v => v >= 0 && v <= DEPLOYMENT_MAX_SCALING
 )
