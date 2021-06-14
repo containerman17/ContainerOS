@@ -2,7 +2,7 @@ import syncContainersList from "./syncContainersList"
 import getDefaultContainers from './getDefaultContainers'
 import database from "../../lib/database"
 import { NODE_NAME } from "../../config"
-import { keyable, StoredPod } from "../../definitions"
+import { keyable, StoredPod, StoredContainerStatus } from "../../definitions"
 import { ContainerCreateOptions } from "dockerode"
 
 async function init() {
@@ -29,7 +29,7 @@ async function start() {
                             Name: 'on-failure',
                             MaximumRetryCount: 10
                         },
-                        PortBindings: { '80/tcp': [{ HostPort: '5000' }] },//TODO: containerFromConfig.httpPorts,
+                        // PortBindings: { '80/tcp': [{ HostPort: '5000' }] },//TODO: containerFromConfig.httpPorts,
                         Memory: containerFromConfig.memLimit,
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
@@ -38,8 +38,7 @@ async function start() {
                 })
             }
         }
-
-        await syncContainersList(containersToBeDeployed)
+        const results = await syncContainersList(containersToBeDeployed)
     })
 }
 export default { start, init }
