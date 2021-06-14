@@ -26,14 +26,15 @@ async function start() {
                     ExposedPorts: { "80/tcp": {} },//TODO: containerFromConfig.httpPorts,
                     HostConfig: {
                         RestartPolicy: {
-                            Name: 'always'
+                            Name: 'on-failure',
+                            MaximumRetryCount: 10
                         },
                         PortBindings: { '80/tcp': [{ HostPort: '5000' }] },//TODO: containerFromConfig.httpPorts,
                         Memory: containerFromConfig.memLimit,
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
                     },
-                    Labels: { "pod": pod.name }
+                    Labels: { "dockerized-pod": pod.name }
                 })
             }
         }

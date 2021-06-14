@@ -1,6 +1,6 @@
 import Dockerode from "dockerode"
 import { UNTOUCHABLE_CONTAINERS } from "../../config"
-import { containerStatus, keyable } from "../../definitions"
+import { containerStatusValues, keyable } from "../../definitions"
 
 const docker = new Dockerode()
 
@@ -9,7 +9,7 @@ export default async function sync(containersToStart: Array<Dockerode.ContainerC
     return await createAbsentContainers(containersToStart)
 }
 
-type CreateContainerResult = keyable<containerStatus>
+type CreateContainerResult = keyable<containerStatusValues>
 
 async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
     const containersOnHost = await docker.listContainers({ all: true });
@@ -20,7 +20,7 @@ async function createAbsentContainers(containersToStart: Array<Dockerode.Contain
         if (!hostHasContainer(containersOnHost, container.name!)) {
             try {
                 await runContainer(container);
-                results[container.name] = "ok"
+                results[container.name] = "starting"
             } catch (e) {
                 if (e instanceof ContainerPullingError) {
                     results[container.name] = "error_pulling"
@@ -90,8 +90,7 @@ function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, exist
 async function dockerPull(image: string): Promise<void> {
     return new Promise((resolve, reject) => {
         docker.pull(image, function (err: any, stream: any) {
-            if (err) reject(new ContainerPullingError("ContainerPullingError"))
-
+            if (err) return reject(new ContainerPullingError("ContainerPullingError"))
             docker.modem.followProgress(stream, onFinished, () => null);
 
             function onFinished(err: any, output: any) {
