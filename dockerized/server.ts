@@ -11,14 +11,10 @@ process.on('unhandledRejection', (error: Error) => {
 async function start() {
     await scheduler.init();
 
-    if (true) { //TODO: if is master (=== consul is master)
-        listeners.start()
-    }
-
-    scheduler.start();
     api.start();
+    scheduler.start();
     reporter.start();
-
+    listeners.start()
 }
 
 

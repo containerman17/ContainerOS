@@ -18,7 +18,7 @@ const getConsulCmd = function (myIp: string): string[] {
     cmd.push('-data-dir=/data')
     cmd.push('-datacenter=main')
     cmd.push(`-encrypt=${CONSUL_ENCRYPTION_KEY}`)
-    cmd.push(`--bootstrap`)
+    cmd.push(`--bootstrap-expect=2`)
 
     for (let bootstrapIp of BOOTSTRAP_IPS) {
         cmd.push(`-retry-join=${bootstrapIp}`)
@@ -51,7 +51,7 @@ export default async function (): Promise<ContainerCreateOptions[]> {
 
     return [
         {
-            Image: 'consul:1.9.1',
+            Image: 'consul:1.9.6',
             Cmd: getConsulCmd(defaultNetworkInterface.ip_address),
             name: `consul`,
             HostConfig: {

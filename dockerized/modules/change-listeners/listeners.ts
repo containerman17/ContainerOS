@@ -2,6 +2,8 @@ import database from "../../lib/database"
 import manageDeploymentPods from "./manageDeploymentPods"
 import assignPodsToNodes from "./assignPodsToNodes"
 import { keyable, StoredPod, StoredDeployment } from "../../definitions"
+import getDefaultNetworkInterface from "../../lib/system/getDefaultNetworkInterface"
+
 import delay from "delay"
 
 let deploymentList: keyable<StoredDeployment> = null
@@ -9,7 +11,27 @@ let podList: keyable<StoredPod> = null
 
 let dirty = true
 
-async function start(): Promise<void> {
+async function start() {
+    let started = false
+    const myIp = (await getDefaultNetworkInterface()).ip_address
+
+    database.onLeaderChanged((newLeader) => {
+        if (newLeader === myIp) {
+            console.error("Cool! I am a leader. Starting listeners")
+            if (started) {
+                return
+            } else {
+                started = true
+                actuallyStart()
+            }
+        } else if (started) {
+            console.error("I am not a conslu leader anymore :/")
+            process.exit(1)
+        }
+    })
+}
+
+async function actuallyStart(): Promise<void> {
     console.log('Start update listeners')
 
     database.listenForUpdates("deployments", function (newDeploymentList: keyable<StoredDeployment>) {
