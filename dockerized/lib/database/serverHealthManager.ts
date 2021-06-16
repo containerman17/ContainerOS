@@ -7,7 +7,8 @@ let healthData: TransformedHealthReport[] = null
 type TransformedHealthReport = {
     name: string,
     utilizationPercent: number,
-    alive: boolean
+    alive: boolean,
+    ip: string
 }
 
 export function gotNewHealthData(newHealthData: keyable<NodeHealth>) {
@@ -27,7 +28,8 @@ export function gotNewHealthData(newHealthData: keyable<NodeHealth>) {
                 report.RamUtilization,
                 report.RamBooking / RAM_OVERBOOKING_RATE,
             ),
-            alive: healthReportDelay < (NODE_HEALTH_INTERVAL * 3)
+            alive: healthReportDelay < (NODE_HEALTH_INTERVAL * 3),
+            ip: report.ip,
         }
         transformedHealthData.push(result)
     }
@@ -59,6 +61,22 @@ export async function getLeastBusyServer() {
         throw "No alive servers to schedule"
     }
     return result.name
+}
+
+interface GetServerResponse {
+    workerIps: string[],
+    controllerIps: string[],
+}
+
+export async function getServers(): Promise<GetServerResponse> {
+    await waitForHealthData()
+
+    return {
+        workerIps: healthData.filter(server => server.alive === true)
+            .map(node => node.ip),
+        controllerIps: healthData.filter(server => server.alive === true)
+            .map(node => node.ip),
+    }
 }
 
 let waitForHealthData = async function () {

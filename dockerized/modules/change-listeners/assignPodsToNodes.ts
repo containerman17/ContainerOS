@@ -1,6 +1,5 @@
 import { keyable, StoredDeployment, StoredPod } from "../../definitions"
 import { NODE_NAME } from "../../config"
-import { getLeastBusyServer } from "./serverHealthManager"
 import database from "../../lib/database"
 import randomstring from "randomstring"
 
@@ -24,7 +23,7 @@ export default async function (deployments: keyable<StoredDeployment>, pods: key
 
     //TODO: assign new pods
     for (let podName of podsToCreate) {
-        const selectedNode = await getLeastBusyServer()
+        const selectedNode = await database.getLeastBusyServer()
         const deployment: StoredDeployment = await database.getPath(desiredPods[podName]);
 
         await database.safePatch(`pods/${selectedNode}/${podName}`, function (oldPod: StoredPod | null) {

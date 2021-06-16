@@ -16,7 +16,7 @@ async function createAbsentContainers(containersToStart: Array<Dockerode.Contain
 
     for (let container of containersToStart) {
         if (!hostHasContainer(containersOnHost, container.name!)) {
-            const podName = container?.Labels['dockerized-pod']
+            const podName = container?.Labels?.['dockerized-pod']
 
             try {
                 await runContainer(container);

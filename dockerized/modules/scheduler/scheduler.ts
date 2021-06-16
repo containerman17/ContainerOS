@@ -4,10 +4,34 @@ import database from "../../lib/database"
 import { NODE_NAME } from "../../config"
 import { keyable, StoredPod, StoredContainerStatus } from "../../definitions"
 import { ContainerCreateOptions } from "dockerode"
+import axios from "axios"
+import delay from "delay"
 
 async function init() {
     const defaultContainers = await getDefaultContainers();
     await syncContainersList(defaultContainers)
+    for (let i = 0; i < 30; i++) {
+        await delay(i * 100)
+        const isStarted = await isConsulStarted()
+        if (isStarted) {
+            console.log('Consul started')
+            return
+        }
+    }
+    throw "COULD NOT START CONSUL"
+}
+
+async function isConsulStarted() {
+    try {
+        const response = await axios.get(`http://localhost:8500/v1/catalog/nodes`)
+        if (response.data[0].ID) {
+            return true
+        } else {
+            return false
+        }
+    } catch (e) {
+        return false
+    }
 }
 
 async function start() {
