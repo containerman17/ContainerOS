@@ -25,6 +25,7 @@ export interface NodeHealth {
     RamBooking: number,
     lastUpdatedUTC: string,
     lastUpdatedTs: number,
+    ip: string,
 }
 
 export interface StoredPod {
