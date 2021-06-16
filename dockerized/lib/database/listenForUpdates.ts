@@ -20,7 +20,7 @@ export default function (key: string, callback: (result: keyable<any>) => void) 
     });
 
     watch.on('error', function (err) {
-        console.error('watch error:', err);
+        console.error(`watch error on key ${key}:`, err);
         process.exit(1)
     });
 }

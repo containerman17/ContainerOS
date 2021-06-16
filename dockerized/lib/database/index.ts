@@ -1,6 +1,7 @@
 import listenForUpdates from "./listenForUpdates"
 import safePatch from "./safePatch"
 import consulInstance from "./consulInstance"
+import setWithDelay from "./setWithDelay"
 
 export async function getPath(path: string, fallback = {}) {
     const response = await consulInstance.kv.get(path)
@@ -23,5 +24,5 @@ export async function setPath(path: string, data: any) {
 }
 
 export default {
-    listenForUpdates, safePatch, getPath, deletePath, setPath
+    listenForUpdates, safePatch, getPath, deletePath, setPath, setWithDelay
 }

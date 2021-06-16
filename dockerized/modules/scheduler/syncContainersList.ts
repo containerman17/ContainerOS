@@ -1,29 +1,47 @@
 import Dockerode from "dockerode"
-import { UNTOUCHABLE_CONTAINERS } from "../../config"
-import { containerStatus, keyable } from "../../definitions"
+import { UNTOUCHABLE_CONTAINERS, NODE_NAME } from "../../config"
+import { containerStatusValues, keyable, StoredContainerStatus } from "../../definitions"
 
 const docker = new Dockerode()
 
-export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
+export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<StoredContainerStatus[]> {
     await deleteChangedContainers(containersToStart)
     return await createAbsentContainers(containersToStart)
 }
 
-type CreateContainerResult = keyable<containerStatus>
-
-async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<CreateContainerResult> {
+async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<StoredContainerStatus[]> {
     const containersOnHost = await docker.listContainers({ all: true });
 
-    const results: CreateContainerResult = {}
+    const results: StoredContainerStatus[] = []
 
     for (let container of containersToStart) {
         if (!hostHasContainer(containersOnHost, container.name!)) {
+            const podName = container?.Labels['dockerized-pod']
+
             try {
                 await runContainer(container);
-                results[container.name] = "ok"
+                if (podName) {
+                    results.push({
+                        status: "starting",
+                        time: Math.round(Number(new Date) / 1000),
+                        containerName: container.name,
+                        podName: podName,
+                        nodeName: NODE_NAME
+                    })
+                }
             } catch (e) {
                 if (e instanceof ContainerPullingError) {
                     results[container.name] = "error_pulling"
+
+                    if (podName) {
+                        results.push({
+                            status: "starting",
+                            time: Math.round(Number(new Date) / 1000),
+                            containerName: container.name,
+                            podName: podName,
+                            nodeName: NODE_NAME
+                        })
+                    }
                 } else {
                     throw e //something goes sideways. it's better to die actually
                 }
@@ -90,8 +108,7 @@ function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, exist
 async function dockerPull(image: string): Promise<void> {
     return new Promise((resolve, reject) => {
         docker.pull(image, function (err: any, stream: any) {
-            if (err) reject(new ContainerPullingError("ContainerPullingError"))
-
+            if (err) return reject(new ContainerPullingError("ContainerPullingError"))
             docker.modem.followProgress(stream, onFinished, () => null);
 
             function onFinished(err: any, output: any) {
