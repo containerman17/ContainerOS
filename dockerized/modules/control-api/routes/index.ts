@@ -1,4 +1,6 @@
 import updateDeployment from "./updateDeployment"
+import getNodes from "./getNodes"
+
 import express from "express"
 
 interface RouteMap {
@@ -7,6 +9,7 @@ interface RouteMap {
 
 const routeMap: RouteMap = {
     "/updateDeployment": updateDeployment,
+    "/getNodes": getNodes,
 }
 
 export default routeMap
