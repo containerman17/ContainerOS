@@ -42,7 +42,6 @@ async function start() {
                 const containerName = event.Actor.Attributes?.name
 
                 if (!podName) {
-                    console.error(containerName, "No dockerized-pod attribute. We'll skip this container",)
                     return
                 }
 

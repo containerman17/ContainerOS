@@ -61,6 +61,17 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
         if (UNTOUCHABLE_CONTAINERS.indexOf(containerOnHost.Names[0]) !== -1) {
             continue;
         }
+
+        if (containerOnHost.State === 'exited') {
+            try {//at least try to start an exited container
+                const exitedContainer = await docker.getContainer(containerOnHost.Id)
+                await exitedContainer.start()
+            } catch (e) {
+                console.error(`Failed to start container ${containerOnHost.Names[0]} but I can live with it`)
+            }
+        }
+
+
         let shouldBeDeleted = true
         for (let containerToStart of containersToStart) {
             //should not be deleted only if specs are the same
@@ -89,6 +100,7 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
     }
 }
 
+//TODO: may be obsolete since a pod will be replaced with a new pod on any change
 function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, existingContainer: Dockerode.ContainerInfo) {
     if ('/' + newContainer.name !== existingContainer.Names[0]) {
         return true // this has to be the first comparison
