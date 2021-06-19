@@ -13,12 +13,9 @@ export default async function (req: express.Request, res: express.Response) {
         console.log('oldDeployment.currentConfig', oldDeployment.currentConfig)
         console.log('validatedBody', validatedBody)
 
-        if (
-            oldDeployment?.currentConfig?.image !== validatedBody.image
-            || oldDeployment?.currentConfig?.memLimit !== validatedBody.memLimit
-            || oldDeployment?.currentConfig?.cpus !== validatedBody.cpus
-            //TODO: update when env is changed
-        ) {
+        //TODO: update only if config changed
+        const needNewPods = true
+        if (needNewPods) {
             oldDeployment.currentPodNames = []
         }
 

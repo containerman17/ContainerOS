@@ -1,36 +1,20 @@
 diff --git a/node_modules/@types/consul/index.d.ts b/node_modules/@types/consul/index.d.ts
-index 18355be..e9e9712 100644
+index 18355be..d5f3b48 100644
 --- a/node_modules/@types/consul/index.d.ts
 +++ b/node_modules/@types/consul/index.d.ts
-@@ -12,6 +12,16 @@ import { IncomingMessage as HttpIncomingMessage } from "http";
+@@ -719,6 +719,11 @@ declare namespace Consul {
+         }
  
- declare namespace Consul {
- 
-+    interface KVGetResponse{
-+        LockIndex: number,
-+        Key: string,
-+        Flags: number,
-+        Value: string,
-+        CreateIndex: number,
-+        ModifyIndex: number
-+    
-+    }
+         interface DeleteOptions extends DelOptions { }
 +
-     interface Thenable<T> {
-         then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
-         then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
-@@ -730,8 +740,8 @@ declare namespace Consul {
-         get: {
-             <TData>(key: string, callback: Callback<TData>): void;
-             <TData>(opts: Kv.GetOptions, callback: Callback<TData>): void;
--            <TData>(key: string): Thenable<TData>;
--            <TData>(opts: Kv.GetOptions): Thenable<TData>;
-+            <TData>(key: string): Thenable<KVGetResponse>;
-+            <TData>(opts: Kv.GetOptions): Thenable<KVGetResponse>;
-         };
++        interface GetOneResponse {
++            Value: string,
++            ModifyIndex: string,
++        }
+     }
  
-         /**
-@@ -956,6 +966,7 @@ declare namespace Consul {
+     interface Kv {
+@@ -956,6 +961,7 @@ declare namespace Consul {
          
          interface WatchOptions {
              key?: string;
@@ -38,13 +22,3 @@ index 18355be..e9e9712 100644
          }
  
          interface Options {
-@@ -1008,6 +1019,9 @@ declare namespace Consul {
-         kv: Kv;
-         session: Session;
-         status: Status;
-+        transaction: {
-+            create(param: any): any
-+        }
- 
-         /**
-          * Lock helper.

@@ -26,18 +26,26 @@ export default async function (deployments: keyable<StoredDeployment>, pods: key
         const selectedNode = await database.getLeastBusyServer()
         const deployment: StoredDeployment = await database.getPath(desiredPods[podName]);
 
+        //TODO: why do we use safepatch here!?
         await database.safePatch(`pods/${selectedNode}/${podName}`, function (oldPod: StoredPod | null) {
-            return {
+            const result = {
                 name: podName,
-                containers: [{
-                    name: `${podName}-main`,
-                    image: deployment.currentConfig.image,
-                    httpPorts: deployment.currentConfig.httpPorts,
-                    memLimit: deployment.currentConfig.memLimit,
-                    cpus: deployment.currentConfig.cpus,
-                    env: deployment.currentConfig.env,
-                }]
+                containers: [],
             }
+
+            for (let containerName in deployment.currentConfig.containers) {
+                const container = deployment.currentConfig.containers[containerName]
+                result.containers.push({
+                    name: `${podName}-${containerName}`,
+                    image: container.image,
+                    memLimit: container.memLimit,
+                    cpus: container.cpus,
+                    env: container.env,
+                    httpPorts: container.httpPorts,
+                })
+            }
+
+            return result
         })
 
     }

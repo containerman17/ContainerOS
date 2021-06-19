@@ -4,9 +4,10 @@ import consulInstance from "./consulInstance"
 import setWithDelay from "./setWithDelay"
 import { getLeastBusyServer, gotNewHealthData, getServers } from "./serverHealthManager"
 import { onLeaderChanged } from "./consulLeader"
+import Consul from "consul"
 
 export async function getPath(path: string, fallback = {}) {
-    const response = await consulInstance.kv.get({
+    const response = await consulInstance.kv.get<Consul.Kv.GetOneResponse>({
         key: path,
     })
     if (!response) {

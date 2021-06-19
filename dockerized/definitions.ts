@@ -3,16 +3,20 @@ export interface StoredDeployment {
     currentPodNames: String[]
 }
 
-export interface DeploymentUpdate {
-    name: string,
-    image: string,
+export interface ContainerUpdate {
     httpPorts: {
         [key: number]: string;
     },
     memLimit: number,
     cpus: number,
     env: string[],
+    image: string,
+}
+
+export interface DeploymentUpdate {
+    name: string,
     scale: number
+    containers: keyable<ContainerUpdate>
 }
 export interface keyable<TypeName> {
     [key: string]: TypeName

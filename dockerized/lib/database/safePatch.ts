@@ -7,7 +7,7 @@ import { keyable } from "../../definitions"
 export default async function safePatch(key: string, patch: (oldValue: any) => any, defaultStringValue = '{}',): Promise<void> {
     for (let i = 0; i < 1000; i++) {
         try {
-            const beforeModification = await consul.kv.get(key) || {
+            const beforeModification = await consul.kv.get<Consul.Kv.GetOneResponse>(key) || {
                 Value: defaultStringValue,
                 ModifyIndex: undefined
             }
