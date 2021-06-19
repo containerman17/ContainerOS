@@ -111,12 +111,10 @@ function areSpecsDifferent(newContainer: Dockerode.ContainerCreateOptions, exist
     if (newContainer.Image !== existingContainer.Image) {
         return true
     }
-    if (newContainer?.HostConfig?.NetworkMode !== existingContainer?.HostConfig?.NetworkMode) {
-        return true
-    }
 
     //TODO: check cmd
     //TODO: check env
+    //TODO: check NetworkMode
     return false
 }
 
