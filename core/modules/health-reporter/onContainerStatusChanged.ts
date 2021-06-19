@@ -8,6 +8,7 @@ let started = false
 
 const podStatusMap: keyable<containerStatusValues> = {
     "kill": "dead",
+    "restart": "dead",
     "start": "started",
     "stop": "dead",
     "die": "dead",

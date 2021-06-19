@@ -34,6 +34,7 @@ export interface NodeHealth {
 
 export interface StoredPod {
     name: string,
+    deploymentName: string,
     containers: StoredContainer[]
 }
 

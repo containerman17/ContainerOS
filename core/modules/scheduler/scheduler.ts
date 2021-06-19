@@ -51,7 +51,8 @@ async function start() {
                     const domain = containerFromConfig.httpPorts[portNumber]
                     ExposedPorts[`${portNumber}/tcp`] = {}
                     PortBindings[`${portNumber}/tcp`] = [{ HostPort: '' }]
-                    Labels[`router-domain-${portNumber}`] = domain
+                    Labels[`service-${portNumber}-name`] = pod.deploymentName;
+                    Labels[`service-${portNumber}-tags`] = `routerDomain-${domain},hello-world`
                 }
 
                 containersToBeDeployed.push({

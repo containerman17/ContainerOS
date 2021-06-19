@@ -28,8 +28,9 @@ export default async function (deployments: keyable<StoredDeployment>, pods: key
 
         //TODO: why do we use safepatch here!?
         await database.safePatch(`pods/${selectedNode}/${podName}`, function (oldPod: StoredPod | null) {
-            const result = {
+            const result: StoredPod = {
                 name: podName,
+                deploymentName: deployment.currentConfig.name,
                 containers: [],
             }
 

@@ -83,6 +83,7 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
             }
         }
         if (shouldBeDeleted) {
+            console.log("Stopping container", containerOnHost)
             const containerToDelete = await docker.getContainer(containerOnHost.Id)
             try {
                 await containerToDelete.stop()
