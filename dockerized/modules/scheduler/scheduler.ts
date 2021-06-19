@@ -53,7 +53,7 @@ async function start() {
                             Name: 'on-failure',
                             MaximumRetryCount: 10
                         },
-                        // PortBindings: { '80/tcp': [{ HostPort: '5000' }] },//TODO: containerFromConfig.httpPorts,
+                        PortBindings: { '80/tcp': [{ HostPort: '' }] },//TODO: containerFromConfig.httpPorts,
                         Memory: containerFromConfig.memLimit,
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
