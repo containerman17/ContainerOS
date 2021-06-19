@@ -34,10 +34,10 @@ export interface NodeHealth {
 
 export interface StoredPod {
     name: string,
-    containers: Container[]
+    containers: StoredContainer[]
 }
 
-export interface Container {
+export interface StoredContainer {
     name: string,
     image: string,
     httpPorts: {

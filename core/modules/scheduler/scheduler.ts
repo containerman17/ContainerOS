@@ -9,7 +9,7 @@ import delay from "delay"
 
 async function init() {
     const defaultContainers = await getDefaultContainers();
-    await syncContainersList(defaultContainers)
+    await syncContainersList(defaultContainers, false)
     for (let i = 0; i < 30; i++) {
         await delay(i * 100)
         const isStarted = await isConsulStarted()
@@ -43,22 +43,33 @@ async function start() {
 
         for (let pod of Object.values(newPods)) {
             for (let containerFromConfig of pod.containers) {
+                const ExposedPorts = {}
+                const PortBindings = {}
+                const Labels = { "dockerized-pod": pod.name }
+
+                for (let portNumber of Object.keys(containerFromConfig.httpPorts)) {
+                    const domain = containerFromConfig.httpPorts[portNumber]
+                    ExposedPorts[`${portNumber}/tcp`] = {}
+                    PortBindings[`${portNumber}/tcp`] = [{ HostPort: '' }]
+                    Labels[`router-domain-${portNumber}`] = domain
+                }
+
                 containersToBeDeployed.push({
                     name: containerFromConfig.name,
                     Image: containerFromConfig.image,
                     Env: containerFromConfig.env,
-                    ExposedPorts: { "80/tcp": {} },//TODO: containerFromConfig.httpPorts,
+                    ExposedPorts: ExposedPorts,
                     HostConfig: {
                         RestartPolicy: {
                             Name: 'on-failure',
                             MaximumRetryCount: 10
                         },
-                        PortBindings: { '80/tcp': [{ HostPort: '' }] },//TODO: containerFromConfig.httpPorts,
+                        PortBindings: PortBindings,
                         Memory: containerFromConfig.memLimit,
                         CpuPeriod: 100000,
                         CpuQuota: 100000 * containerFromConfig.cpus
                     },
-                    Labels: { "dockerized-pod": pod.name }
+                    Labels: Labels,
                 })
             }
         }

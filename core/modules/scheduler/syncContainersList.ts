@@ -4,8 +4,10 @@ import { containerStatusValues, keyable, StoredContainerStatus } from "../../def
 
 const docker = new Dockerode()
 
-export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<StoredContainerStatus[]> {
-    await deleteChangedContainers(containersToStart)
+export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>, deleteContainers: boolean = true): Promise<StoredContainerStatus[]> {
+    if (deleteContainers) {
+        await deleteChangedContainers(containersToStart)
+    }
     return await createAbsentContainers(containersToStart)
 }
 
