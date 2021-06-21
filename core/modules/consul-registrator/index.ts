@@ -1,15 +1,11 @@
 import Dockerode from "dockerode"
 import { mapContainerPortsToNodePorts, parseLables } from "./helpers";
 import { register, deRegister } from "./serviceStore"
+import containerStatusMap from "../../lib/docker/containerStatusMap"
+import { containerStatusValuesFromDockerEvents, dockerodeContainerEvent } from "../../definitions";
 const docker = new Dockerode()
 
-const start = async function () {
-    const eventsStream = await docker.getEvents({
-        filters: {
-            type: ["container"],
-        },
-    })
-
+const initialContainerCheck = async function () {
     const containers = await docker.listContainers()
     for (let container of containers) {
         await handleContainer({
@@ -20,14 +16,36 @@ const start = async function () {
             ports: container.Ports
         })
     }
+}
 
-    eventsStream.on('data', function (chunk) {
-        let event = null
+const start = async function () {
+    const eventsStream = await docker.getEvents({
+        filters: {
+            type: ["container"],
+        },
+    })
+
+    await initialContainerCheck()
+
+    let tempLock = Promise.resolve()
+
+    eventsStream.on('data', async function (chunk) {
+        let event: dockerodeContainerEvent;
         try {
             event = JSON.parse(chunk.toString('utf8'))
         } catch (e) {
             console.warn("JSON parsing problem in container status")
             return
+        }
+
+        const mappedStatus: containerStatusValuesFromDockerEvents = containerStatusMap[event.status]
+
+        if (mappedStatus === "dead") {
+            deRegister(event.id) //TODO: if you have services that do not exist anymore, that's probably 
+        } else {
+            //TODO: highly inefective. use containerStatusMap instead
+            await tempLock
+            tempLock = initialContainerCheck()
         }
     });
 
@@ -43,7 +61,6 @@ async function handleContainer(containerData: {
 }) {
     const publicPortsMapping = mapContainerPortsToNodePorts(containerData.ports)
     const parsedServices = parseLables(containerData.labels, containerData.name, publicPortsMapping)
-
 
     if (parsedServices.length > 0 && containerData.state === "running") {
         await register(containerData.id, parsedServices)

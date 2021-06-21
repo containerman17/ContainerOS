@@ -1,7 +1,7 @@
 import Dockerode from "dockerode"
 import { UNTOUCHABLE_CONTAINERS, NODE_NAME } from "../../config"
 import { containerStatusValues, keyable, StoredContainerStatus } from "../../definitions"
-
+import delay from "delay"
 const docker = new Dockerode()
 
 export default async function sync(containersToStart: Array<Dockerode.ContainerCreateOptions>, deleteContainers: boolean = true): Promise<StoredContainerStatus[]> {
@@ -12,6 +12,7 @@ export default async function sync(containersToStart: Array<Dockerode.ContainerC
 }
 
 async function createAbsentContainers(containersToStart: Array<Dockerode.ContainerCreateOptions>): Promise<StoredContainerStatus[]> {
+    console.debug('createAbsentContainers', containersToStart.map(cont => cont.name))
     const containersOnHost = await docker.listContainers({ all: true });
 
     const results: StoredContainerStatus[] = []
@@ -21,6 +22,7 @@ async function createAbsentContainers(containersToStart: Array<Dockerode.Contain
             const podName = container?.Labels?.['dockerized-pod']
 
             try {
+                console.debug('run container ' + container.name)
                 await runContainer(container);
                 if (podName) {
                     results.push({
@@ -45,11 +47,13 @@ async function createAbsentContainers(containersToStart: Array<Dockerode.Contain
                         })
                     }
                 } else {
+                    console.log({ container, containersOnHost: containersOnHost.map(cont => cont.Names) })
                     throw e //something goes sideways. it's better to die actually
                 }
             }
         }
     }
+    console.debug('createAbsentContainers finished', containersToStart.map(cont => cont.name))
 
     return results
 }
@@ -64,7 +68,7 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
             continue;
         }
 
-        if (containerOnHost.State === 'exited') {
+        if (containerOnHost.State === 'exited') {//TODO: why do we need that here? may be in createAbsentContainers??
             try {//at least try to start an exited container
                 const exitedContainer = await docker.getContainer(containerOnHost.Id)
                 await exitedContainer.start()
@@ -72,7 +76,6 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
                 console.error(`Failed to start container ${containerOnHost.Names[0]} but I can live with it`)
             }
         }
-
 
         let shouldBeDeleted = true
         for (let containerToStart of containersToStart) {
@@ -83,22 +86,30 @@ async function deleteChangedContainers(containersToStart: Array<Dockerode.Contai
             }
         }
         if (shouldBeDeleted) {
-            console.log("Stopping container", containerOnHost)
+            console.log("Stopping container", containerOnHost.Names[0])
             const containerToDelete = await docker.getContainer(containerOnHost.Id)
+
             try {
                 await containerToDelete.stop()
             } catch (e) {
-                if (e.reason !== 'container already stopped') {
-                    throw e
+                if (String(e?.json?.message).endsWith("is already in progress")
+                    || ['container already stopped', 'no such container'].includes(e.reason)) {
+                    console.warn(`Could not stop container ${containerOnHost.Names[0]}, but that's ok. let's murder it`)
+                } else {
+                    throw e // that's an unexpected error
                 }
             }
+
             try {
                 await containerToDelete.remove()
             } catch (e) {
-                if (!String(e?.json?.message).endsWith("is already in progress")) {
+                if (['no such container'].includes(e.reason)
+                    || String(e?.json?.message).endsWith("is already in progress")) {
+                } else {
                     throw e
                 }
             }
+
         }
     }
 }

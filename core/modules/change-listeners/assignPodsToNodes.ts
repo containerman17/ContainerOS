@@ -37,7 +37,7 @@ export default async function (deployments: keyable<StoredDeployment>, pods: key
             for (let containerName in deployment.currentConfig.containers) {
                 const container = deployment.currentConfig.containers[containerName]
                 result.containers.push({
-                    name: `${podName}-${containerName}`,
+                    name: containerName,
                     image: container.image,
                     memLimit: container.memLimit,
                     cpus: container.cpus,

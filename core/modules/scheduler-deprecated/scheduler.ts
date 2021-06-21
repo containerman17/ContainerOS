@@ -34,12 +34,16 @@ async function isConsulStarted() {
     }
 }
 
+let asyncSyncLock: Promise<StoredContainerStatus[]> = Promise.resolve([])
+let containersToBeDeployed: ContainerCreateOptions[] = []
+
 async function start() {
     console.log('Runner is running')
     const defaultContainers = await getDefaultContainers();
 
     database.listenForUpdates(`pods/${NODE_NAME}`, async function (newPods: keyable<StoredPod>) {
-        const containersToBeDeployed: ContainerCreateOptions[] = [...defaultContainers]
+        console.log('got container list updates')
+        containersToBeDeployed = [...defaultContainers]
 
         for (let pod of Object.values(newPods)) {
             for (let containerFromConfig of pod.containers) {
@@ -51,12 +55,12 @@ async function start() {
                     const domain = containerFromConfig.httpPorts[portNumber]
                     ExposedPorts[`${portNumber}/tcp`] = {}
                     PortBindings[`${portNumber}/tcp`] = [{ HostPort: '' }]
-                    Labels[`service-${portNumber}-name`] = pod.deploymentName;
+                    Labels[`service-${portNumber}-name`] = `${pod.deploymentName}-${containerFromConfig.name}`;
                     Labels[`service-${portNumber}-tags`] = `routerDomain-${domain},hello-world`
                 }
 
                 containersToBeDeployed.push({
-                    name: containerFromConfig.name,
+                    name: `${pod.name}-${containerFromConfig.name}`,
                     Image: containerFromConfig.image,
                     Env: containerFromConfig.env,
                     ExposedPorts: ExposedPorts,
@@ -74,7 +78,12 @@ async function start() {
                 })
             }
         }
-        const results = await syncContainersList(containersToBeDeployed)
+
+        const interval = setInterval(() => console.log(`Waiting for syncContainersList...`), 1000)
+        await asyncSyncLock
+        clearInterval(interval)
+
+        asyncSyncLock = syncContainersList(containersToBeDeployed)
     })
 }
 export default { start, init }

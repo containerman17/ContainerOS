@@ -14,12 +14,13 @@ export async function register(containerId: string, services: ServicePayload[]) 
 }
 
 export async function deRegister(containerId) {
-    delete containerServices[containerId]
-    sync()//no await
+    if (containerServices[containerId] !== undefined) {
+        delete containerServices[containerId]
+        sync()//no await
+    }
 }
 
 let syncPromise = Promise.resolve()
-
 
 export async function sync() {
     await syncPromise //to remove concurency issues
@@ -27,7 +28,7 @@ export async function sync() {
         try {
             const servicesInConsul = await consul.agent.service.list()
             // console.log('servicesInConsul', servicesInConsul)
-            // console.log('containerServices', containerServices)
+            console.log('containerServices', Object.values(containerServices))
             for (let [containerId, servicePayloads] of Object.entries(containerServices)) {
                 for (let servicePayload of servicePayloads) {
                     await consul.agent.service.register({
@@ -38,7 +39,6 @@ export async function sync() {
                     })
                 }
             }
-
             resolve()
         } catch (e) {
             reject(e)

@@ -57,5 +57,23 @@ export interface StoredContainerStatus {
     nodeName: string
 }
 
+export interface dockerodeContainerEvent {
+    status: string,
+    id: string,
+    from: string,
+    Type: 'container',
+    Action: string,
+    Actor: {
+        ID: string,
+        Attributes: {
+            [key: string]: string;
+        },
+    },
+    scope: string,
+    time: number,
+    timeNano: number
+}
 
-export type containerStatusValues = "error_pulling" | "started" | "starting" | "dead"
+export type containerStatusValuesFromDockerEvents = "started" | "dead" | "not_changed"
+
+export type containerStatusValues = containerStatusValuesFromDockerEvents | "error_pulling" | "starting"

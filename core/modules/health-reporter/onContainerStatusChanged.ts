@@ -1,20 +1,12 @@
 import Dockerode from "dockerode"
-import { keyable, StoredContainerStatus, containerStatusValues } from "../../definitions";
+import { keyable, StoredContainerStatus, containerStatusValuesFromDockerEvents } from "../../definitions";
 import { NODE_NAME } from "../../config";
+import podStatusMap from "../../lib/docker/containerStatusMap";
 
 const docker = new Dockerode()
 
 let started = false
 
-const podStatusMap: keyable<containerStatusValues> = {
-    "kill": "dead",
-    "restart": "dead",
-    "start": "started",
-    "stop": "dead",
-    "die": "dead",
-    "destroy": "dead",
-    "create": "starting",
-}
 
 async function start() {
     started = true
@@ -37,8 +29,10 @@ async function start() {
                     return
                 }
 
-
-                const mappedStatus: containerStatusValues = podStatusMap[event.status]
+                const mappedStatus: containerStatusValuesFromDockerEvents = podStatusMap[event.status]
+                if (mappedStatus === "not_changed") {
+                    return
+                }
                 const podName = event?.Actor.Attributes['dockerized-pod']
                 const containerName = event.Actor.Attributes?.name
 
