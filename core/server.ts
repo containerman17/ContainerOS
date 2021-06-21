@@ -1,4 +1,4 @@
-import scheduler from './modules/scheduler-deprecated/scheduler';
+import scheduler from './modules/scheduler-compose/scheduler';
 import api from './modules/control-api/api';
 import listeners from './modules/change-listeners/listeners';
 import reporter from './modules/health-reporter/reporter';
