@@ -47,21 +47,3 @@ export function mapContainerPortsToNodePorts(ports: Dockerode.Port[]): { [key: s
     }
     return mapping
 }
-
-if (require.main === module) {
-    const result = parseLabels({
-        'com.docker.compose.config-hash': 'eb0a95d84700eeec3486d35ff8a882ce7f2044998088f22299fc5f953cc28904',
-        'com.docker.compose.container-number': '1',
-        'com.docker.compose.oneoff': 'False',
-        'com.docker.compose.project': 'tmp',
-        'com.docker.compose.project.config_files': 'docker-compose.yaml',
-        'com.docker.compose.project.working_dir': '/tmp',
-        'com.docker.compose.service': 'registry-5hh7q-nginx',
-        'com.docker.compose.version': '1.25.0',
-        'dockerized-pod': 'registry-5hh7q',
-        maintainer: 'Bitnami <containers@bitnami.com>',
-        'service-80-name': 'registry-nginx',
-        'service-80-tags': 'routerDomain-nginx.rd.dev.containeros.org,hello-world'
-    }, 'registry-5hh7q-nginx')
-    console.log()
-}

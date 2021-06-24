@@ -20,6 +20,8 @@ export default async function sync(containersToStart: Array<Dockerode.ContainerC
 
     const composeResponse = await execa('/usr/bin/docker-compose', composeParams, { cwd: '/tmp' });
 
+    // console.log('composeResponse', composeResponse)
+
     return []//TODO: fix
     // let yamlStr = yaml.dump(data);
     // fs.writeFileSync(`/tmp/docker-compose.yaml`, yamlStr)

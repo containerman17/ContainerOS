@@ -27,6 +27,8 @@ async function start() {
         } else if (started) {
             console.error("I am not a conslu leader anymore :/")
             process.exit(1)
+        } else {
+            console.log("I am a follower. Not listening for updates")
         }
     })
 }

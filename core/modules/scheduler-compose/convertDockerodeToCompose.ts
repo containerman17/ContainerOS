@@ -13,34 +13,41 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
         //TODO: memory
         //TODO: PortBindings
 
-        console.debug("container", container.name, container.ExposedPorts, container?.HostConfig?.PortBindings)
 
-        const ports = []
-        if (container?.HostConfig?.PortBindings) {
-            for (let [containerPort, exposed] of Object.entries(container?.HostConfig?.PortBindings)) {
-                const fixedHostPort = exposed[0].HostPort
-                if (fixedHostPort) {
-                    ports.push(`${fixedHostPort}:${containerPort}`)
-                } else {
-                    ports.push(containerPort)
-                }
-            }
-        }
-
-        const volumes = (container?.HostConfig?.Binds || []).map(pair => ({
-            type: 'bind',
-            source: pair.split(':')[0],
-            target: pair.split(':')[1],
-        }))
+        // const volumes = (container?.HostConfig?.Binds || []).map(pair => {
+        //     // type: 'bind',
+        //     // source: pair.split(':')[0],
+        //     // target: pair.split(':')[1],
+        //     return `${}:${}`
+        // })
+        console.debug('volumes', container?.HostConfig?.Binds)
 
         data.services[container.name] = {
             image: container.Image,
             container_name: container.name,
             network_mode: container?.HostConfig?.NetworkMode || 'bridge',
-            volumes: volumes,
+            volumes: container?.HostConfig?.Binds,
             labels: container.Labels,
-            ports
+            environment: container?.Env || []
         }
+
+        //ports
+
+        if (container?.HostConfig?.NetworkMode !== "host") {
+            const ports = []
+            if (container?.HostConfig?.PortBindings) {
+                for (let [containerPort, exposed] of Object.entries(container?.HostConfig?.PortBindings)) {
+                    const fixedHostPort = exposed[0].HostPort
+                    if (fixedHostPort) {
+                        ports.push(`${fixedHostPort}:${containerPort}`)
+                    } else {
+                        ports.push(containerPort)
+                    }
+                }
+            }
+            data.services[container.name].ports = ports
+        }
+
 
         //like restart=failure:5
         if (container?.HostConfig?.RestartPolicy?.Name) {

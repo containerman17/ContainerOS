@@ -1,6 +1,6 @@
 import Dockerode from "dockerode"
 import { mapContainerPortsToNodePorts, parseLables } from "./helpers";
-import { register, deRegister } from "./serviceStore"
+import { register, deRegister, sync } from "./serviceStore"
 import containerStatusMap from "../../lib/docker/containerStatusMap"
 import { containerStatusValuesFromDockerEvents, dockerodeContainerEvent } from "../../definitions";
 const docker = new Dockerode()
@@ -26,6 +26,7 @@ const start = async function () {
     })
 
     await initialContainerCheck()
+    await sync()
 
     let tempLock = Promise.resolve()
 

@@ -27,11 +27,9 @@ const getConsulCmd = function (myIp: string): string[] {
     if (IS_DEV) {
         cmd.push(`-ui`)
         cmd.push(`-client`, `0.0.0.0`)
-        cmd.push()
     } else {
         cmd.push(`-client`, `127.0.0.1`)
     }
-    cmd.push(`--bind`, `${myIp}`)
 
     return cmd
 }
@@ -39,19 +37,20 @@ const getConsulCmd = function (myIp: string): string[] {
 export default async function (): Promise<ContainerCreateOptions[]> {
     const defaultNetworkInterface = await getDefaultNetworkInterface();
 
-    let consulDataFolder = '/var/consul'
-    if (OS_TYPE === POSSIBLE_OS_TYPES.Darwin) {
-        consulDataFolder = path.join(os.homedir(), 'consul-data')
-    }
+    // let consulDataFolder = '/var/consul'
+    // if (OS_TYPE === POSSIBLE_OS_TYPES.Darwin) {
+    const consulDataFolder = path.join(os.homedir(), 'consul-data')
+    // }
 
     if (!fs.existsSync(consulDataFolder)) {
         fs.mkdirSync(consulDataFolder)
-        fs.chmodSync(consulDataFolder, 0o777)
     }
+    fs.chmodSync(consulDataFolder, 0o777)//TODO: set correct permissions
+
 
     return [
         {
-            Image: 'consul:1.9.6',
+            Image: 'consul:1.10.0',
             Cmd: getConsulCmd(defaultNetworkInterface.ip_address),
             name: `consul`,
             HostConfig: {
@@ -59,8 +58,9 @@ export default async function (): Promise<ContainerCreateOptions[]> {
                 RestartPolicy: {
                     Name: 'always'
                 },
-                Binds: [`/var/consul:/data`]
+                Binds: [`${consulDataFolder}:/data`]
             },
+            Env: ["CONSUL_BIND_INTERFACE=eth0"]
         }
     ]
 }

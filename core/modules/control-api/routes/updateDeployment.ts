@@ -10,8 +10,8 @@ export default async function (req: express.Request, res: express.Response) {
 
     await database.safePatch(`deployments/${validatedBody.name}`, (oldDeployment): object => {
 
-        console.log('oldDeployment.currentConfig', oldDeployment.currentConfig)
-        console.log('validatedBody', validatedBody)
+        // console.log('oldDeployment.currentConfig', oldDeployment.currentConfig)
+        // console.log('validatedBody', validatedBody)
 
         //TODO: update only if config changed
         const needNewPods = true
