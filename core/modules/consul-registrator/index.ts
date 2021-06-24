@@ -1,6 +1,6 @@
 import Dockerode from "dockerode"
 import { mapContainerPortsToNodePorts, parseLables } from "./helpers";
-import { register, deRegister, sync } from "./serviceStore"
+import { register, deRegister, fullSync } from "./serviceStore"
 import containerStatusMap from "../../lib/docker/containerStatusMap"
 import { containerStatusValuesFromDockerEvents, dockerodeContainerEvent } from "../../definitions";
 const docker = new Dockerode()
@@ -26,7 +26,8 @@ const start = async function () {
     })
 
     await initialContainerCheck()
-    await sync()
+    await fullSync()
+    setInterval(fullSync, 5 * 60 * 1000)
 
     let tempLock = Promise.resolve()
 
@@ -42,7 +43,7 @@ const start = async function () {
         const mappedStatus: containerStatusValuesFromDockerEvents = containerStatusMap[event.status]
 
         if (mappedStatus === "dead") {
-            deRegister(event.id) //TODO: if you have services that do not exist anymore, that's probably 
+            await deRegister(event.id) //TODO: if you have services that do not exist anymore, that's probably 
         } else {
             //TODO: highly inefective. use containerStatusMap instead
             await tempLock

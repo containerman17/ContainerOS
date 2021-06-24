@@ -1,8 +1,16 @@
 diff --git a/node_modules/@types/consul/index.d.ts b/node_modules/@types/consul/index.d.ts
-index 18355be..d5f3b48 100644
+index 18355be..831d45b 100644
 --- a/node_modules/@types/consul/index.d.ts
 +++ b/node_modules/@types/consul/index.d.ts
-@@ -719,6 +719,11 @@ declare namespace Consul {
+@@ -252,6 +252,7 @@ declare namespace Consul {
+                 ttl?: string;
+                 notes?: string;
+                 status?: string;
++                tcp?: string;
+             }
+ 
+             interface ListOptions extends CommonOptions { }
+@@ -719,6 +720,11 @@ declare namespace Consul {
          }
  
          interface DeleteOptions extends DelOptions { }
@@ -14,7 +22,7 @@ index 18355be..d5f3b48 100644
      }
  
      interface Kv {
-@@ -956,6 +961,7 @@ declare namespace Consul {
+@@ -956,6 +962,7 @@ declare namespace Consul {
          
          interface WatchOptions {
              key?: string;

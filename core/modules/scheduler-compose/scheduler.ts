@@ -34,7 +34,6 @@ async function isConsulStarted() {
     }
 }
 
-let asyncSyncLock: Promise<StoredContainerStatus[]> = Promise.resolve([])
 let containersToBeDeployed: ContainerCreateOptions[] = []
 
 async function start() {
@@ -43,7 +42,7 @@ async function start() {
     const defaultContainers = await getDefaultContainers();
 
     database.listenForUpdates(`pods/${NODE_NAME}`, async function (newPods: keyable<StoredPod>) {
-        console.log('got container list updates')
+        console.log('got container list updates', Object.values(newPods).map(pod => pod.name))
         containersToBeDeployed = [...defaultContainers]
 
         for (let pod of Object.values(newPods)) {
@@ -80,11 +79,22 @@ async function start() {
             }
         }
 
-        const interval = setInterval(() => console.log(`Waiting for syncContainersList...`), 1000)
-        await asyncSyncLock
-        clearInterval(interval)
 
-        asyncSyncLock = syncContainersList(containersToBeDeployed)
+        const MAX_RETRIES = 3
+        for (let i = 1; i <= 3; i++) {//
+            try {
+                await syncContainersList(containersToBeDeployed)
+                console.log('syncContainersList complete')
+            } catch (e) {
+                console.log('syncContainersList error', String(e).slice(0, 100))
+
+                if (i === MAX_RETRIES) {
+                    throw e
+                } else {
+                    await delay(1000)
+                }
+            }
+        }
     })
 }
 export default { start, init }

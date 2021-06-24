@@ -5,22 +5,10 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
     let data = { version: '2.4', services: {} };
     for (let container of containers) {
 
-        //TODO: ports
-        //TODO: env
-        //TODO: labels
         //TODO: CpuPeriod
         //TODO: CpuQuota
         //TODO: memory
-        //TODO: PortBindings
 
-
-        // const volumes = (container?.HostConfig?.Binds || []).map(pair => {
-        //     // type: 'bind',
-        //     // source: pair.split(':')[0],
-        //     // target: pair.split(':')[1],
-        //     return `${}:${}`
-        // })
-        console.debug('volumes', container?.HostConfig?.Binds)
 
         data.services[container.name] = {
             image: container.Image,
@@ -60,6 +48,7 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
             }
         }
 
+        //cmd
         if (container.Cmd) {
             data.services[container.name].command = container.Cmd.join(' ')
         }
