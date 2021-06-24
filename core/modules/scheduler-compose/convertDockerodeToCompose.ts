@@ -4,8 +4,6 @@ import Dockerode from "dockerode";
 export default function (containers: Array<Dockerode.ContainerCreateOptions>): any {
     let data = { version: '2.4', services: {} };
     for (let container of containers) {
-        console.log(container)
-
 
         //TODO: ports
         //TODO: env
@@ -15,35 +13,49 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
         //TODO: memory
         //TODO: PortBindings
 
+        console.debug("container", container.name, container.ExposedPorts, container?.HostConfig?.PortBindings)
+
+        const ports = []
+        if (container?.HostConfig?.PortBindings) {
+            for (let [containerPort, exposed] of Object.entries(container?.HostConfig?.PortBindings)) {
+                const fixedHostPort = exposed[0].HostPort
+                if (fixedHostPort) {
+                    ports.push(`${fixedHostPort}:${containerPort}`)
+                } else {
+                    ports.push(containerPort)
+                }
+            }
+        }
+
         const volumes = (container?.HostConfig?.Binds || []).map(pair => ({
             type: 'bind',
             source: pair.split(':')[0],
             target: pair.split(':')[1],
         }))
 
-        containers[container.name] = {
+        data.services[container.name] = {
             image: container.Image,
             container_name: container.name,
             network_mode: container?.HostConfig?.NetworkMode || 'bridge',
             volumes: volumes,
+            labels: container.Labels,
+            ports
         }
 
         //like restart=failure:5
         if (container?.HostConfig?.RestartPolicy?.Name) {
-            containers[container.name].restart = container?.HostConfig?.RestartPolicy?.Name
+            data.services[container.name].restart = container?.HostConfig?.RestartPolicy?.Name
 
             const max = container?.HostConfig?.RestartPolicy?.MaximumRetryCount ||
                 container?.HostConfig?.RestartPolicy?.MaxAttempts
             if (max) { // add restart count
-                containers[container.name].restart += `:${max}`
+                data.services[container.name].restart += `:${max}`
             }
         }
 
         if (container.Cmd) {
-            containers[container.name].command = container.Cmd.join(' ')
+            data.services[container.name].command = container.Cmd.join(' ')
         }
-
-        console.log(containers[container.name])
     }
     return data
 }

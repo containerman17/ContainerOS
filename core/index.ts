@@ -10,10 +10,9 @@ async function start() {
         process.exit(1)
     });
 
-    await scheduler.init();
+    await scheduler.start();
 
     api.start();
-    scheduler.start();
     reporter.start();
     listeners.start()
     registrator.start()

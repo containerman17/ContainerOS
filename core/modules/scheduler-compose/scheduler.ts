@@ -38,6 +38,7 @@ let asyncSyncLock: Promise<StoredContainerStatus[]> = Promise.resolve([])
 let containersToBeDeployed: ContainerCreateOptions[] = []
 
 async function start() {
+    await init();
     console.log('Runner is running')
     const defaultContainers = await getDefaultContainers();
 
