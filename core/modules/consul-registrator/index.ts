@@ -13,7 +13,8 @@ const initialContainerCheck = async function () {
             name: container.Names[0].slice(1),
             labels: container.Labels,
             state: container.State,
-            ports: container.Ports
+            ports: container.Ports,
+            networkMode: container?.HostConfig?.NetworkMode
         })
     }
 }
@@ -59,10 +60,10 @@ const start = async function () {
 
 
 async function handleContainer(containerData: {
-    id: string, name: string, labels: { [label: string]: string }, state: string, ports: Dockerode.Port[]
+    id: string, name: string, labels: { [label: string]: string }, state: string, ports: Dockerode.Port[], networkMode: string
 }) {
     const publicPortsMapping = mapContainerPortsToNodePorts(containerData.ports)
-    const parsedServices = parseLables(containerData.labels, containerData.name, publicPortsMapping)
+    const parsedServices = parseLables(containerData.labels, containerData.name, publicPortsMapping, containerData.networkMode)
 
     if (parsedServices.length > 0 && containerData.state === "running") {
         await register(containerData.id, parsedServices)

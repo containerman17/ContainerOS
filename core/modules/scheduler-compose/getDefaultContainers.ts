@@ -72,6 +72,7 @@ export default async function (): Promise<ContainerCreateOptions[]> {
                 },
                 Binds: [`${consulDataFolder}:/data`]
             },
+            Labels: { 'service-443-name': 'caddy' }
         }
     ]
 }

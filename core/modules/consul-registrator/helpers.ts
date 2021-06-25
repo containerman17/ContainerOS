@@ -4,7 +4,8 @@ import { keyable, ServicePayload } from "./types";
 export function parseLables(
     labels: keyable<string>,
     defaultName: string,
-    publicPortsMapping: { [key: string]: string }): ServicePayload[] {
+    publicPortsMapping: { [key: string]: string },
+    networkMode): ServicePayload[] {
 
     interface tempServiceVar {
         name?: string,
@@ -32,7 +33,10 @@ export function parseLables(
 
     const result: ServicePayload[] = []
     for (const [port, { tags, name }] of Object.entries(services)) {
-        const publishedPort = publicPortsMapping[port]
+        const publishedPort = networkMode === 'host'
+            ? port
+            : publicPortsMapping[port]
+
         if (!publishedPort) continue
         result.push({ port: Number(publishedPort), tags, name })
     }

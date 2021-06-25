@@ -85,6 +85,9 @@ async function start() {
             })
         }
 
+        const caddyInstances = await consul.catalog.service.nodes('caddy')
+        console.log('caddyInstances', caddyInstances)
+
         await axios.post("http://localhost:2019/config/apps/http/", { "servers": { "srv0": caddyConf } })
     });
 
