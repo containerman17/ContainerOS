@@ -85,29 +85,22 @@ async function start() {
             })
         }
 
-        await axios.post("http://localhost:2019/config/apps/http/servers/srv0/", caddyConf)
+        await axios.post("http://localhost:2019/config/apps/http/", { "servers": { "srv0": caddyConf } })
     });
 
-    watch.on('error',
-        function (err) {
-            console.error(`watch error on consul.health.state:`,
-                err);
-            process.exit(1)
-        });
+    watch.on('error', function (err) {
+        console.error(`watch error on consul.health.state:`, err);
+        process.exit(1)
+    });
 }
 
 export default { start }
 
 if (require.main === module) {
     process.on('unhandledRejection',
-        (reason,
-            p) => {
-            console.error('Unhandled Rejection at:',
-                p,
-                'reason:',
-                reason)
+        (reason, p) => {
+            console.error('Unhandled Rejection at:', p, 'reason:', reason)
             process.exit(1)
         });
-
     start();
 }

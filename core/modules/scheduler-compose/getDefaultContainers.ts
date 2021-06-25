@@ -61,6 +61,17 @@ export default async function (): Promise<ContainerCreateOptions[]> {
                 Binds: [`${consulDataFolder}:/data`]
             },
             Env: ["CONSUL_BIND_INTERFACE=eth0"]
+        },
+        {
+            Image: 'quay.io/containeros/caddy-with-consul-plugin:v1',
+            name: `caddy`,
+            HostConfig: {
+                NetworkMode: "host",
+                RestartPolicy: {
+                    Name: 'always'
+                },
+                Binds: [`${consulDataFolder}:/data`]
+            },
         }
     ]
 }

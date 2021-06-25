@@ -1,0 +1,12 @@
+{
+    storage consul {
+           address      "127.0.0.1:8500"
+           timeout      10
+           prefix       "caddytls"
+           value_prefix "myprefix"
+           tls_enabled  "false"
+           tls_insecure "true"
+    }
+
+    cert_issuer zerossl
+}
