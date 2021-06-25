@@ -30,3 +30,4 @@ export const CONSUL_ENCRYPTION_KEY = Buffer.from(md5(md5(API_PASSWORD) + API_PAS
 export const IS_CONTROLLER = true
 export const IS_WORKER = true
 export const DEV_MODE = true
+export const REGISTRY_DOMAIN = "reg.rd.dev.containeros.org"

@@ -5,6 +5,7 @@ import setWithDelay from "./setWithDelay"
 import { getLeastBusyServer, gotNewHealthData, getServers } from "./serverHealthManager"
 import { onLeaderChanged } from "./consulLeader"
 import Consul from "consul"
+import updateDeployment from "./updateDeployment"
 
 export async function getPath(path: string, fallback = {}) {
     const response = await consulInstance.kv.get<Consul.Kv.GetOneResponse>({
@@ -46,5 +47,5 @@ export async function setPath(path: string, data: any) {
 
 export default {
     listenForUpdates, safePatch, getPath, deletePath, setPath, setWithDelay,
-    getPathRecurse, getLeastBusyServer, gotNewHealthData, getServers, onLeaderChanged
+    getPathRecurse, getLeastBusyServer, gotNewHealthData, getServers, onLeaderChanged, updateDeployment
 }

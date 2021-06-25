@@ -15,7 +15,8 @@ export interface ContainerUpdate {
 
 export interface DeploymentUpdate {
     name: string,
-    scale: number
+    scale: number,
+    namespace?: string,
     containers: keyable<ContainerUpdate>
 }
 export interface keyable<TypeName> {

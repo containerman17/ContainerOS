@@ -1,4 +1,4 @@
-import { assert, object, size, number, record, string, array, boolean, optional, defaulted, refine, create, pattern } from 'superstruct'
+import { assert, object, size, map, number, record, string, array, boolean, optional, defaulted, refine, create, pattern } from 'superstruct'
 import { DEPLOYMENT_MAX_SCALING } from "../../config"
 
 export const validName = pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/)
@@ -8,7 +8,7 @@ export const ContainerUpdate = object({
     memLimit: defaulted(number(), 1000 * 1000 * 1000), //1GB
     cpus: defaulted(number(), 1),
     env: defaulted(array(string()), []),
-    httpPorts: defaulted(object(), {}),
+    httpPorts: defaulted(record(string(), string()), {}),
 })
 
 export const DeploymentUpdate = object({

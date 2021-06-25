@@ -8,22 +8,7 @@ export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, DeploymentUpdate)
     assert(validatedBody.scale, ScaleCheck)
 
-    await database.safePatch(`deployments/${validatedBody.name}`, (oldDeployment): object => {
-
-        // console.log('oldDeployment.currentConfig', oldDeployment.currentConfig)
-        // console.log('validatedBody', validatedBody)
-
-        //TODO: update only if config changed
-        const needNewPods = true
-        if (needNewPods) {
-            oldDeployment.currentPodNames = []
-        }
-
-        oldDeployment.currentConfig = validatedBody
-
-        return oldDeployment
-    })
-
+    await database.updateDeployment(validatedBody)
 
     return res.send({
         success: true,

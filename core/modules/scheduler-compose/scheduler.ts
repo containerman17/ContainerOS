@@ -86,7 +86,7 @@ async function start() {
                 await syncContainersList(containersToBeDeployed)
                 console.log('syncContainersList complete')
             } catch (e) {
-                console.log('syncContainersList error', String(e).slice(0, 100))
+                console.log('syncContainersList error', String(e).slice(0, 200))
 
                 if (i === MAX_RETRIES) {
                     throw e

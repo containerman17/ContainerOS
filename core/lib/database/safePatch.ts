@@ -1,7 +1,6 @@
 import consul from "./consulInstance"
 import Consul from "consul";
 import delay from "delay"
-import { keyable } from "../../definitions"
 
 
 export default async function safePatch(key: string, patch: (oldValue: any) => any, defaultStringValue = '{}',): Promise<void> {
@@ -17,6 +16,8 @@ export default async function safePatch(key: string, patch: (oldValue: any) => a
                     JSON.parse(beforeModification.Value)
                 ), null, 2
             )
+
+            if (value === JSON.stringify(null)) return
 
             const setParam: Consul.Kv.SetOptions = { key, value }
 
