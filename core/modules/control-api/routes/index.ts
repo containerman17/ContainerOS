@@ -1,5 +1,6 @@
 import updateDeployment from "./updateDeployment"
 import getNodes from "./getNodes"
+import updateNamespace from "./updateNamespace"
 
 import express from "express"
 
@@ -8,8 +9,11 @@ interface RouteMap {
 }
 
 const routeMap: RouteMap = {
-    "/updateDeployment": updateDeployment,
-    "/getNodes": getNodes,
+    "/v1/updateDeployment": updateDeployment,
+    "/v1/getNodes": getNodes,
+    "/v1/updateNamespace": updateNamespace,
 }
+
+console.log('routeMap', routeMap)
 
 export default routeMap

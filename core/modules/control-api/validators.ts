@@ -11,6 +11,11 @@ export const ContainerUpdate = object({
     httpPorts: defaulted(record(string(), string()), {}),
 })
 
+export const updateNamespace = object({
+    name: validName,
+    token: size(string(), 5, 34)
+})
+
 export const DeploymentUpdate = object({
     name: validName,
     scale: defaulted(number(), () => 1),
