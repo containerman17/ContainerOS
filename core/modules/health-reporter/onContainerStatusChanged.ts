@@ -33,7 +33,7 @@ async function start() {
                 if (mappedStatus === "not_changed") {
                     return
                 }
-                const podName = event?.Actor.Attributes['dockerized-pod']
+                const podName = event?.Actor.Attributes['org.containeros.pod.podName']
                 const containerName = event.Actor.Attributes?.name
 
                 if (!podName) {

@@ -2,19 +2,19 @@
 #
 #  auth:
 #    token:
-#      realm: "http://127.0.0.1:5001/auth"
+#      realm: "http://auth:5001/auth"
 #      service: "Docker registry"
 #      issuer: "Acme auth server"
 #      rootcertbundle: "/path/to/server.pem"
 
 server:
   addr: ":5001"
-  certificate: "/dummy_certs/dummy_cert.pem"
-  key: "/dummy_certs/dummy_key.key"
 
 token:
   issuer: "Acme auth server"  # Must match issuer in the Registry config.
   expiration: 900
+  certificate: "/dummy_certs/dummy_cert.pem"
+  key: "/dummy_certs/dummy_key.key"
 
 ext_auth:
   command: "/auth.js" 

@@ -1,21 +1,30 @@
 #!/usr/bin/env node
+const fs = require('fs')
 
-const http = require("http")
+const stdinBuffer = fs.readFileSync(0); // STDIN_FILENO = 0
+const [login, token] = stdinBuffer.toString().split(' ')
 
-const [login, token] = process.argv.slice(2);
+const { URL } = require('url')
+const AUTH_API_URL = process.env.AUTH_API_URL || "http://127.0.0.1:8000"
+const { protocol, hostname, port } = new URL(AUTH_API_URL);
+
+const http = require(protocol.slice(0, -1))
+const DEBUG_ENABLED = process.env.AUTH_DEBUG_LOG_ENABLED || false
 
 
 async function run() {
+    if (DEBUG_ENABLED) fs.appendFileSync('/debug.txt', `${login}: Auth started. token ${token}\n`)
     try {
         await httpRequest({
-            host: '127.0.0.1',
-            port: 8000,
+            host: hostname,
+            port: port,
             method: 'GET',
             path: `/v1/public/testRegistryPassword?name=${login}&token=${token}`
         })
+        if (DEBUG_ENABLED) fs.appendFileSync('/debug.txt', `${login}: Auth succeed\n`)
         process.exit(0)
     } catch (e) {
-        console.error(String(e).slice(0, 20))
+        if (DEBUG_ENABLED) fs.appendFileSync('/debug.txt', `${login}: Auth failed. Err: ${String(e).slice(0, 200)}\n`)
         process.exit(1)
     }
 }

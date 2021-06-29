@@ -1,12 +1,12 @@
 import os from "os"
 import md5 from "md5"
 import dotenv from "dotenv"
-
+import fs from "fs"
 dotenv.config()
 
 export const OS_TYPE = os.type()
 
-export const UNTOUCHABLE_CONTAINERS = ['/resilio', '/dockerized']
+export const UNTOUCHABLE_CONTAINERS = ['/resilio', '/containeros']
 
 export const POSSIBLE_OS_TYPES = {
     Linux: 'Linux',
@@ -35,9 +35,12 @@ export const IS_CONTROLLER = true
 export const IS_WORKER = true
 export const DEV_MODE = true
 export const REGISTRY_DOMAIN = "reg.rd.dev.containeros.org"
+export const REGISTRY_AUTH_DOMAIN = "reg-auth.rd.dev.containeros.org"
+export const API_URL = "http://168.119.182.4:8000"
 
 export const REGISTRY_STORAGE_S3_ACCESSKEY = process.env.REGISTRY_STORAGE_S3_ACCESSKEY
 export const REGISTRY_STORAGE_S3_SECRETKEY = process.env.REGISTRY_STORAGE_S3_SECRETKEY
 export const REGISTRY_STORAGE_S3_BUCKET = process.env.REGISTRY_STORAGE_S3_BUCKET
 export const REGISTRY_STORAGE_S3_REGIONENDPOINT = process.env.REGISTRY_STORAGE_S3_REGIONENDPOINT
 export const REGISTRY_STORAGE_S3_REGION = process.env.REGISTRY_STORAGE_S3_REGION
+export const VERSION = fs.readFileSync(__dirname + "/../version.txt")

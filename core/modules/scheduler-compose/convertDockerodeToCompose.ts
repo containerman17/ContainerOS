@@ -2,26 +2,31 @@ import Dockerode from "dockerode";
 
 //TODO specify docker compose return type
 export default function (containers: Array<Dockerode.ContainerCreateOptions>): any {
-    let data = { version: '2.4', services: {} };
+    let data = { version: '2.4', services: {}, networks: {} };
     for (let container of containers) {
 
         //TODO: CpuPeriod
         //TODO: CpuQuota
         //TODO: memory
 
-
         data.services[container.name] = {
             image: container.Image,
             container_name: container.name,
-            network_mode: container?.HostConfig?.NetworkMode || 'bridge',
             volumes: container?.HostConfig?.Binds,
             labels: container.Labels,
             environment: container?.Env || []
         }
 
+        if (container?.HostConfig?.NetworkMode) {
+            data.services[container.name].network_mode = container?.HostConfig?.NetworkMode
+        }
+
+        const podName = container?.Labels?.['org.containeros.pod.podName']
+        const originalContainerName = container?.Labels?.['org.containeros.pod.containerName']
         //ports
 
         if (container?.HostConfig?.NetworkMode !== "host") {
+            //open ports
             const ports = []
             if (container?.HostConfig?.PortBindings) {
                 for (let [containerPort, exposed] of Object.entries(container?.HostConfig?.PortBindings)) {
@@ -34,6 +39,14 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
                 }
             }
             data.services[container.name].ports = ports
+            //connect pod containers into a netowrk
+            //TODO: check if this required for single-pod deployments
+            if (podName) {
+                data.networks[podName] = {}
+                data.services[container.name].networks = {}
+                data.services[container.name].networks[podName] = { aliases: [originalContainerName] }
+
+            }
         }
 
 

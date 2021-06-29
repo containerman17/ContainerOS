@@ -49,7 +49,10 @@ async function start() {
             for (let containerFromConfig of pod.containers) {
                 const ExposedPorts = {}
                 const PortBindings = {}
-                const Labels = { "dockerized-pod": pod.name }
+                const Labels = {
+                    "org.containeros.pod.podName": pod.name,
+                    "org.containeros.pod.containerName": containerFromConfig.name,
+                }
 
                 for (let portNumber of Object.keys(containerFromConfig.httpPorts)) {
                     const domain = containerFromConfig.httpPorts[portNumber]

@@ -1,11 +1,12 @@
-VERSION=v0.1.1
+VERSION=`cat ../../core/version.txt`
 
-deploy: dummy_certs build-auth push-auth build-reg push-reg
+
+deploy: dummy_certs push-auth push-reg
 
 build-auth:
 	docker build -f Dockerfile.auth_service -t quay.io/containeros/auth-service:${VERSION} .
 
-push-auth:
+push-auth: build-auth
 	docker tag quay.io/containeros/auth-service:${VERSION} quay.io/containeros/auth-service:latest
 	docker push quay.io/containeros/auth-service:${VERSION}
 	docker push quay.io/containeros/auth-service:latest
@@ -13,7 +14,7 @@ push-auth:
 build-reg:
 	docker build -f Dockerfile.registry -t quay.io/containeros/registry:${VERSION} .
 
-push-reg:
+push-reg: build-reg
 	docker tag quay.io/containeros/registry:${VERSION} quay.io/containeros/registry:latest
 	docker push quay.io/containeros/registry:${VERSION}
 	docker push quay.io/containeros/registry:latest
