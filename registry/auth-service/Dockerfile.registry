@@ -1,0 +1,7 @@
+FROM registry:2
+COPY ./dummy_certs /dummy_certs
+ENV REGISTRY_STORAGE=s3
+ENV REGISTRY_AUTH_TOKEN_REALM=http://127.0.0.1:5001/auth
+ENV REGISTRY_AUTH_TOKEN_SERVICE="Docker registry"
+ENV REGISTRY_AUTH_TOKEN_ISSUER="Acme auth server"
+ENV REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE="/dummy_certs/dummy_cert.pem"

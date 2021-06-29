@@ -3,6 +3,11 @@ export interface StoredDeployment {
     currentPodNames: String[]
 }
 
+export interface StoredNamespace {
+    name: string,
+    token: string
+}
+
 export interface ContainerUpdate {
     httpPorts: {
         [key: number]: string;

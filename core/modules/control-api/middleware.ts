@@ -15,6 +15,9 @@ export default {
         })
 
         app.use(function (req, res, next) {
+            if (req.path.startsWith(`/v1/public/`)) {
+                return next()
+            }
             if (req.body.password !== API_PASSWORD) {
                 return next(new HttpError("Wrong password", HttpCodes.Forbiddenn))
             } else {
