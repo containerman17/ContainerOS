@@ -7,8 +7,6 @@ export default async function updateDeployment(deploymentUpdate: DeploymentUpdat
     await safePatch(`deployments/${deploymentUpdate.name}`, (oldDeployment): object => {
         //TODO: update only if config changed
 
-        console.log('oldDeployment.currentConfig', oldDeployment.currentConfig)
-        console.log('deploymentUpdate', deploymentUpdate)
 
         const needNewPods = !deepEqual(//compare configs without scale
             Object.assign({}, oldDeployment.currentConfig, { scale: -1 }),

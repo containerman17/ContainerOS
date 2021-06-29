@@ -34,7 +34,7 @@ async function start() {
                     return
                 }
                 const podName = event?.Actor.Attributes['org.containeros.pod.podName']
-                const containerName = event.Actor.Attributes?.name
+                const containerName = event?.Actor.Attributes['org.containeros.pod.containerName']
 
                 if (!podName) {
                     return

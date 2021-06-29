@@ -7,6 +7,7 @@ export enum HttpCodes {
     PaymentRequired,
     Forbiddenn,
     NotFound,
+    ServerError = 500
 }
 
 export class HttpError extends Error {

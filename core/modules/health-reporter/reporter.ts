@@ -7,8 +7,8 @@ import { StoredContainerStatus } from "../../definitions"
 
 async function start(): Promise<void> {
     setInterval(reportNodeHealth, NODE_HEALTH_INTERVAL)
-    onContainerStatusChanged(function (podStatus: StoredContainerStatus) {
-        database.setWithDelay(`podHealth/${podStatus.podName}/${podStatus.containerName}`, podStatus)
+    onContainerStatusChanged(function (containerStatus: StoredContainerStatus) {
+        database.setWithDelay(`podHealth/${containerStatus.podName}/${containerStatus.containerName}`, containerStatus)
     })
 }
 

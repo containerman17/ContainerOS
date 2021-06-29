@@ -27,7 +27,7 @@ export const NODE_HEALTH_INTERVAL = 5000;
 export const RAM_OVERBOOKING_RATE = 3;
 export const CPU_OVERBOOKING_RATE = 3;
 
-export const BOOTSTRAP_IPS = ["168.119.182.4"];
+export const EXPECTED_CONTROLLER_IPS = ["168.119.182.4"];
 
 export const CONSUL_ENCRYPTION_KEY = Buffer.from(md5(md5(API_PASSWORD) + API_PASSWORD)).toString('base64')
 

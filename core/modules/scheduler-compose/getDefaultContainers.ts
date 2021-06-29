@@ -1,4 +1,4 @@
-import { CONSUL_ENCRYPTION_KEY, OS_TYPE, POSSIBLE_OS_TYPES, BOOTSTRAP_IPS, IS_CONTROLLER, DEV_MODE, IS_DEV } from "../../config";
+import { CONSUL_ENCRYPTION_KEY, OS_TYPE, POSSIBLE_OS_TYPES, EXPECTED_CONTROLLER_IPS, IS_CONTROLLER, DEV_MODE, IS_DEV } from "../../config";
 import { ContainerCreateOptions } from "dockerode"
 import getDefaultNetworkInterface from '../../lib/system/getDefaultNetworkInterface'
 import os from "os"
@@ -18,9 +18,9 @@ const getConsulCmd = function (myIp: string): string[] {
     cmd.push('-data-dir=/data')
     cmd.push('-datacenter=main')
     cmd.push(`-encrypt=${CONSUL_ENCRYPTION_KEY}`)
-    cmd.push(`--bootstrap-expect=2`)
+    cmd.push(`--bootstrap-expect=${EXPECTED_CONTROLLER_IPS.length}`)
 
-    for (let bootstrapIp of BOOTSTRAP_IPS) {
+    for (let bootstrapIp of EXPECTED_CONTROLLER_IPS) {
         cmd.push(`-retry-join=${bootstrapIp}`)
     }
 

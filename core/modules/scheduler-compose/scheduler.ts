@@ -84,9 +84,10 @@ async function start() {
 
 
         const MAX_RETRIES = 3
+        let pullErrors: StoredContainerStatus[] = []
         for (let i = 1; i <= 3; i++) {//
             try {
-                await syncContainersList(containersToBeDeployed)
+                pullErrors = await syncContainersList(containersToBeDeployed)
                 console.log('syncContainersList complete')
             } catch (e) {
                 console.log('syncContainersList error', String(e).slice(0, 200))
@@ -98,6 +99,9 @@ async function start() {
                 }
             }
         }
+        pullErrors.map(containerStatus => {
+            database.setWithDelay(`podHealth/${containerStatus.podName}/${containerStatus.containerName}`, containerStatus)
+        })
     })
 }
 export default { start, init }
