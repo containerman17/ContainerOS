@@ -11,6 +11,7 @@ async function start() {
 
     var watch = consul.watch({
         method: consul.health.state,
+        // @ts-ignore: wrong ts typing in library
         options: { state: 'any' },
         backoffFactor: 1000,
         maxAttempts: 500

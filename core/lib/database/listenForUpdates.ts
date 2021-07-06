@@ -1,15 +1,23 @@
 import consul from "./consulInstance"
 import { keyable } from "../../definitions"
 
-export default function (key: string, callback: (result: keyable<any>) => void) {
-    var watch = consul.watch({
-        method: consul.kv.get,
-        options: { key, recurse: true },
-        backoffFactor: 1000,
-        maxAttempts: 500
-    });
+const watches = {}
 
-    watch.on('change', function (data, res) {
+export default function (key: string, callback: (result: keyable<any>) => void) {
+    if (!watches[key]) {
+        watches[key] = consul.watch({
+            method: consul.kv.get,
+            options: { key, recurse: true },
+            backoffFactor: 1000,
+            maxAttempts: 500
+        });
+
+        watches[key].on('error', function (err) {
+            console.error(`watch error on key ${key}:`, err);
+            process.exit(1)
+        });
+    }
+    watches[key].on('change', function (data, res) {
         const result: keyable<any> = {}
         if (data !== undefined) {
             for (let item of data || []) {
@@ -17,10 +25,5 @@ export default function (key: string, callback: (result: keyable<any>) => void) 
             }
         }
         callback(result)
-    });
-
-    watch.on('error', function (err) {
-        console.error(`watch error on key ${key}:`, err);
-        process.exit(1)
     });
 }
