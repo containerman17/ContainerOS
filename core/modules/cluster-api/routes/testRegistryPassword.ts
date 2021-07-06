@@ -1,11 +1,11 @@
 import express from "express";
-import StoreCopy from "../../../lib/database/StoreCopy"
+import getStoreCopy from "../../../lib/database/getStoreCopy"
 import { updateNamespace } from "../validators"
 import { create } from 'superstruct'
 import { HttpError, HttpCodes } from '../../../lib/http/Error';
 import { StoredNamespace } from "../../../definitions"
 
-const namespaceStore = new StoreCopy<StoredNamespace>("namespaces")
+const namespaceStore = getStoreCopy<StoredNamespace>("namespaces")
 
 export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, updateNamespace)

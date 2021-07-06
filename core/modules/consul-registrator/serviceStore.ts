@@ -62,8 +62,8 @@ export async function fullSync() {
             //deregister old ones
             for (let [serviceId, service] of Object.entries(servicesInConsul)) {
                 if (allContainerIds.includes(serviceId)) continue
-                // await consul.agent.service.deregister(serviceId)
-                console.log(`deregister service`, serviceId.slice(0, 4), allContainerIds.map(ser => ser.slice(0, 4)))
+                await consul.agent.service.deregister(serviceId)
+                // console.log(`deregister service`, serviceId.slice(0, 4), allContainerIds.map(ser => ser.slice(0, 4)))
             }
             resolve()
         } catch (e) {

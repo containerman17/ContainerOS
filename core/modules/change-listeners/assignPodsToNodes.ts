@@ -32,6 +32,7 @@ export default async function (deployments: keyable<StoredDeployment>, pods: key
                 name: podName,
                 deploymentName: deployment.currentConfig.name,
                 containers: [],
+                nodeName: selectedNode
             }
 
             for (let containerName in deployment.currentConfig.containers) {

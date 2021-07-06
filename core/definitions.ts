@@ -1,6 +1,6 @@
 export interface StoredDeployment {
     currentConfig: DeploymentUpdate,
-    currentPodNames: String[]
+    currentPodNames: string[]
 }
 
 export interface StoredNamespace {
@@ -40,6 +40,7 @@ export interface NodeHealth {
 
 export interface StoredPod {
     name: string,
+    nodeName: string,
     deploymentName: string,
     containers: StoredContainer[]
 }
