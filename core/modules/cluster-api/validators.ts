@@ -22,6 +22,10 @@ export const DeploymentUpdate = object({
     containers: record(validName, ContainerUpdate)
 })
 
+export const GetDeploymentLogsValidator = object({
+    name: validName,
+})
+
 export const ScaleCheck = refine(
     number(),
     'min 1, max ' + DEPLOYMENT_MAX_SCALING,
