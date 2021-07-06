@@ -2,6 +2,8 @@ import { assert, object, size, map, number, record, string, array, boolean, opti
 
 export const validName = pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/)
 
-export const getContainerLogs = object({
+export const getContainerLogsValidator = object({
     name: validName,
 })
+
+export const getPodLogsValidator = getContainerLogsValidator
