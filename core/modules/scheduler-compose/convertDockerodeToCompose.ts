@@ -25,6 +25,16 @@ export default function (containers: Array<Dockerode.ContainerCreateOptions>): a
         const originalContainerName = container?.Labels?.['org.containeros.pod.containerName']
         //ports
 
+        //TODO: do not hardcode. move to scheduler instead
+        data.services[container.name].logging = {
+            driver: "json-file",
+            options: {
+                "max-size": "10m",
+                "max-file": "3",
+                labels: `pod-${podName}`
+            }
+        }
+
         if (container?.HostConfig?.NetworkMode !== "host") {
             //open ports
             const ports = []

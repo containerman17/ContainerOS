@@ -1,10 +1,9 @@
 import express from "express";
-import { keyable, StoredNamespace } from "../../../definitions";
 import { isReady as isNsStoreReady, getNamespace } from "../lib/namespaceStore"
 import delay from "delay"
-import { DeploymentUpdate, ScaleCheck, updateNamespace } from "../validators"
-import { assert, create } from 'superstruct'
-import { HttpError, StructError, HttpCodes } from '../lib/Error';
+import { updateNamespace } from "../validators"
+import { create } from 'superstruct'
+import { HttpError, HttpCodes } from '../../../lib/http/Error';
 
 
 export default async function (req: express.Request, res: express.Response) {

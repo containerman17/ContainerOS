@@ -19,7 +19,8 @@ export const NODE_NAME = os.hostname()
 export const IS_DEV = true
 export const API_PASSWORD = 'dev'
 
-export const API_PORT = 8000;
+export const CLUSTER_API_PORT = 8000;
+export const NODE_API_PORT = 3070;
 
 export const DEPLOYMENT_MAX_SCALING = 5;
 export const NODE_HEALTH_INTERVAL = 5000;

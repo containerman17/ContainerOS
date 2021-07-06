@@ -1,5 +1,6 @@
 import scheduler from './modules/scheduler-compose/scheduler';
-import api from './modules/control-api/api';
+import clusterAPI from './modules/cluster-api/api';
+import nodeAPI from './modules/node-api/api';
 import listeners from './modules/change-listeners/listeners';
 import reporter from './modules/health-reporter/reporter';
 import registrator from './modules/consul-registrator/index';
@@ -14,7 +15,8 @@ async function start() {
 
     await scheduler.start();
 
-    api.start();
+    clusterAPI.start();
+    nodeAPI.start();
     reporter.start();
     listeners.start()
     registrator.start()
