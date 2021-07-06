@@ -1,4 +1,4 @@
-import scheduler from './modules/scheduler-compose/scheduler';
+import runner from './modules/container-runner/runner';
 import clusterAPI from './modules/cluster-api/api';
 import nodeAPI from './modules/node-api/api';
 import listeners from './modules/change-listeners/listeners';
@@ -13,7 +13,7 @@ async function start() {
         process.exit(1)
     });
 
-    await scheduler.start();
+    await runner.start();
 
     clusterAPI.start();
     nodeAPI.start();
