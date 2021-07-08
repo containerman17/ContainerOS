@@ -3,6 +3,10 @@ import { DEPLOYMENT_MAX_SCALING } from "../../config"
 
 export const validName = pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/)
 
+export const namesArray = object({
+    names: array(validName)
+})
+
 export const ContainerUpdate = object({
     image: string(),
     memLimit: defaulted(number(), 1000 * 1000 * 1000), //1GB
@@ -11,7 +15,7 @@ export const ContainerUpdate = object({
     httpPorts: defaulted(record(string(), string()), {}),
 })
 
-export const updateNamespace = object({
+export const updateProject = object({
     name: validName,
     token: size(string(), 5, 34)
 })

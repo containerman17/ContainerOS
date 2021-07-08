@@ -1,17 +1,17 @@
 import express from "express";
 import getStoreCopy from "../../../lib/database/getStoreCopy"
-import { updateNamespace } from "../validators"
+import { updateProject } from "../validators"
 import { create } from 'superstruct'
 import { HttpError, HttpCodes } from '../../../lib/http/Error';
-import { StoredNamespace } from "../../../definitions"
+import { StoredProject } from "../../../definitions"
 
-const namespaceStore = getStoreCopy<StoredNamespace>("namespaces")
+const projectStore = getStoreCopy<StoredProject>("projects")
 
 export default async function (req: express.Request, res: express.Response) {
-    const validatedBody = create(req.body, updateNamespace)
+    const validatedBody = create(req.body, updateProject)
 
     try {
-        const ns = await namespaceStore.getKey(`namespaces/${validatedBody.name}`)
+        const ns = await projectStore.getKey(`projects/${validatedBody.name}`)
 
         if (!ns) {
             throw new HttpError("No user " + validatedBody.name, HttpCodes.Forbiddenn)

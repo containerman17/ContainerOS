@@ -3,7 +3,7 @@ export interface StoredDeployment {
     currentPodNames: string[]
 }
 
-export interface StoredNamespace {
+export interface StoredProject {
     name: string,
     token: string
 }
@@ -21,7 +21,7 @@ export interface ContainerUpdate {
 export interface DeploymentUpdate {
     name: string,
     scale: number,
-    namespace?: string,
+    project?: string,
     containers: keyable<ContainerUpdate>
 }
 export interface keyable<TypeName> {

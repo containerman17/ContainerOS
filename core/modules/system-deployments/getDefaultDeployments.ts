@@ -5,7 +5,7 @@ export default async function (): Promise<DeploymentUpdate[]> {
     return [{
         name: "registry-auth",
         scale: 1,
-        namespace: 'system',
+        project: 'system',
         containers: {
             "auth": {
                 env: [
@@ -23,7 +23,7 @@ export default async function (): Promise<DeploymentUpdate[]> {
     }, {
         name: "registry",
         scale: 1,
-        namespace: 'system',
+        project: 'system',
         containers: {
             "reg": {
                 httpPorts: {

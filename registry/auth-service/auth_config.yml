@@ -25,4 +25,4 @@ acl:
     comment: "root has pull access to everything. No push though"
   - match: {account: "/.+/", name: "${account}/*"}
     actions: ["*"]
-    comment: "Logged in users have full access to images that are in their 'namespace'"
+    comment: "Logged in users have full access to images that are in their 'project'"
