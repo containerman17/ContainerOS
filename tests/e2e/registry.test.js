@@ -4,6 +4,9 @@ const axios = require('axios')
 const execa = require('execa')
 const registryHelpers = require('./lib/projectHelpers')
 const TestTimer = require('./lib/Timer')
+const streamExec = require('./lib/streamExec')
+const delay = require('delay')
+
 const path = require('path')
 require('dotenv').config({
     path: path.join(__dirname, '..', '..', '.env')
@@ -25,12 +28,16 @@ describe('Registry', function () {
         registryDomain = (await api.get(
             "/v1/config?password=dev"
         )).data.REGISTRY_DOMAIN
+
+        await api.post(
+            "/v1/testHelpers/cleanTestData?password=dev"
+        );
     });
 
     after(async function () {
+        //TODO: clean up test apps
         await api.post(
-            "/v1/testHelpers/cleanProjects?password=dev",
-            { "names": registryHelpers.getCreatedProjects().map(u => u.name) }
+            "/v1/testHelpers/cleanTestData?password=dev"
         );
     });
 
@@ -111,6 +118,7 @@ describe('Registry', function () {
         timer.report('build complete')
         await execa("docker", ["push", imageName])
         timer.report('push complete')
+        const appDomain = `${randomDeploymentName}.${WILDCARD_DOMAIN}`
 
         //create app
         await api.post("/v1/updateDeployment?password=dev",
@@ -119,14 +127,26 @@ describe('Registry', function () {
                 "containers": {
                     "main": {
                         "image": imageName,
-                        "httpPorts": { "80": "reg.rd.dev.containeros.org" }
+                        "httpPorts": { "80": appDomain }
                     },
                 }
             });
         timer.report('updateDeployment complete')
 
+        for (let i = 0; i < 100; i++) {
+            try {
+                const response = await axios.get(
+                    `http://${appDomain}/`,
+                    { validateStatus: status => status < 500 }
+                )
+                console.log('response.data', response.data)
+            } catch (e) {
+                console.error("error reaching", `http://${appDomain}/`, e)
+            }
+            await delay(1000)
+        }
+
         //TODO: expose http port and check if current app version is the valid one
 
-        //TODO: clean up test apps
     });
 });

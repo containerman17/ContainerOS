@@ -47,6 +47,14 @@ class StoreCopy<TypeName> {
         }
         this.#nameEndingsMap = result
     }
+    async getAll(): Promise<keyable<TypeName>> {
+        await this.#init()
+        return Object.assign({}, this.#objectsList)
+    }
+    async getAllKeys(): Promise<string[]> {
+        await this.#init()
+        return Object.keys(this.#objectsList)
+    }
     async getKey(key: string): Promise<TypeName> {
         await this.#init()
         return this.#objectsList[key]
