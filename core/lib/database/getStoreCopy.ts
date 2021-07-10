@@ -57,7 +57,7 @@ class StoreCopy<TypeName> {
     }
     async getKey(key: string): Promise<TypeName> {
         await this.#init()
-        return this.#objectsList[key]
+        return this.#objectsList[key] || null
     }
     async getByEnding(ending: string) {
         await this.#init()

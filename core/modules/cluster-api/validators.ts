@@ -26,7 +26,7 @@ export const DeploymentUpdate = object({
     containers: record(validName, ContainerUpdate)
 })
 
-export const GetDeploymentLogsValidator = object({
+export const OnlyNameValidator = object({
     name: validName,
 })
 

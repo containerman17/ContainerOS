@@ -1,7 +1,7 @@
 import express from "express";
 import database from "../../../lib/database"
 import { HttpCodes, HttpError } from "../../../lib/http/Error";
-import { GetDeploymentLogsValidator } from "../validators";
+import { OnlyNameValidator } from "../validators";
 import { create } from 'superstruct'
 import { NodeHealth, StoredDeployment, StoredPod } from "../../../definitions";
 import getStoreCopy from "../../../lib/database/getStoreCopy"
@@ -14,7 +14,7 @@ const nodeHealthStore = getStoreCopy<NodeHealth>("nodeHealth")
 const deploymentStore = getStoreCopy<StoredDeployment>("deployments")
 
 export default async function (req: express.Request, res: express.Response) {
-    const { name } = create(req.body, GetDeploymentLogsValidator)
+    const { name } = create(req.body, OnlyNameValidator)
 
     const deployment: StoredDeployment = await deploymentStore.getKey(`deployments/${name}`)
 

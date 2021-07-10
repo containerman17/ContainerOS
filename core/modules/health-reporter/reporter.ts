@@ -5,6 +5,7 @@ import { NODE_HEALTH_INTERVAL } from "../../config"
 import { StoredContainerStatus } from "../../definitions"
 
 
+
 async function start(): Promise<void> {
     setInterval(reportNodeHealth, NODE_HEALTH_INTERVAL)
     onContainerStatusChanged(function (containerStatus: StoredContainerStatus) {

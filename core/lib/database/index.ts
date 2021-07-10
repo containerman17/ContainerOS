@@ -17,13 +17,13 @@ export async function getPath(path: string, fallback = {}) {
     return JSON.parse(response.Value)
 }
 
-export async function getPathRecurse(path: string) {
+export async function getPathRecurse(path: string, defaultVal = {}) {
     const response: any = await consulInstance.kv.get({
         key: path,
         recurse: true
     })
     if (!response) {
-        return []
+        return defaultVal
     }
     const result = {}
     for (let responseLine of response) {

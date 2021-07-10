@@ -2,6 +2,7 @@ import updateDeployment from "./updateDeployment"
 import updateProject from "./updateProject"
 import testRegistryPassword from "./testRegistryPassword"
 import getDeploymentLogs from "./getDeploymentLogs"
+import getDeploymentStatus from "./getDeploymentStatus"
 import configRoute from "./config"
 
 import cleanTestData from "./testHelpers/cleanTestData"
@@ -18,6 +19,7 @@ const routeMap: RouteMap = {
     "/v1/updateProject": updateProject,
     "/v1/public/testRegistryPassword": testRegistryPassword,
     "/v1/getDeploymentLogs": getDeploymentLogs,
+    "/v1/getDeploymentStatus": getDeploymentStatus,
     "/v1/testHelpers/cleanTestData": cleanTestData,
 }
 
