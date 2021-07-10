@@ -4,14 +4,16 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "mocha *.test.js",
-        "dev": "mocha *.test.js --watch"
+        "pretest": "bash prepeareForTests.sh",
+        "test": "COS_API_SERVER='http://test.rd.dev.containeros.org:8000' mocha *.test.js",
+        "dev": "COS_API_SERVER='http://test.rd.dev.containeros.org:8000' mocha *.test.js --watch"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "axios": "^0.21.1",
+        "dotenv": "^10.0.0",
         "execa": "^5.1.1"
     },
     "devDependencies": {

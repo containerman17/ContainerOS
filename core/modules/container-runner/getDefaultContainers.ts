@@ -1,10 +1,9 @@
-import { CONSUL_ENCRYPTION_KEY, OS_TYPE, POSSIBLE_OS_TYPES, EXPECTED_CONTROLLER_IPS, IS_CONTROLLER, DEV_MODE, IS_DEV } from "../../config";
+import { CONSUL_ENCRYPTION_KEY, EXPECTED_CONTROLLER_IPS, IS_CONTROLLER, IS_DEV } from "../../config";
 import { ContainerCreateOptions } from "dockerode"
 import getDefaultNetworkInterface from '../../lib/system/getDefaultNetworkInterface'
 import os from "os"
 import path from "path"
 import fs from "fs"
-import axios from "axios"
 
 const getConsulCmd = function (myIp: string): string[] {
     const cmd = [
@@ -37,10 +36,7 @@ const getConsulCmd = function (myIp: string): string[] {
 export default async function (): Promise<ContainerCreateOptions[]> {
     const defaultNetworkInterface = await getDefaultNetworkInterface();
 
-    // let consulDataFolder = '/var/consul'
-    // if (OS_TYPE === POSSIBLE_OS_TYPES.Darwin) {
     const consulDataFolder = path.join(os.homedir(), 'consul-data')
-    // }
 
     if (!fs.existsSync(consulDataFolder)) {
         fs.mkdirSync(consulDataFolder)
