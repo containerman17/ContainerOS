@@ -50,6 +50,7 @@ Should be renamed for sure.
 
 **Output**: 
 - Starts and stops docker containers
+
 ### Health reporter
 **Input**: 
 - Docker events from local containers
