@@ -3,13 +3,30 @@ import getDefaultContainers from './getDefaultContainers'
 import database from "../../lib/database"
 import { NODE_NAME } from "../../config"
 import { keyable, StoredPod, StoredContainerStatus } from "../../definitions"
-import { ContainerCreateOptions } from "dockerode"
+import Dockerode, { ContainerCreateOptions } from "dockerode"
 import axios from "axios"
 import delay from "delay"
+import podListToContainerList from "./podListToContainerList"
+import { pullMultipleImages } from "./pullImages"
+import { setDesiredContainersList, setRemoveOrphans } from "./composeDriver"//should be easy to replace with another driver
+import { object } from "superstruct"
 
 async function init() {
     const defaultContainers = await getDefaultContainers();
-    await syncContainersList(defaultContainers, false)
+
+    //pull images
+    const pullImageResults: keyable<boolean> = await pullMultipleImages(
+        defaultContainers.map(cont => cont.Image)
+    )
+    for (let [image, result] of Object.entries(pullImageResults)) {
+        if (result === false) {
+            throw `Failed to start - system image "${image}" can not be pulled`
+        }
+    }
+
+    setRemoveOrphans(false)//so it would not delete already started containers
+    await setDesiredContainersList(defaultContainers)
+
     for (let i = 0; i < 30; i++) {
         await delay(i * 100)
         const isStarted = await isConsulStarted()
@@ -34,74 +51,25 @@ async function isConsulStarted() {
     }
 }
 
-let containersToBeDeployed: ContainerCreateOptions[] = []
-
 async function start() {
     await init();
     console.log('Runner is running')
     const defaultContainers = await getDefaultContainers();
 
-    database.listenForUpdates(`pods/${NODE_NAME}`, async function (newPods: keyable<StoredPod>) {
-        console.log('got container list updates', Object.values(newPods).map(pod => pod.name))
-        containersToBeDeployed = [...defaultContainers]
+    database.listenForUpdates(`pods/${NODE_NAME}`, async function (podList: keyable<StoredPod>) {
+        //convert pod list to container list
+        const containerList: Dockerode.ContainerCreateOptions[] = [...podListToContainerList(podList), ...defaultContainers]
 
-        for (let pod of Object.values(newPods)) {
-            for (let containerFromConfig of pod.containers) {
-                const ExposedPorts = {}
-                const PortBindings = {}
-                const Labels = {
-                    "org.containeros.pod.podName": pod.name,
-                    "org.containeros.pod.containerName": containerFromConfig.name,
-                }
+        //pre-pull images to know which one will be failed to pull
+        const pullImageResults: keyable<boolean> = await pullMultipleImages(
+            defaultContainers.map(cont => cont.Image)
+        )
+        //TODO: exclude pull errors from list of containers to start
+        //TODO: report container statuses for pull errors
 
-                for (let portNumber of Object.keys(containerFromConfig.httpPorts)) {
-                    const domain = containerFromConfig.httpPorts[portNumber]
-                    ExposedPorts[`${portNumber}/tcp`] = {}
-                    PortBindings[`${portNumber}/tcp`] = [{ HostPort: '' }]
-                    Labels[`service-${portNumber}-name`] = `${pod.deploymentName}-${containerFromConfig.name}`;
-                    Labels[`service-${portNumber}-tags`] = `routerDomain-${domain},hello-world`
-                }
-
-                containersToBeDeployed.push({
-                    name: `${pod.name}-${containerFromConfig.name}`,
-                    Image: containerFromConfig.image,
-                    Env: containerFromConfig.env,
-                    ExposedPorts: ExposedPorts,
-                    HostConfig: {
-                        RestartPolicy: {
-                            Name: 'on-failure',
-                            MaximumRetryCount: 10
-                        },
-                        PortBindings: PortBindings,
-                        Memory: containerFromConfig.memLimit,
-                        CpuPeriod: 100000,
-                        CpuQuota: 100000 * containerFromConfig.cpus
-                    },
-                    Labels: Labels,
-                })
-            }
-        }
-
-
-        const MAX_RETRIES = 3
-        let pullErrors: StoredContainerStatus[] = []
-        for (let i = 1; i <= 3; i++) {//
-            try {
-                pullErrors = await syncContainersList(containersToBeDeployed)
-                console.log('syncContainersList complete')
-            } catch (e) {
-                console.log('syncContainersList error', String(e).slice(0, 200))
-
-                if (i === MAX_RETRIES) {
-                    throw e
-                } else {
-                    await delay(1000)
-                }
-            }
-        }
-        pullErrors.map(containerStatus => {
-            database.setWithDelay(`podHealth/${containerStatus.podName}/${containerStatus.containerName}`, containerStatus)
-        })
+        //set desired containers list
+        setRemoveOrphans(true)
+        await setDesiredContainersList(containerList)
     })
 }
 export default { start, init }
