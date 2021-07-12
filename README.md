@@ -1,15 +1,84 @@
 # ContainerOS
-## Lightweight and simple Kubernetes alternative
-- Batteries included (a.k.a SSL certificates, registry and user managemet)
-- Bare metal friendly 
 
-## Personal story
-My name is Ilya. I live in Florida and I am passionate about distributed systems. 
+## Usage
 
-My main project is ContainerOS. It's a light-weight easy-to-use Kubernetes alternative.
+This section will be empty till release v0.1.
 
-I tried to implement Kubernetes in our large cluster (4800+ Cores/20+ TB RAM) but it was a big failure. Kubernetes is just too complex and has too many moving parts. Then I re-write core functionality in Kubernetes in a few weeks and it works perfectly till now. I implement ideas from this internal cluster manager into ContainerOS.
+## Architecture
 
-My goal with ContainerOS is to create a Kubernetes alternative, that has all the useful 
+### Caddy configurator
+To be renamed to `ingress-configurator`
 
-I personally adore simple projects like Linstor and Wireguard and don't like over-engineered projects like OpenVPN and CEPH. ContainerOS should be as simple as possible. 
+**Input**: 
+- List of healthy services from Consul.
+
+**Output**: 
+- Pushes JSON config to Caddy
+
+### Change listeners
+Should be renamed for sure.
+
+**Input**: 
+- List of deployments
+- List of pods
+- Health of nodes
+
+**Output**: 
+- Creates pods and assigns them to nodes
+
+### Cluster API
+**Input**: 
+- User API requests
+
+**Output**: 
+- CRUD deployments
+- CRUD projects
+- Reverse-proxy logs from Node API
+
+### Consul Registrator
+**Input**: 
+- Local docker events 
+- Tags with service names on docker containers
+
+**Output**: 
+- Register and de-register Consul services
+
+### Container Runner
+**Input**: 
+- List of default containers (Consul, Caddy, etc.)
+- List of pods (`/pods/${hostname}/`)
+
+**Output**: 
+- Starts and stops docker containers
+### Health reporter
+**Input**: 
+- Docker events from local containers
+- Node load information (CPU, RAM)
+
+**Output**: 
+- Pod health values in the database
+- Node health values in the database
+
+P.S. To be replaced by events, http requests or any other light-weight alternative
+### Node API
+**Input**: 
+- HTTP requests from Cluster API
+
+**Output**: 
+- Logs
+
+### Node health reporter
+**Input**: 
+- HTTP requests from Cluster API
+
+**Output**: 
+- Local container logs
+
+### System deployments
+To be renamed to `initial-configurator`
+
+**Input**: 
+- Hardcoded containers list
+
+**Output**: 
+- Updates system deployments (registry, etc) in the cluster
