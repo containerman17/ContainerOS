@@ -33,7 +33,7 @@ const getConsulCmd = function (myIp: string): string[] {
     return cmd
 }
 
-export default async function (): Promise<ContainerCreateOptions[]> {
+export default async function getDefaultContainers(): Promise<ContainerCreateOptions[]> {
     const defaultNetworkInterface = await getDefaultNetworkInterface();
 
     const consulDataFolder = path.join(os.homedir(), 'consul-data')

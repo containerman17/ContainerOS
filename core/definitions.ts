@@ -81,9 +81,9 @@ export interface dockerodeContainerEvent {
     timeNano: number
 }
 
-export type containerStatusValuesFromDockerEvents = "started" | "dead" | "not_changed" | "not_sterted_yet"
+// export type containerStatusValuesFromDockerEvents = "started" | "dead" | "not_changed" | "not_sterted_yet"
 
-export type containerStatusValues = containerStatusValuesFromDockerEvents | "error_pulling" | "starting"
+// export type containerStatusValues = containerStatusValuesFromDockerEvents | "error_pulling" | "starting"
 
-export type podStatusValue = "healthy" | "unhealthy"
-export type deploymentStatusValue = podStatusValue | "partially_healthy"
+export type podStatusValue = "Pending" | "Running" | "Succeeded" | "Failed" | "Unknown"
+// export type deploymentStatusValue = podStatusValue | "partially_healthy"

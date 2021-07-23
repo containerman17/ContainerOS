@@ -2,7 +2,7 @@ import syncContainersList from "./syncContainersList"
 import getDefaultContainers from './getDefaultContainers'
 import database from "../../lib/database"
 import { NODE_NAME } from "../../config"
-import { keyable, StoredPod, StoredContainerStatus } from "../../definitions"
+import { keyable, StoredPod, StoredContainerStatus, StoredContainer } from "../../definitions"
 import Dockerode, { ContainerCreateOptions } from "dockerode"
 import axios from "axios"
 import delay from "delay"
@@ -56,7 +56,29 @@ async function start() {
     console.log('Runner is running')
     const defaultContainers = await getDefaultContainers();
 
+    //TODO: this can be faster if we start pods and not wait for all pods to be pulled
     database.listenForUpdates(`pods/${NODE_NAME}`, async function (podList: keyable<StoredPod>) {
+        //TODO: for each pod pre-pull images and report fail
+        const podsToStart = []
+        const pullFailedPods = []
+
+        await Promise.all(
+            Object.entries(podList).map(async entry => {
+                const [podName, podConf] = entry;
+                const pullImageResults: keyable<boolean> = await pullMultipleImages(
+                    podConf.containers.map((cont: StoredContainer) => cont.image)
+                )
+                const allContainerPulled = Object.values(pullImageResults)
+                    .reduce((acc, val) => acc && val, true)
+
+                if (allContainerPulled) {
+                    podsToStart.push(podName)
+                } else {
+                    pullFailedPods.push(podName)
+                }
+            })
+        )
+
         //convert pod list to container list
         const containerList: Dockerode.ContainerCreateOptions[] = [...podListToContainerList(podList), ...defaultContainers]
 

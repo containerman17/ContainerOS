@@ -42,4 +42,11 @@ export const REGISTRY_STORAGE_S3_SECRETKEY = process.env.REGISTRY_STORAGE_S3_SEC
 export const REGISTRY_STORAGE_S3_BUCKET = process.env.REGISTRY_STORAGE_S3_BUCKET
 export const REGISTRY_STORAGE_S3_REGIONENDPOINT = process.env.REGISTRY_STORAGE_S3_REGIONENDPOINT
 export const REGISTRY_STORAGE_S3_REGION = process.env.REGISTRY_STORAGE_S3_REGION
-export const VERSION = fs.readFileSync(__dirname + "/../../version.txt")
+
+let ver
+try {
+    ver = fs.readFileSync(__dirname + "/../../version.txt")
+} catch (error) {
+    ver = fs.readFileSync(__dirname + "/../version.txt")
+}
+export const VERSION = ver
