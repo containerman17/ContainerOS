@@ -3,7 +3,7 @@ import { safePatch } from "./privateMethods"
 import deepEqual from "deep-equal"
 
 async function update(deploymentUpdate: DeploymentUpdate) {
-    await safePatch(`deployments/${deploymentUpdate.name}`, (oldDeployment): object => {
+    await safePatch(`microservices/${deploymentUpdate.name}`, (oldDeployment): object => {
         const needNewPods = !deepEqual(//compare configs without scale
             Object.assign({}, oldDeployment.currentConfig, { scale: -1 }),
             Object.assign({}, deploymentUpdate, { scale: -1 }),

@@ -1,5 +1,5 @@
 import logger from "../../../lib/logger"
-
+import { Router } from 'express';
 import updateMicroservice from "./updateMicroservice"
 // import updateProject from "./updateProject"
 // import testRegistryPassword from "./testRegistryPassword"
@@ -9,22 +9,12 @@ import updateMicroservice from "./updateMicroservice"
 
 // import cleanTestData from "./testHelpers/cleanTestData"
 
-import { RequestHandler } from "express"
+import asyncHandler from "express-async-handler";
 
-interface RouteMap {
-    [key: string]: RequestHandler
-}
 
-const routeMap: RouteMap = {
-    "/v1/updateMicroservice": updateMicroservice,
-    // "/v1/config": configRoute,
-    // "/v1/updateProject": updateProject,
-    // "/v1/public/testRegistryPassword": testRegistryPassword,
-    // "/v1/getDeploymentLogs": getDeploymentLogs,
-    // "/v1/getDeploymentStatus": getDeploymentStatus,
-    // "/v1/testHelpers/cleanTestData": cleanTestData,
-}
+const routes = Router();
 
-logger.debug('routeMap', routeMap)
+routes.all("/v1/microservice/update", asyncHandler(updateMicroservice))
 
-export default routeMap
+
+export default routes

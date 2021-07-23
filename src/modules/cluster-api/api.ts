@@ -1,6 +1,5 @@
 import express from 'express';
 import config from '../../config';
-import asyncHandler from "express-async-handler";
 import middleware from "./middleware"
 import { HttpError, StructError, HttpCodes } from '../../lib/http/Error';
 import logger from '../../lib/logger';
@@ -12,16 +11,10 @@ middleware.init(app);
 
 //routes
 import routes from "./routes"
-for (let routePath of Object.keys(routes)) {
-    app.all(routePath, asyncHandler(routes[routePath]))
-}
+app.use('/', routes);
 
 
-function start(): void {
-    app.listen(config.get("CLUSTER_API_PORT"), () => {
-        logger.info(`⚡️[server]: Server is running at port ${config.get("CLUSTER_API_PORT")}`);
-    });
-
+function start(skipListening: boolean = false): express.Router {
     app.use(function onError(e: HttpError, req: express.Request, res: express.Response, next: Function) {
         let err = e
         if (err instanceof StructError) {
@@ -46,10 +39,18 @@ function start(): void {
             });
         }
     });
+
+    if (!skipListening) {
+        app.listen(config.get("CLUSTER_API_PORT"), () => {
+            logger.info(`⚡️[server]: Server is running at port ${config.get("CLUSTER_API_PORT")}`);
+        });
+    }
+
+    return app
 }
 
 export default { start }
 
-if (require.main === module) {
-    start();
-}
+// if (require.main === module) {
+//     start();
+// }

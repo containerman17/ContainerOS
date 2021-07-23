@@ -1,5 +1,5 @@
 import express from 'express';
-import database from "../../../lib/database/database"
+import database from "../../../lib/database"
 import { assert, create } from 'superstruct'
 import { DeploymentUpdate, ScaleCheck } from "../validators"
 
