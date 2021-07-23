@@ -20,7 +20,7 @@ export const updateProject = object({
     token: size(string(), 5, 34)
 })
 
-export const DeploymentUpdate = object({
+export const MicroserviceUpdate = object({
     name: validName,
     scale: defaulted(number(), () => 1),
     containers: record(validName, ContainerUpdate)

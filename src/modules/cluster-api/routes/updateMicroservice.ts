@@ -1,11 +1,11 @@
 import express from 'express';
 import database from "../../../lib/database"
 import { assert, create } from 'superstruct'
-import { DeploymentUpdate, ScaleCheck } from "../validators"
+import { MicroserviceUpdate, ScaleCheck } from "../validators"
 
 
 export default async function (req: express.Request, res: express.Response) {
-    const validatedBody = create(req.body, DeploymentUpdate)
+    const validatedBody = create(req.body, MicroserviceUpdate)
     assert(validatedBody.scale, ScaleCheck)
 
     await database.microservice.update(validatedBody)

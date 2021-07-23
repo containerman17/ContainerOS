@@ -12,7 +12,7 @@ export interface ContainerUpdate {
     image: string,
 }
 
-export interface DeploymentUpdate {
+export interface MicroserviceUpdate {
     name: string,
     scale: number,
     project?: string,
