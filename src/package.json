@@ -1,0 +1,28 @@
+{
+    "name": "src",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@types/consul": "^0.23.35",
+        "consul": "^0.40.0",
+        "cors": "^2.8.5",
+        "deep-equal": "^2.0.5",
+        "delay": "^5.0.0",
+        "express": "^4.17.1",
+        "express-async-handler": "^1.1.4",
+        "superstruct": "^0.15.2",
+        "tslog": "^3.2.0"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.12",
+        "@types/delay": "^3.1.0",
+        "@types/node": "^16.4.1",
+        "typescript": "^4.3.5"
+    }
+}

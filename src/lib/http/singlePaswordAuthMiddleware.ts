@@ -1,12 +1,11 @@
-import { HttpError, HttpCodes } from '../../lib/http/Error';
-import { API_PASSWORD } from "../../config"
+import { HttpError, HttpCodes } from './Error';
 
-export default function authMiddleware(allowedPrefixes: string[] = []) {
+export default function authMiddleware(apiPassword: string, allowedPrefixes: string[] = []) {
     return function (req, res, next) {
         if (req.path.startsWith(`/v1/public/`)) {
             return next()
         }
-        if (req.body.password !== API_PASSWORD) {
+        if (req.body.password !== apiPassword) {
             return next(new HttpError("Wrong password", HttpCodes.Forbiddenn))
         } else {
             delete req.body.password
