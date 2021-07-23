@@ -1,5 +1,4 @@
 // import runner from './modules/container-runner-old/runner';
-import clusterAPI from './modules/cluster-api/api';
 // import nodeAPI from './modules/node-api/api';
 // import listeners from './modules/change-listeners/listeners';
 // import reporter from './modules/health-reporter/reporter';
@@ -7,15 +6,20 @@ import clusterAPI from './modules/cluster-api/api';
 // import configurator from './modules/caddy-configurator/configurator';
 // import deployments from './modules/system-deployments/deployments';
 
+import setUpNode from "./modules/set-up-node/setUpNode"
+import clusterAPI from './modules/cluster-api/api';
+
+
 async function start() {
     process.on('unhandledRejection', (reason, p) => {
         console.error('Unhandled Rejection at:', p, 'reason:', reason)
         process.exit(1)
     });
 
-    // await runner.start();
-
+    await setUpNode()
     clusterAPI.start();
+
+
     // nodeAPI.start();
     // reporter.start();
     // listeners.start()

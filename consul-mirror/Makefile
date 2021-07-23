@@ -1,8 +1,8 @@
-VERSION=v2
+VERSION=1.10.0
 deploy: build push
 
 build:
-	docker build -t quay.io/containeros/caddy-with-consul-plugin:$(VERSION) .
+	docker build -t quay.io/containeros/consul:$(VERSION) .
 
 push:
-	docker push quay.io/containeros/caddy-with-consul-plugin:$(VERSION)
+	docker push quay.io/containeros/consul:$(VERSION)
