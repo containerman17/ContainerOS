@@ -23,3 +23,8 @@ export interface ConsulItemResponse {
     Value: string,
     ModifyIndex: string,
 }
+
+export interface StoredMicroservice {
+    currentConfig: MicroserviceUpdate,
+    currentPodNames: string[]
+}

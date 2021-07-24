@@ -1,13 +1,10 @@
 import delay from "delay"
 import Consul from "consul";
-import { ConsulItemResponse } from "../../types";
+import { ConsulItemResponse } from "../../../types";
+import consul from "./consul"
 
-export const consul = new Consul({
-    promisify: true,
-    host: process.env.CONSUL_HOST || '127.0.0.1'
-})
 
-export async function safePatch(key: string, patch: (oldValue: any) => any, defaultStringValue = '{}',): Promise<void> {
+export default async function safePatch(key: string, patch: (oldValue: any) => any, defaultStringValue = '{}',): Promise<void> {
     for (let i = 0; i < 1000; i++) {
         try {
             const beforeModification = await consul.kv.get<ConsulItemResponse>(key) || {
