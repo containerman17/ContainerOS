@@ -3,22 +3,19 @@ import config from "../../config"
 
 let calculatedCpuLoad = 24
 const valuesHistory = []
-const INTERVAL_SECONDS = config.get('NODE_HEALTH_REPORTING_INTERVAL') / 4 / 1000
-const HISTORY_SIZE = 15 / INTERVAL_SECONDS
+const NODE_HEALTH_REPORTING_INTERVAL = config.get('NODE_HEALTH_REPORTING_INTERVAL')
+const HISTORY_SIZE = 45 / (NODE_HEALTH_REPORTING_INTERVAL / 1000)
 
 setInterval(async () => {
     osUtils.cpuUsage(function (usageRaw) {
-        console.debug('got cpu')
-
         const usage = usageRaw * 100
         valuesHistory.push(usage)
         if (valuesHistory.length > HISTORY_SIZE) {
             valuesHistory.shift()
         }
         calculatedCpuLoad = weightedAverage(valuesHistory)
-
     })
-}, INTERVAL_SECONDS * 1000)
+}, NODE_HEALTH_REPORTING_INTERVAL)
 
 const weightedAverage = function (arr) {
     let total = 0
