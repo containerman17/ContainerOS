@@ -11,6 +11,7 @@ const config: keyable<any> = {
     API_PASSWORD: "dev",
     CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.0',
     NODE_NAME: os.hostname(),
+    NODE_HEALTH_REPORTING_INTERVAL: 15 * 1000
 }
 
 set("CONSUL_ENCRYPTION_KEY", genConsulKey(get("API_PASSWORD")))

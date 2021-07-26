@@ -2,7 +2,6 @@ import database from "../../lib/database"
 import { NodeHealth } from "../../types"
 import config from "../../config"
 import getSmoothedCpuUtlization from "./getSmoothedCpuUtilization"
-const REPORT_INTERVAL = 15 * 1000
 
 const nodeName = config.get('NODE_NAME')
 
@@ -21,7 +20,8 @@ const report = function () {
 }
 
 export default async function start() {
-    setInterval(report, REPORT_INTERVAL)
+    setInterval(report, config.get('NODE_HEALTH_REPORTING_INTERVAL'))
+    report();
 }
 
 
