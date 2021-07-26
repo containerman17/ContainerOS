@@ -1,6 +1,7 @@
 import delay from "delay"
 import { keyable } from "./types"
 import md5 from "md5"
+import os from "os"
 
 const genConsulKey = base => Buffer.from(md5(md5(base) + base)).toString('base64')
 
@@ -9,6 +10,7 @@ const config: keyable<any> = {
     DEPLOYMENT_MAX_SCALING: 5,
     API_PASSWORD: "dev",
     CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.0',
+    NODE_NAME: os.hostname(),
 }
 
 set("CONSUL_ENCRYPTION_KEY", genConsulKey(get("API_PASSWORD")))
@@ -36,5 +38,6 @@ async function waitAndGet(key: string) {
 //TODO: get from CLI
 set("EXPECTED_CONTROLLER_IPS", [])
 set("IS_DEV", true)
+
 
 export default { get, set, waitAndGet }

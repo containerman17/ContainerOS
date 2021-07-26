@@ -15,7 +15,7 @@ const app = api.start(true)
 
 it('should update microserice', async () => {
     let res, err
-    const updateMicroserviceFake = sinon.replace(database.microservice, "update", sinon.fake());
+    const updateMicroserviceFake = sinon.replace(database.microservice, "smartUpdate", sinon.fake());
     try {
         res = await chai.request(app)
             .post('/v1/microservice/update?password=' + config.get('API_PASSWORD'))

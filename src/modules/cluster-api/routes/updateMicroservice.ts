@@ -8,7 +8,7 @@ export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, MicroserviceUpdate)
     assert(validatedBody.scale, ScaleCheck)
 
-    await database.microservice.update(validatedBody)
+    await database.microservice.smartUpdate(validatedBody)
 
     return res.send({
         success: true,

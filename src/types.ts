@@ -12,6 +12,15 @@ export interface ContainerUpdate {
     image: string,
 }
 
+export interface NodeHealth {
+    cpuUtilization: number,
+    cpuBooking: number,
+    RamUtilization: number,
+    RamBooking: number,
+    lastUpdatedUTC?: string,
+    lastUpdatedTs: number,
+}
+
 export interface MicroserviceUpdate {
     name: string,
     scale: number,

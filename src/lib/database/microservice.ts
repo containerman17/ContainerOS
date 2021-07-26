@@ -8,7 +8,7 @@ class Microservice extends AbstractObject<StoredMicroservice> {
     constructor() {
         super('microservices')
     }
-    async update(microserviceUpdate: MicroserviceUpdate) {
+    async smartUpdate(microserviceUpdate: MicroserviceUpdate) {
         await safePatch(`${this.prefix}/${microserviceUpdate.name}`, (oldDeployment): object => {
             const newData = Object.assign({}, oldDeployment.currentConfig, microserviceUpdate)
 

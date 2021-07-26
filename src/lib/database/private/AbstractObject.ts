@@ -2,6 +2,7 @@ import { MicroserviceUpdate, StoredMicroservice, keyable } from "../../../types"
 import safePatch from "./safePatch"
 import deepEqual from "deep-equal"
 import listenForUpdates from "./listenForUpdates"
+import consul from "./consul"
 
 
 export default class AbstractObject<Type> {
@@ -32,5 +33,11 @@ export default class AbstractObject<Type> {
             callback(this.collection)
         }
         this.callbacks.push(callback)
+    }
+    public async update(name: string, data: Type) {
+        await consul.kv.set({
+            key: this.prefix + '/' + name,
+            value: JSON.stringify(data, null, 2)
+        })
     }
 }

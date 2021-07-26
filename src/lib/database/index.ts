@@ -1,9 +1,6 @@
 import microservice from "./microservice"
-
-function onLeaderChanged() {
-
-}
+import nodeHealth from "./nodeHealth"
 
 export default {
-    microservice
+    microservice, nodeHealth
 }

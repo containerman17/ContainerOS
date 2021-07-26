@@ -8,7 +8,7 @@
 
 import setUpNode from "./modules/set-up-node/setUpNode"
 import clusterAPI from './modules/cluster-api/api';
-
+import startReporting from './modules/node-health-reporter/startReporting';
 
 async function start() {
     process.on('unhandledRejection', (reason, p) => {
@@ -16,7 +16,9 @@ async function start() {
         process.exit(1)
     });
 
-    await setUpNode()
+    await setUpNode()//has to be executed first
+
+    startReporting();
     clusterAPI.start();
 
 
