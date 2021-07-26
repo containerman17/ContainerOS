@@ -30,7 +30,7 @@ export default function (key: string, callback: (result: keyable<any>) => void, 
         if (data !== undefined) {
             for (let { Key, Value } of data || []) {
                 const strippedKey = stripPath
-                    ? Key.split('/').slice(0, -1)[0]
+                    ? Key.slice(key.length + 1)[0]
                     : Key
                 result[strippedKey] = JSON.parse(Value)
             }
