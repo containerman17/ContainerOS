@@ -30,8 +30,10 @@ it('should report something', async () => {
         nextTick(resolve)
     })
 
-    clock.tick(config.get('NODE_HEALTH_REPORTING_INTERVAL') + 1);
+    clock.tick(config.get('NODE_HEALTH_INTERVAL') + 1);
 
     expect(updateNodeHealthFake.lastCall.args[1].cpuUtilization).to.be.greaterThan(0)
     expect(updateNodeHealthFake.callCount).to.be.equal(2)
+
+    clock.restore();
 })

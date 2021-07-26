@@ -3,10 +3,11 @@ import safePatch from "./safePatch"
 import deepEqual from "deep-equal"
 import listenForUpdates from "./listenForUpdates"
 import consul from "./consul"
-
+import delay from "delay"
+import config from "../../../config"
 
 export default class AbstractObject<Type> {
-    private initComplete = false
+    private listeningStarted = false
     private callbacks: ((newList: keyable<Type>) => void)[] = []
     private collection = null
     protected readonly prefix
@@ -14,20 +15,41 @@ export default class AbstractObject<Type> {
     constructor(prefix: string) {
         this.prefix = prefix
     }
+    private startListening() {
+        if (this.listeningStarted) return
+        this.listeningStarted = true
 
-    private init() {
-        if (this.initComplete) return
-        this.initComplete = true
-
-        listenForUpdates('microservices', (newData: keyable<Type>) => {
-            this.callbacks.map(callback => callback(newData))
+        listenForUpdates(this.prefix, (newData: keyable<Type>) => {
+            this.collection = newData
+            this.callbacks.map(callback => callback(this.collection))
         })
     }
-    public onListChanged(callback: (newList: keyable<Type>) => void) {
-        if (this.initComplete === false) {
-            this.init()
-            this.initComplete = true
+    public async ready(): Promise<void> {
+        this.startListening()
+
+        for (let i = 0; i < 30; i++) {
+            if (this.collection === null) {
+                await delay(i * 20)
+            } else {
+                return //we are ready
+            }
         }
+        throw new Error(`${this.prefix} is not ready yet`)
+    }
+    public getAll(): keyable<Type> {
+        if (this.collection === null) {
+            throw new Error(`You have to call method "await ${this.prefix}.ready()" first`)
+        }
+        return this.collection
+    }
+    public get(name: string): Type {
+        if (this.collection === null) {
+            throw new Error(`You have to call method "await ${this.prefix}.ready()" first`)
+        }
+        return this.collection[name] || null
+    }
+    public addListChangedCallback(callback: (newList: keyable<Type>) => void) {
+        this.startListening()//it will check if it is already listening
 
         if (this.collection !== null) {
             callback(this.collection)

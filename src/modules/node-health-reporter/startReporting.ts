@@ -20,7 +20,7 @@ const report = function () {
 }
 
 export default async function start() {
-    setInterval(report, config.get('NODE_HEALTH_REPORTING_INTERVAL'))
+    setInterval(report, config.get('NODE_HEALTH_INTERVAL'))
     report();
 }
 
