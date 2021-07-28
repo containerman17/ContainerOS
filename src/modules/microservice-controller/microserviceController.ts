@@ -1,13 +1,11 @@
 import database from "../../lib/database"
 import { StoredMicroservice, keyable } from "../../types"
 import createPods from "./assignPods"
-import assignPods from "./createPods"
-import deleteObsoletePods from "./deleteObsoletePods"
+import assignPods from "./createAndDeletePods"
 
 const onMicroservicesChanged = async function (microservices: keyable<StoredMicroservice>) {
     await assignPods(microservices)
     await createPods(microservices)
-    await deleteObsoletePods(microservices)
 }
 
 async function start() {

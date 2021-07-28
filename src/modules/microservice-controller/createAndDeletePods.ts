@@ -37,6 +37,9 @@ export default async function (microserviceList: keyable<StoredMicroservice>) {
         }
 
         await database.pod.update(podName, newPod)
+    }
 
+    for (let podName of podsToDelete) {
+        await database.pod.delete(podName)
     }
 }

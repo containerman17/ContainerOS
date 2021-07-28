@@ -8,7 +8,7 @@ import microservice from "../../../lib/database/microservice"
 
 it.skip('works well with syncronous updates')
 
-describe.only('pod assignment on real database', () => {
+describe('pod assignment on real database', () => {
     before(async () => {
         await setUpNode()
         sinon.replace(database.nodeHealth, "getLeastBusyServerName", sinon.fake.returns('fake-server'))
