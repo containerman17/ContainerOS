@@ -40,7 +40,6 @@ export interface StoredMicroservice {
 
 export interface StoredPod {
     name: string,
-    nodeName: string,
     parentName: string,
     containers: StoredContainer[]
 }
