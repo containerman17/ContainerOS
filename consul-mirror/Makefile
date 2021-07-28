@@ -1,8 +1,3 @@
-VERSION=1.10.0
-deploy: build push
-
-build:
-	docker build -t quay.io/containeros/consul:$(VERSION) .
-
-push:
-	docker push quay.io/containeros/consul:$(VERSION)
+VERSION=1.10.1
+deploy:
+	docker buildx build --platform linux/amd64,linux/arm64 -t quay.io/containeros/consul:$(VERSION) --push .
