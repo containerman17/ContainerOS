@@ -9,7 +9,7 @@ class Microservice extends AbstractObject<StoredMicroservice> {
         super('microservices')
     }
     async smartUpdate(microserviceUpdate: MicroserviceUpdate) {
-        await safePatch(`${this.prefix}/${microserviceUpdate.name}`, (oldDeployment): object => {
+        await safePatch(`${this.prefix}/${microserviceUpdate.name}`, (oldDeployment): StoredMicroservice => {
             const newData = Object.assign({}, oldDeployment.currentConfig, microserviceUpdate)
 
             const needNewPods = !deepEqual(//compare configs without scale

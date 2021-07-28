@@ -24,7 +24,7 @@ export interface NodeHealth {
 export interface MicroserviceUpdate {
     name: string,
     scale: number,
-    project?: string,
+    // project?: string,
     containers: keyable<ContainerUpdate>
 }
 
@@ -36,4 +36,22 @@ export interface ConsulItemResponse {
 export interface StoredMicroservice {
     currentConfig: MicroserviceUpdate,
     currentPodNames: string[]
+}
+
+export interface StoredPod {
+    name: string,
+    nodeName: string,
+    parentName: string,
+    containers: StoredContainer[]
+}
+
+export interface StoredContainer {
+    name: string,
+    image: string,
+    httpPorts: {
+        [key: number]: string;
+    },
+    memLimit: number,
+    cpus: number,
+    env: string[],
 }

@@ -1,4 +1,5 @@
 import dockerode from "../../lib/docker/dockerode";
+import Dockerode from "dockerode"
 import { pullImage, getContainerByName } from "../../lib/docker/dockerodeUtils";
 import config from "../../config"
 import os from "os"
@@ -6,11 +7,17 @@ import path from "path"
 import fs from "fs"
 import axios from "axios"
 import delay from "delay"
+import logger from "../../lib/logger"
+
+const IS_PROD = config.get("IS_PROD")
+
 
 export default async function () {
     //create directory 
     const consulDataFolder = path.join(os.homedir(), 'consul-data')
-    createConsulDir(consulDataFolder)
+    if (IS_PROD) {
+        createConsulDir(consulDataFolder)
+    }
 
     //TODO search for image
     const imageName = config.get("CONSUL_IMAGE")
@@ -22,36 +29,52 @@ export default async function () {
     //create container if not exists
     let createdContainer = await getContainerByName("consul")
     if (!createdContainer) {
-        await dockerode.createContainer({
+        const conf: Dockerode.ContainerCreateOptions = {
             Image: imageName,
             Cmd: getConsulCmd(),
             name: "consul",
             HostConfig: {
-                NetworkMode: "host",
                 RestartPolicy: {
                     Name: 'always'
                 },
-                Binds: [`${consulDataFolder}:/data`]
+                Binds: [],
             },
             Env: ["CONSUL_BIND_INTERFACE=eth0"]
-        })
+        }
+
+        if (IS_PROD) {
+            conf.HostConfig.NetworkMode = "host"
+            conf.HostConfig.Binds.push(`${consulDataFolder}:/data`)
+        } else {
+            conf.HostConfig.PortBindings = {
+                "8500/tcp": [
+                    {
+                        "HostPort": "8500"
+                    }
+                ]
+            }
+        }
+
+        await dockerode.createContainer(conf)
         createdContainer = await getContainerByName("consul")
     }
 
     //start container if not started
     const containerToStart = dockerode.getContainer(createdContainer.Id);
-    console.debug('createdContainer.State', createdContainer.State)
+    logger.debug('createdContainer.State', createdContainer.State)
     if (createdContainer.State !== 'running') {
         await containerToStart.start()
     }
 
     for (let i = 0; i < 30; i++) {
-        await delay(i * 100)
+
         const isStarted = await isConsulStarted()
-        console.debug('Waiting for consul to start')
         if (isStarted) {
-            console.info('Consul started')
+            logger.info('Consul started')
             return
+        } else {
+            logger.debug('Waiting for consul to start')
+            await delay(i * 100)
         }
     }
     throw "COULD NOT START CONSUL"
@@ -60,7 +83,7 @@ export default async function () {
 
 async function isConsulStarted() {
     try {
-        const response = await axios.get(`http://localhost:8500/v1/catalog/nodes`)
+        const response = await axios.get(`http://127.0.0.1:8500/v1/catalog/nodes`)
         if (response.data[0].ID) {
             return true
         } else {
@@ -80,22 +103,15 @@ const createConsulDir = consulDataFolder => {
 
 const getConsulCmd = function (): string[] {
     const EXPECTED_CONTROLLER_IPS = config.get("EXPECTED_CONTROLLER_IPS")
-    const IS_DEV = config.get("IS_DEV")
     const cmd = [
         'agent',
     ]
 
     cmd.push('-server')
 
-    cmd.push('-data-dir=/data')
     cmd.push('-datacenter=main')
 
-    if (IS_DEV) {
-        cmd.push(`-dev`)
-        cmd.push(`-ui`)
-        cmd.push(`-client`, `0.0.0.0`)
-        cmd.push('-data-dir=/tmp')
-    } else {
+    if (IS_PROD) {
         cmd.push('-data-dir=/data')
         cmd.push(`--bootstrap-expect=${EXPECTED_CONTROLLER_IPS.length}`)
         cmd.push(`-client`, `127.0.0.1`)
@@ -103,6 +119,11 @@ const getConsulCmd = function (): string[] {
         for (let bootstrapIp of EXPECTED_CONTROLLER_IPS) {
             cmd.push(`-retry-join=${bootstrapIp}`)
         }
+    } else {
+        cmd.push(`-dev`)
+        cmd.push(`-ui`)
+        cmd.push(`-client`, `0.0.0.0`)
+        cmd.push('-data-dir=/tmp')
     }
 
     return cmd

@@ -5,14 +5,14 @@
 // import registrator from './modules/consul-registrator/index';
 // import configurator from './modules/caddy-configurator/configurator';
 // import deployments from './modules/system-deployments/deployments';
-
+import logger from "./lib/logger"
 import setUpNode from "./modules/set-up-node/setUpNode"
 import clusterAPI from './modules/cluster-api/api';
 import startReporting from './modules/node-health-reporter/startReporting';
 
 async function start() {
     process.on('unhandledRejection', (reason, p) => {
-        console.error('Unhandled Rejection at:', p, 'reason:', reason)
+        logger.error('Unhandled Rejection at:', p, 'reason:', reason)
         process.exit(1)
     });
 

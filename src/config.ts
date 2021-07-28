@@ -9,7 +9,7 @@ const config: keyable<any> = {
     CLUSTER_API_PORT: 8000,
     DEPLOYMENT_MAX_SCALING: 5,
     API_PASSWORD: "dev",
-    CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.0',
+    CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.1',
     NODE_NAME: os.hostname(),
     NODE_HEALTH_INTERVAL: 5 * 1000,
     CPU_OVERBOOKING_RATE: 3,
@@ -45,11 +45,11 @@ set("EXPECTED_CONTROLLER_IPS", [])
 const looksLikeTestEnv = process.env.NODE_ENV === "test"
     || process.env.npm_lifecycle_event === "test"
     || process.env.npm_lifecycle_event === "test-watch"
+    || String(process.env._).endsWith('mocha')
 
 set("ENV", looksLikeTestEnv ? "test" : "dev")
 set("IS_TEST", get("ENV") === "test")
 set("IS_DEV", get("ENV") === "dev")
 set("IS_PROD", get("ENV") === "prod")
-
 
 export default { get, set, waitAndGet }

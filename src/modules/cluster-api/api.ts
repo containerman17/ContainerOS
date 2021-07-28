@@ -32,7 +32,7 @@ function start(skipListening: boolean = false): express.Router {
                 app: 'cluster-api'
             });
         } else {//Unexpected error
-            console.error("Unexpected error", err)
+            logger.error("Unexpected error", err)
             res.status(HttpCodes.ServerError).send({
                 errorMessage: "Internal server error. Please contact technical support.",
                 statusCode: HttpCodes.ServerError

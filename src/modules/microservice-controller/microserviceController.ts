@@ -1,23 +1,23 @@
 import database from "../../lib/database"
+import { StoredMicroservice, keyable } from "../../types"
+import createPods from "./assignPods"
+import assignPods from "./createPods"
+import deleteObsoletePods from "./deleteObsoletePods"
 
+const onMicroservicesChanged = async function (microservices: keyable<StoredMicroservice>) {
+    await assignPods(microservices)
+    await createPods(microservices)
+    await deleteObsoletePods(microservices)
+}
 
-// async function start() {
-//     let started = false
+async function start() {
+    await database.pod.ready()
 
-//     database.onLeaderChanged((newLeader) => {
-//         if (newLeader === myIp) {
-//             console.error("Cool! I am a leader. Starting listeners")
-//             if (started) {
-//                 return
-//             } else {
-//                 started = true
-//                 actuallyStart()
-//             }
-//         } else if (started) {
-//             console.error("I am not a conslu leader anymore :/")
-//             process.exit(1)
-//         } else {
-//             console.log("I am a follower. Not listening for updates")
-//         }
-//     })
-// }
+    database.microservice.addListChangedCallback(onMicroservicesChanged)
+}
+
+async function stop() {
+    database.microservice.removeListChangedCallback(onMicroservicesChanged)
+}
+
+export default { start, stop }

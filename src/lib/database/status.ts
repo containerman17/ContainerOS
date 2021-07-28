@@ -19,7 +19,3 @@
 //     leaderChangedCallbacks.push(callback)
 //     await checkForLeader()
 // }
-
-// if (require.main === module) {
-//     onLeaderChanged(console.log);
-// }
