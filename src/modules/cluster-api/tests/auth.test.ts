@@ -7,8 +7,10 @@ chai.use(chaiHttp);
 chai.should();
 
 const app = api.start(true)
-
-it('should reject wrong password', async () => {
-    const response = await chai.request(app).get("/v1/microservice/update")
-    expect(response).to.have.status(403)
+describe('Cluster API auth', () => {
+    it('should reject wrong password', async () => {
+        const response = await chai.request(app).get("/v1/microservice/update")
+        expect(response).to.have.status(403)
+    })
 })
+

@@ -3,13 +3,12 @@ import sinon from "sinon"
 import database from "../../../lib/database"
 import microserviceController from "../microserviceController"
 
-describe('general microservice controller behavior', () => {
+describe('Microservice controller', () => {
     afterEach(() => {
         sinon.restore()
     })
 
-    it.only('has to stop and start', (done) => {
-        let callbacks = []
+    it('has to stop and start on consul leader changed', (done) => {
         const addListChangedCallback = sinon.replace(database.microservice, "addListChangedCallback", sinon.fake())
         const removeListChangedCallback = sinon.replace(database.microservice, "removeListChangedCallback", sinon.fake())
 
@@ -22,8 +21,6 @@ describe('general microservice controller behavior', () => {
             expect(addListChangedCallback.callCount).to.be.equal(1)
             expect(removeListChangedCallback.callCount).to.be.equal(1)
 
-            console.log('before twice', addListChangedCallback.__proto)
-
             cb('127.0.0.1', true)
             expect(addListChangedCallback.callCount).to.be.equal(2)
             expect(removeListChangedCallback.callCount).to.be.equal(1)
@@ -34,10 +31,4 @@ describe('general microservice controller behavior', () => {
         microserviceController.start()
     })
 
-    // let callbacks = []
-    // sinon.stub(database.system, "onLeaderChanged").callsFake(function fakeFn(cb) {
-    //     return "bar";
-    // });
 })
-
-it('starts and stops on consul leader changed', () => { })

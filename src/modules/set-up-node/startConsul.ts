@@ -1,6 +1,6 @@
 import dockerode from "../../lib/docker/dockerode";
 import Dockerode from "dockerode"
-import { pullImage, getContainerByName } from "../../lib/docker/dockerodeUtils";
+import { isImagePulledSuccessfully, getContainerByName } from "../../lib/docker/dockerodeUtils";
 import config from "../../config"
 import os from "os"
 import path from "path"
@@ -10,7 +10,6 @@ import delay from "delay"
 import logger from "../../lib/logger"
 
 const IS_PROD = config.get("IS_PROD")
-
 
 export default async function () {
     //create directory 
@@ -22,7 +21,7 @@ export default async function () {
     //TODO search for image
     const imageName = config.get("CONSUL_IMAGE")
 
-    if (!await pullImage(imageName)) {
+    if (!await isImagePulledSuccessfully(imageName)) {
         throw "Ooops! Error pulling consul image. Unable to start"
     }
 

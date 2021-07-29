@@ -5,8 +5,6 @@ import sinon from "sinon"
 import { keyable, StoredMicroservice } from "../../../types"
 import { expect } from "chai"
 
-it.skip('works well with syncronous updates')
-
 describe('pod assignment on real database', () => {
     before(async () => {
         await setUpNode()

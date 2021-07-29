@@ -3,5 +3,5 @@ build
 playground
 .env
 **nogit**
-.rsls
+*.rsls
 .DS_Store

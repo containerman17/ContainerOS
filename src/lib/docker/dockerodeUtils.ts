@@ -1,7 +1,7 @@
 import dockerode from "./dockerode"
 import Dockerode from "dockerode"
 
-export async function pullImage(img: string): Promise<boolean> {
+export async function isImagePulledSuccessfully(img: string): Promise<boolean> {
     try {
         await dockerode.getImage(img).inspect()
         return true

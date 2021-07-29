@@ -16,24 +16,26 @@ import { nextTick } from 'process';
 
 // const app = api.start(true)
 
+describe('Node health reporter', () => {
 
+    it('should report something', async () => {
+        const clock = sinon.useFakeTimers();
+        const updateNodeHealthFake = sinon.replace(database.nodeHealth, "update", sinon.fake());
 
-it('should report something', async () => {
-    const clock = sinon.useFakeTimers();
-    const updateNodeHealthFake = sinon.replace(database.nodeHealth, "update", sinon.fake());
+        startReporing()
 
-    startReporing()
+        expect(updateNodeHealthFake.callCount).to.be.equal(1)
 
-    expect(updateNodeHealthFake.callCount).to.be.equal(1)
+        await new Promise((resolve) => {
+            nextTick(resolve)
+        })
 
-    await new Promise((resolve) => {
-        nextTick(resolve)
+        clock.tick(config.get('NODE_HEALTH_INTERVAL') + 1);
+
+        expect(updateNodeHealthFake.lastCall.args[1].cpuUtilization).to.be.greaterThan(0)
+        expect(updateNodeHealthFake.callCount).to.be.equal(2)
+
+        clock.restore();
     })
 
-    clock.tick(config.get('NODE_HEALTH_INTERVAL') + 1);
-
-    expect(updateNodeHealthFake.lastCall.args[1].cpuUtilization).to.be.greaterThan(0)
-    expect(updateNodeHealthFake.callCount).to.be.equal(2)
-
-    clock.restore();
 })
