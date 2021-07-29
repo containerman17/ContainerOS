@@ -2,9 +2,8 @@ import setUpNode from "../../set-up-node/setUpNode"
 import database from "../../../lib/database"
 import microserviceController from '../microserviceController'
 import sinon from "sinon"
-import { StoredPod, keyable, StoredMicroservice } from "../../../types"
+import { keyable, StoredMicroservice } from "../../../types"
 import { expect } from "chai"
-import microservice from "../../../lib/database/microservice"
 
 it.skip('works well with syncronous updates')
 

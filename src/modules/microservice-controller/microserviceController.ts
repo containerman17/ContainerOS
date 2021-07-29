@@ -8,14 +8,30 @@ const onMicroservicesChanged = async function (microservices: keyable<StoredMicr
     await createPods(microservices)
 }
 
-async function start() {
+let subscribed = false
+
+const start = async function () {
     await database.pod.ready()
+    database.system.onLeaderChanged(function (leader, isMe) {
+        if (isMe) {
+            subscribe()
+        } else {
+            unsubscribe()
+        }
+    })
+}
 
+async function subscribe() {
+    if (subscribed) return
     database.microservice.addListChangedCallback(onMicroservicesChanged)
+    subscribed = true
 }
 
-async function stop() {
+async function unsubscribe() {
+    if (!subscribed) return
     database.microservice.removeListChangedCallback(onMicroservicesChanged)
+    subscribed = false
+
 }
 
-export default { start, stop }
+export default { start, stop: unsubscribe }
