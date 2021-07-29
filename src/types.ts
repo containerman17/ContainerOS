@@ -54,3 +54,28 @@ export interface StoredContainer {
     cpus: number,
     env: string[],
 }
+
+export type StoredPodStatus = {
+    history: (StoredPodStatusElement & { ts: number })[]
+}
+
+
+export type StoredPodStatusElement = {
+    status: "Pending",
+    reason: "Starting",
+    message: string
+} | {
+    status: "Running",
+    reason: "Ok",
+    message: string
+} | {
+    status: "Failed",
+    reason: "ContainerFailedPulling" | "ContainerKeepsCrashing",
+    message: string
+} | {
+    status: "Unknown",
+    reason: "Unknown",
+    message: string
+}
+
+export type podStatusValue = StoredPodStatusElement['status']

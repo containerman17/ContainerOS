@@ -63,10 +63,10 @@ export default class AbstractObject<Type> {
     public removeListChangedCallback(callback: (newList: keyable<Type>) => void) {
         this.callbacks = this.callbacks.filter(cb => cb !== callback)
     }
-    public async safePatch(name: string, patch: (oldValue: Type) => Type) {
+    public async safePatch(name: string, patch: (oldValue: Type) => Type, defaultStringValue = '{}') {
         const lastVersion = this.dataVersion // fix version before update
 
-        await safePatch(`${this.prefix}/${name}`, patch)
+        await safePatch(`${this.prefix}/${name}`, patch, defaultStringValue)
 
         await this.waitForVersion(lastVersion)
 
@@ -94,7 +94,7 @@ export default class AbstractObject<Type> {
             key: this.prefix + '/' + name
         })
 
-        await this.waitForVersion(ModifyIndex)//TODO: warning!!! may stuck if no changes made
+        await this.waitForVersion(ModifyIndex)//TODO: warning! if stuck, look here
     }
     public async delete(name: string) {
         const lastVersion = this.dataVersion // fix version before update
