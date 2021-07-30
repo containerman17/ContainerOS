@@ -1,4 +1,4 @@
-import { StoredPod } from "../../types";
+import { StoredPod, StoredPodStatus } from "../../types";
 import logger from "../../lib/logger"
 import { getContainerByName, isImagePulledSuccessfully } from "../../lib/docker/dockerodeUtils"
 import dockerode from "../../lib/docker/dockerode"
@@ -17,6 +17,13 @@ export default class Pod {
     }
     private async start() {
         logger.info("Starting pod", this.storedPod.name)
+
+        await database.podStatus.ready()
+        const lastReportedStatus: StoredPodStatus = database.podStatus.get(this.storedPod.name)
+        if (lastReportedStatus && lastReportedStatus.history[0]?.status === "Failed") {
+            logger.info("Pod failed, not starting", this.storedPod.name)
+            return
+        }
 
         await database.podStatus.report(this.storedPod.name, {
             status: "Pending",
