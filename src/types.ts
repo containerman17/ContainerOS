@@ -66,11 +66,11 @@ export type StoredPodStatusElement = {
     message: string
 } | {
     status: "Running",
-    reason: "Ok",
+    reason: "Started",
     message: string
 } | {
     status: "Failed",
-    reason: "ContainerFailedPulling" | "ContainerKeepsCrashing",
+    reason: "ContainerFailedPulling" | "ContainerKeepsCrashing" | "ContainerFailedStarting",
     message: string
 } | {
     status: "Unknown",

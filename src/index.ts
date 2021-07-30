@@ -7,8 +7,8 @@
 // import deployments from './modules/system-deployments/deployments';
 import logger from "./lib/logger"
 import setUpNode from "./core/set-up-node/setUpNode"
-import clusterAPI from './plugins/cluster-api/api';
-import microserviceController from './plugins/microservice-controller/microserviceController'
+import clusterAPI from './apps/cluster-api/api';
+import microserviceController from './core/microservice-controller/microserviceController'
 import startReporting from './core/node-health-reporter/startReporting';
 import podRunner from "./core/pod-runner/podRunner"
 
