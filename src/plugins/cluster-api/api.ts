@@ -41,8 +41,9 @@ function start(skipListening: boolean = false): express.Router {
     });
 
     if (!skipListening) {
-        app.listen(config.get("CLUSTER_API_PORT"), () => {
-            logger.info(`⚡️[server]: Server is running at port ${config.get("CLUSTER_API_PORT")}`);
+        const PORT = config.get("CLUSTER_API_PORT")
+        app.listen(PORT, '0.0.0.0', () => {
+            logger.info(`⚡️ Server is running at port ${PORT}`);
         });
     }
 

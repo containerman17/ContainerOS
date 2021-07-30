@@ -3,6 +3,9 @@ import { StoredMicroservice } from "../../../types"
 import database from "../index"
 
 describe('AbstractObject', () => {
+    beforeEach(async () => {
+        await database.microservice.dropAll()
+    })
 
     it('have to delete all the objects with dropAll method', async () => {
         await database.microservice.update('test-ms', {

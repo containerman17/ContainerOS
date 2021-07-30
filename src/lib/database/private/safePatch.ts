@@ -13,7 +13,7 @@ export default async function safePatch(key: string, patch: (oldValue: any) => a
             }
 
             const value = JSON.stringify(
-                patch(
+                await patch(
                     JSON.parse(beforeModification.Value)
                 ), null, 2
             )
@@ -30,7 +30,7 @@ export default async function safePatch(key: string, patch: (oldValue: any) => a
             if (setResult === true) {
                 return
             }
-            await delay(Math.round(Math.random() * 500)) // 250 ms on average
+            await delay(Math.round(Math.random() * 20) + i * 10) // i*10 + 10 on avg
         } catch (e) {
             if (e?.statusCode === 429) {
                 await delay(Math.round(Math.random() * 1000)) // 500 ms on average

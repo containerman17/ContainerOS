@@ -8,7 +8,7 @@ import { expect } from "chai"
 describe('pod assignment on real database', () => {
     before(async () => {
         await setUpNode()
-        sinon.replace(database.nodeHealth, "getLeastBusyServerName", sinon.fake.returns('fake-server'))
+        sinon.replace(database.nodeHealth, "getLeastBusyServerName", sinon.fake.returns(Promise.resolve('fake-server')))
     })
 
     beforeEach(async () => {
@@ -49,9 +49,14 @@ describe('pod assignment on real database', () => {
 
         await new Promise((resolve, reject) => {
             const msListener = function (mservices: keyable<StoredMicroservice>) {
-                if (mservices['test-ms'].currentPodNames.length === 3) {
-                    database.microservice.removeListChangedCallback(msListener)
-                    resolve(undefined)
+                try {
+                    if (mservices['test-ms'].currentPodNames.length === 3) {
+                        database.microservice.removeListChangedCallback(msListener)
+                        expect(mservices['test-ms'].currentPodNames[0]).to.contain('fake-server')
+                        resolve(undefined)
+                    }
+                } catch (e) {
+                    reject(e)
                 }
             }
             database.microservice.addListChangedCallback(msListener)

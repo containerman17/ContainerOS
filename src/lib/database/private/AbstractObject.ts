@@ -63,7 +63,7 @@ export default class AbstractObject<Type> {
     public removeListChangedCallback(callback: (newList: keyable<Type>) => void) {
         this.callbacks = this.callbacks.filter(cb => cb !== callback)
     }
-    public async safePatch(name: string, patch: (oldValue: Type) => Type, defaultStringValue = '{}') {
+    public async safePatch(name: string, patch: (oldValue: Type) => Type | Promise<Type>, defaultStringValue = '{}') {
         const lastVersion = this.dataVersion // fix version before update
 
         await safePatch(`${this.prefix}/${name}`, patch, defaultStringValue)

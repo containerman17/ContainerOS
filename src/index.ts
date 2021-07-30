@@ -8,7 +8,9 @@
 import logger from "./lib/logger"
 import setUpNode from "./core/set-up-node/setUpNode"
 import clusterAPI from './plugins/cluster-api/api';
+import microserviceController from './plugins/microservice-controller/microserviceController'
 import startReporting from './core/node-health-reporter/startReporting';
+import podRunner from "./core/pod-runner/podRunner"
 
 async function start() {
     process.on('unhandledRejection', (reason, p) => {
@@ -20,6 +22,8 @@ async function start() {
 
     startReporting();
     clusterAPI.start();
+    microserviceController.start();
+    podRunner.start();
 
 
     // nodeAPI.start();

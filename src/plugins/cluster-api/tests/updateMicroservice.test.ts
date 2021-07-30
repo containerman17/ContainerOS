@@ -19,7 +19,7 @@ describe('Cluster api / update microservice', () => {
         const updateMicroserviceFake = sinon.replace(database.microservice, "smartUpdate", sinon.fake());
         try {
             res = await chai.request(app)
-                .post('/v1/microservice/update?password=' + config.get('API_PASSWORD'))
+                .post('/v1/microservice?password=' + config.get('API_PASSWORD'))
                 .set('X-API-Key', 'foobar')
                 .send({
                     "name": "test",

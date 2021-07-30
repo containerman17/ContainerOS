@@ -6,9 +6,9 @@ export interface ContainerUpdate {
     httpPorts: {
         [key: number]: string;
     },
-    memLimit: number,
-    cpus: number,
-    env: string[],
+    memLimit?: number,
+    cpus?: number,
+    env?: string[],
     image: string,
 }
 
@@ -62,7 +62,7 @@ export type StoredPodStatus = {
 
 export type StoredPodStatusElement = {
     status: "Pending",
-    reason: "Starting",
+    reason: "PullingContainers" | "StartingContainers",
     message: string
 } | {
     status: "Running",

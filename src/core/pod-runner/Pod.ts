@@ -14,23 +14,31 @@ export default class Pod {
 
         await database.podStatus.report(this.storedPod.name, {
             status: "Pending",
-            reason: "Starting",
+            reason: "PullingContainers",
             message: ""
         })
 
         //pull
         const pullResults = await Promise.all(
-            this.storedPod.containers.map(cont => isImagePulledSuccessfully(cont.name))
+            this.storedPod.containers.map(cont => isImagePulledSuccessfully(cont.image))
         )
         for (let i = 0; i < pullResults.length; i++) {
             if (pullResults[i] === false) {
                 await database.podStatus.report(this.storedPod.name, {
                     status: "Failed",
                     reason: "ContainerFailedPulling",
-                    message: "Failed pulling container " + this.storedPod.containers[i]
+                    message: "Failed pulling image " + this.storedPod.containers[i].image
                 })
                 return;
             }
         }
+
+        //start
+        await database.podStatus.report(this.storedPod.name, {
+            status: "Pending",
+            reason: "StartingContainers",
+            message: ""
+        })
+
     }
 }

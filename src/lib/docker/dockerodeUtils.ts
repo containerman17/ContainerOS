@@ -1,5 +1,6 @@
 import dockerode from "./dockerode"
 import Dockerode from "dockerode"
+import logger from "../logger"
 
 export async function isImagePulledSuccessfully(img: string): Promise<boolean> {
     try {
@@ -11,6 +12,7 @@ export async function isImagePulledSuccessfully(img: string): Promise<boolean> {
             await dockerode.pull(img)
             return true
         } catch (e) {
+            logger.debug(e)
             return false
         }
     }

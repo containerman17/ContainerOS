@@ -14,7 +14,7 @@ import asyncHandler from "express-async-handler";
 
 const routes = Router();
 
-routes.all("/v1/microservice/update", asyncHandler(updateMicroservice))
+routes.post("/v1/microservice", asyncHandler(updateMicroservice))
 
 
 export default routes

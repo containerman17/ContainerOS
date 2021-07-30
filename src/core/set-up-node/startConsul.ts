@@ -32,11 +32,13 @@ export default async function () {
             Image: imageName,
             Cmd: getConsulCmd(),
             name: "consul",
+            Hostname: config.get("NODE_NAME"),
             HostConfig: {
                 RestartPolicy: {
                     Name: 'always'
                 },
                 Binds: [],
+
             },
             Env: ["CONSUL_BIND_INTERFACE=eth0"]
         }
