@@ -22,7 +22,7 @@ export default async function () {
     const imageName = config.get("CONSUL_IMAGE")
 
     if (!await isImagePulledSuccessfully(imageName)) {
-        throw "Ooops! Error pulling consul image. Unable to start"
+        throw Error(`Ooops! Error pulling consul image ${imageName}. Unable to start`)
     }
 
     //create container if not exists

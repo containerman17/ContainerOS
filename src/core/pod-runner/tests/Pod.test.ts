@@ -5,14 +5,18 @@ import sinon from "sinon"
 import * as dockerUtils from "../../../lib/docker/dockerodeUtils"
 import { StoredPodStatus, keyable } from "../../../types"
 import { expect } from "chai"
+import { after } from "mocha"
 
-describe.only('Pod runner', () => {
+describe('Pod runner', () => {
     before(async () => {
         await setUpNode()
     })
 
     beforeEach(async () => {
         await database.pod.dropAll()
+    })
+    after(() => {
+        sinon.restore()
     })
 
     it('reports failed pulls', async () => {

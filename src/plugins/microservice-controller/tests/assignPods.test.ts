@@ -1,4 +1,4 @@
-import setUpNode from "../../set-up-node/setUpNode"
+import setUpNode from "../../../core/set-up-node/setUpNode"
 import database from "../../../lib/database"
 import microserviceController from '../microserviceController'
 import sinon from "sinon"

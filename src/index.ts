@@ -6,9 +6,9 @@
 // import configurator from './modules/caddy-configurator/configurator';
 // import deployments from './modules/system-deployments/deployments';
 import logger from "./lib/logger"
-import setUpNode from "./modules/set-up-node/setUpNode"
-import clusterAPI from './modules/cluster-api/api';
-import startReporting from './modules/node-health-reporter/startReporting';
+import setUpNode from "./core/set-up-node/setUpNode"
+import clusterAPI from './plugins/cluster-api/api';
+import startReporting from './core/node-health-reporter/startReporting';
 
 async function start() {
     process.on('unhandledRejection', (reason, p) => {
