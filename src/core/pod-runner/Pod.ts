@@ -7,11 +7,15 @@ import database from "../../lib/database"
 
 export default class Pod {
     storedPod: StoredPod
+    private startPromise: Promise<void> = null
     constructor(_storedPod: StoredPod) {
         this.storedPod = _storedPod
-        this.start()
+        this.startPromise = this.start()
     }
-    async start() {
+    public async waitForStart() {
+        await this.startPromise
+    }
+    private async start() {
         logger.info("Starting pod", this.storedPod.name)
 
         await database.podStatus.report(this.storedPod.name, {

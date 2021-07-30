@@ -8,11 +8,13 @@ import { StoredPodStatus, keyable } from "../../../types"
 import { expect } from "chai"
 import { after } from "mocha"
 
-describe.only('Pod runner failures', () => {
+describe('Pod runner failures', () => {
     before(async () => {
         await setUpNode()
 
     })
+
+    let isImagePulledSuccessfullyStub: sinon.SinonStub
 
     beforeEach(async () => {
         await database.podStatus.dropAll()
@@ -21,7 +23,7 @@ describe.only('Pod runner failures', () => {
 
         let createdContainers = new Set()
 
-        sinon.stub(dockerUtils, "isImagePulledSuccessfully").callsFake(function fakeFn(image) {
+        isImagePulledSuccessfullyStub = sinon.stub(dockerUtils, "isImagePulledSuccessfully").callsFake(function fakeFn(image) {
             if (image === "should:fail") {
                 return false
             } else if (image === "should:pass") {
@@ -56,7 +58,7 @@ describe.only('Pod runner failures', () => {
     it('reports failed pulls', async () => {
 
         //TODO: mock pull function
-        new Pod({
+        const pod = new Pod({
             name: "fake-server/pod-123",
             parentName: 'fake-deployment-123',
             containers: [{
@@ -76,35 +78,23 @@ describe.only('Pod runner failures', () => {
             }],
         })
 
+        await pod.waitForStart()
+        const podStatus = database.podStatus.get("fake-server/pod-123")
+
         //check health has pending and failed states
 
-        await new Promise((resolve, reject) => {
-            const podStatusListener = function (statuses: keyable<StoredPodStatus>) {
-                try {
-                    if (statuses["fake-server/pod-123"] && statuses["fake-server/pod-123"].history.length === 2) {
-                        expect(statuses["fake-server/pod-123"].history[0].status).to.equal('Failed')
-                        expect(statuses["fake-server/pod-123"].history[0].reason).to.equal("ContainerFailedPulling")
-                        expect(statuses["fake-server/pod-123"].history[0].message).to.contain("should:fail")
+        expect(podStatus.history[0].status).to.equal('Failed')
+        expect(podStatus.history[0].reason).to.equal("ContainerFailedPulling")
+        expect(podStatus.history[0].message).to.contain("should:fail")
 
-                        expect(statuses["fake-server/pod-123"].history[1].status).to.equal('Pending')
-                        expect(statuses["fake-server/pod-123"].history[1].reason).to.equal('PullingContainers')
+        expect(podStatus.history[1].status).to.equal('Pending')
+        expect(podStatus.history[1].reason).to.equal('PullingContainers')
 
-
-                        //TODO: check error message contains correct container name
-                        database.podStatus.removeListChangedCallback(podStatusListener)
-                        resolve(undefined)
-                    }
-                } catch (e) {
-                    reject(e)
-                }
-            }
-            database.podStatus.addListChangedCallback(podStatusListener)
-        })
     })
 
     it('reports ContainerFailedStarting', async () => {
         //TODO: mock pull function
-        new Pod({
+        const pod = new Pod({
             name: "fake-server/pod-123",
             parentName: 'fake-deployment-123',
             containers: [{
@@ -125,29 +115,20 @@ describe.only('Pod runner failures', () => {
         })
 
         //check health has pending and failed states
+        await pod.waitForStart()
+        const podStatus = database.podStatus.get("fake-server/pod-123")
 
-        await new Promise((resolve, reject) => {
-            const podStatusListener = function (statuses: keyable<StoredPodStatus>) {
-                if (statuses["fake-server/pod-123"] && statuses["fake-server/pod-123"].history.length === 3) {
+        expect(podStatus.history[0].status).to.equal('Failed')
+        expect(podStatus.history[0].reason).to.equal("ContainerFailedStarting")
 
-                    expect(statuses["fake-server/pod-123"].history[0].status).to.equal('Failed')
-                    expect(statuses["fake-server/pod-123"].history[0].reason).to.equal("ContainerFailedStarting")
-
-                    expect(statuses["fake-server/pod-123"].history[1].status).to.equal('Pending')
-                    expect(statuses["fake-server/pod-123"].history[1].reason).to.equal('StartingContainers')
+        expect(podStatus.history[1].status).to.equal('Pending')
+        expect(podStatus.history[1].reason).to.equal('StartingContainers')
 
 
-                    //TODO: check error message contains correct container name
-                    database.podStatus.removeListChangedCallback(podStatusListener)
-                    resolve(undefined)
-                }
-            }
-            database.podStatus.addListChangedCallback(podStatusListener)
-        })
     })
 
     it('reports pod Running', async () => {
-        new Pod({
+        const pod = new Pod({
             name: "fake-server/pod-123",
             parentName: 'fake-deployment-123',
             containers: [{
@@ -166,27 +147,70 @@ describe.only('Pod runner failures', () => {
                 env: []
             }],
         })
+        await pod.waitForStart()
 
-        await new Promise((resolve, reject) => {
-            const podStatusListener = function (statuses: keyable<StoredPodStatus>) {
-                if (statuses["fake-server/pod-123"] && statuses["fake-server/pod-123"].history.length === 3) {
+        const podStatus = database.podStatus.get("fake-server/pod-123")
 
-                    expect(statuses["fake-server/pod-123"].history[0].status).to.equal('Running')
-                    expect(statuses["fake-server/pod-123"].history[0].reason).to.equal("Started")
+        expect(podStatus.history[0].status).to.equal('Running')
+        expect(podStatus.history[0].reason).to.equal("Started")
 
-                    expect(statuses["fake-server/pod-123"].history[1].status).to.equal('Pending')
-                    expect(statuses["fake-server/pod-123"].history[1].reason).to.equal('StartingContainers')
+        expect(podStatus.history[1].status).to.equal('Pending')
+        expect(podStatus.history[1].reason).to.equal('StartingContainers')
 
-                    expect(statuses["fake-server/pod-123"].history[2].status).to.equal('Pending')
-                    expect(statuses["fake-server/pod-123"].history[2].reason).to.equal('PullingContainers')
+        expect(podStatus.history[2].status).to.equal('Pending')
+        expect(podStatus.history[2].reason).to.equal('PullingContainers')
+    })
 
-
-                    //TODO: check error message contains correct container name
-                    database.podStatus.removeListChangedCallback(podStatusListener)
-                    resolve(undefined)
-                }
-            }
-            database.podStatus.addListChangedCallback(podStatusListener)
+    it('does not try to re-start failed pods', async () => {
+        expect(isImagePulledSuccessfullyStub.called).to.be.false
+        //TODO: mock pull function
+        const pod1 = new Pod({
+            name: "fake-server/pod-123",
+            parentName: 'fake-deployment-123',
+            containers: [{
+                name: "some-container",
+                image: "should:fail",
+                httpPorts: {},
+                memLimit: 10000,
+                cpus: 10000,
+                env: []
+            }, {
+                name: "other-container",
+                image: "should:pass",
+                httpPorts: {},
+                memLimit: 10000,
+                cpus: 10000,
+                env: []
+            }],
         })
+
+        await pod1.waitForStart()
+        expect(isImagePulledSuccessfullyStub.called).to.be.true
+
+        isImagePulledSuccessfullyStub.resetHistory()
+
+        //re-run the same pod
+        const pod2 = new Pod({
+            name: "fake-server/pod-123",
+            parentName: 'fake-deployment-123',
+            containers: [{
+                name: "some-container",
+                image: "should:fail",
+                httpPorts: {},
+                memLimit: 10000,
+                cpus: 10000,
+                env: []
+            }, {
+                name: "other-container",
+                image: "should:pass",
+                httpPorts: {},
+                memLimit: 10000,
+                cpus: 10000,
+                env: []
+            }],
+        })
+        await pod2.waitForStart()
+
+        expect(isImagePulledSuccessfullyStub.called).to.be.false
     })
 })

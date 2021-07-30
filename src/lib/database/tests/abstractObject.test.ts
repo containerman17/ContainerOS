@@ -69,4 +69,44 @@ describe('AbstractObject', () => {
             })
         }
     })
+
+    it('should await till safePatch completed', async () => {
+        await database.microservice.update('test-ms', {
+            currentConfig: {
+                name: 'test-ms',
+                scale: 0,
+                containers: {}
+            },
+            currentPodNames: []
+        })
+
+        for (let i = 0; i < 7; i++) {
+            await database.microservice.safePatch('test-ms', function (oldValue: StoredMicroservice): StoredMicroservice {
+                oldValue.currentConfig.scale = i
+                return oldValue
+            })
+            const updated = database.microservice.get('test-ms')
+            expect(updated.currentConfig.scale).to.equal(i)
+        }
+    })
+
+    it('have to run safePatch in parallel', async () => {
+        await database.microservice.update('safe-patch-concurrent', {
+            currentConfig: {
+                name: '',
+                scale: 0,
+                containers: {}
+            },
+            currentPodNames: []
+        })
+
+        await Promise.all(
+            Array.from(Array(7)).map(() => database.microservice.safePatch('safe-patch-concurrent', function (oldValue: StoredMicroservice): StoredMicroservice {
+                oldValue.currentConfig.scale++
+                return oldValue
+            }))
+        )
+        const updated = database.microservice.get('safe-patch-concurrent')
+        expect(updated.currentConfig.scale).to.equal(7)
+    })
 })

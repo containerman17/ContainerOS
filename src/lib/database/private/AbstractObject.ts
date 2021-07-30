@@ -64,11 +64,13 @@ export default class AbstractObject<Type> {
         this.callbacks = this.callbacks.filter(cb => cb !== callback)
     }
     public async safePatch(name: string, patch: (oldValue: Type) => Type | Promise<Type>, defaultStringValue = '{}') {
-        const lastVersion = this.dataVersion // fix version before update
-
         await safePatch(`${this.prefix}/${name}`, patch, defaultStringValue)
 
-        await this.waitForVersion(lastVersion)
+        const { ModifyIndex } = await consul.kv.get({
+            key: this.prefix + '/' + name
+        })
+
+        await this.waitForVersion(ModifyIndex)//TODO: warning! if stuck, look here
 
     }
     public async waitForVersion(lastVersion = null): Promise<void> {
