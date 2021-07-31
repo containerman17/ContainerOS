@@ -1,10 +1,36 @@
 # ContainerOS
 
-Lightweight ready-to-use container management system. Intended to replace Kubernetes in 98% of cases.
+Lightweight ready-to-use container management system. Intended to replace Kubernetes in 98% of use cases. Batteries [to be] included. Intended date of 1.0 release is December 2021.
 
-## Usage
+## Goal of the project
+
+To create a system, that able to replace Kubernetes in 95% of projects. Requirements:
+
+- Easy to understand
+- Lightweight and simple
+- For developers, not for devops people
+- Opinionated. All choses by majority of comunity.
+- Zero configuration needed for production
+- Easy to write JavaScript/TypeScript controllers
+- Hardware-agnostic and cloud-independent. Ready to serve even on Raspberry Pi behind corporate firewall.
+- Fail tolerant. Ready to operate on cheap hardware that breaks. Self-healing
+- Scalable to 1000's of nodes
+- Not expecting user to set load or scale of containers
+- Geo-distributed with automated placement of containers close to consumers
+
+## Usage 
 
 TODO
+
+## Release notes
+
+### v0.1.0
+
+- Starting consul in dev mode
+- Creating and updating microservices
+- Exposing microservice containers to random ports
+- Auth with master password
+- Container pre-pulling
 
 ## Modules
 
