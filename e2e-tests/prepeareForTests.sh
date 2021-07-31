@@ -1,1 +1,0 @@
-docker pull quay.io/jitesoft/alpine:3.11
