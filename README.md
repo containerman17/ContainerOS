@@ -1,8 +1,10 @@
 # ContainerOS
 
+Lightweight ready-to-use container management system. Intended to replace Kubernetes in 98% of cases.
+
 ## Usage
 
-This section will be empty till release v0.1.
+TODO
 
 ## Modules
 
