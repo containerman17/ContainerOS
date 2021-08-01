@@ -31,7 +31,7 @@ Run ContainerOS:
 docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.1 
 ```
 
-Start your first container.
+Start your first container:
 
 ```bash
 curl --location --request POST 'http://127.0.0.1:8000/v1/microservice?password=dev' \
