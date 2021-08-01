@@ -18,12 +18,41 @@ To create a system, that able to replace Kubernetes in 95% of projects. Requirem
 - Not expecting user to set load or scale of containers
 - Geo-distributed with automated placement of containers close to consumers
 
-## Usage 
+## Get started 
 
-TODO
+Install docker:
 
-```
+```bash
 curl -sSL https://get.docker.com/ | sh
+```
+
+Run ContainerOS:
+```bash
+docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.0 
+```
+
+Start your first container
+
+```bash
+curl --location --request POST 'http://127.0.0.1:8000/v1/microservice?password=dev' \
+-H "Content-Type: application/json" \
+--data-raw '{
+    "name": "test-server",
+    "scale": 2,
+    "containers": {
+        "reg": {"image": "quay.io/bitnami/nginx:latest", "httpPorts": {"80": "hello.localhost"}}
+    }
+}'
+```
+
+Check your containers started: 
+```bash
+docker ps
+```
+
+Check logs:
+```bash
+docker logs -f containeros
 ```
 
 ## Release notes

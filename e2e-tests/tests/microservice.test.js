@@ -7,6 +7,16 @@ describe('Microservice logic', () => {
     before(async () => {
         await stopConsul()
         await reStartContainerOS()
+
+        //make sure containers from a failed run cleaned up
+        for (let i = 0; i < 50; i++) {
+            const containers = await getRunningContainers()
+            const cleanUpComplete = containers.filter(name => name.startsWith('nginx-test')).length === 0
+            if (cleanUpComplete) break
+            await delay(100)
+        }
+        let containers = await getRunningContainers()
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
     })
     after(async () => {
         await stopConsul()
@@ -28,6 +38,7 @@ describe('Microservice logic', () => {
     })
 
     it('should start, stop and scale microservice', async function () {
+
         //create microservice
         let body = {
             "name": "nginx-test",
@@ -41,12 +52,11 @@ describe('Microservice logic', () => {
         }
         axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 20; i++) {
             const containers = await getRunningContainers()
             const nginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 1
-
             if (nginxFound) break
-            await delay(100)
+            await delay(1000)
         }
 
         let containers = await getRunningContainers()
@@ -65,12 +75,11 @@ describe('Microservice logic', () => {
         }
         axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 10; i++) {
             const containers = await getRunningContainers()
             const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 2
-
             if (secondNginxFound) break
-            await delay(100)
+            await delay(1000)
         }
 
         containers = await getRunningContainers()
