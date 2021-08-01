@@ -57,6 +57,9 @@ docker logs -f containeros
 
 ## Release notes
 
+### v0.1.1
+- Optimized pod-runner for frequent changes
+
 ### v0.1.0
 
 - Starting consul in dev mode

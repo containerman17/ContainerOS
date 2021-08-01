@@ -1,9 +1,9 @@
-import { reStartContainerOS, stopContainerOS, stopConsul, getRunningContainers } from "../tools/containerTools.js"
+import { reStartContainerOS, stopContainerOS, stopConsul, getRunningContainers, getContainerOsLogs } from "../tools/containerTools.js"
 import { expect } from "chai"
 import delay from "delay"
 import axios from "axios"
 
-describe('Microservice logic', () => {
+describe.only('Microservice logic', () => {
     before(async () => {
         await stopConsul()
         await reStartContainerOS()
@@ -19,6 +19,7 @@ describe('Microservice logic', () => {
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
     })
     after(async () => {
+        console.log('Logs: ', await getContainerOsLogs())
         await stopConsul()
         await stopContainerOS()
     })
@@ -50,7 +51,7 @@ describe('Microservice logic', () => {
                 },
             }
         }
-        axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
         for (let i = 0; i < 20; i++) {
             const containers = await getRunningContainers()
@@ -73,7 +74,7 @@ describe('Microservice logic', () => {
                 },
             }
         }
-        axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
         for (let i = 0; i < 10; i++) {
             const containers = await getRunningContainers()
@@ -108,5 +109,74 @@ describe('Microservice logic', () => {
 
         containers = await getRunningContainers()
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
+    })
+
+    it('should handle rapid changes', async function () {
+        //create microservice
+        let body = {
+            "name": "nginx-test",
+            "scale": 0,
+            "containers": {
+                "reg": {
+                    "image": "quay.io/bitnami/nginx:latest",
+                    "httpPorts": { "80": "hello.world" }
+                },
+            }
+        }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+
+        for (let i = 0; i < 20; i++) {
+            const containers = await getRunningContainers()
+            const nginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 0
+            if (nginxFound) break
+            await delay(1000)
+        }
+
+        let containers = await getRunningContainers()
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
+
+        //scale up microservice
+        body = { ...body, scale: 5 }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+
+        for (let i = 0; i < 10; i++) {
+            const containers = await getRunningContainers()
+            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 5
+            if (secondNginxFound) break
+            await delay(1000)
+        }
+
+        containers = await getRunningContainers()
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(5)
+
+        //scale down microservice
+        body = { ...body, scale: 0 }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+
+        for (let i = 0; i < 10; i++) {
+            const containers = await getRunningContainers()
+            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 0
+            if (secondNginxFound) break
+            await delay(1000)
+        }
+
+        containers = await getRunningContainers()
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
+
+        //up and down again
+        body = { ...body, scale: 5 }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+        body = { ...body, scale: 2 }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+
+        for (let i = 0; i < 10; i++) {
+            const containers = await getRunningContainers()
+            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 2
+            if (secondNginxFound) break
+            await delay(1000)
+        }
+
+        containers = await getRunningContainers()
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(2)
     })
 })

@@ -4,7 +4,7 @@ import path from "path"
 
 const dockerode = new Dockerode()
 
-const TEST_CONTAINER_NAME = 'containeros-e2e'
+const TEST_CONTAINER_NAME = 'cos-e2e'
 
 export async function removeContainer(containerName) {
     const container = await getContainerByName(containerName)
@@ -46,14 +46,16 @@ export async function stopContainer(name) {
 }
 
 export async function getContainerOsLogs() {
-    return container.logs({
+    const container = await getContainerByName(TEST_CONTAINER_NAME)
+
+    return String(await container.logs({
         follow: false,
         stdout: true,
         stderr: true,
         details: false,
         tail: 50,
         timestamps: true
-    })
+    }))
 }
 
 export async function reStartContainerOS() {

@@ -1,9 +1,9 @@
 import { NodeHealth, keyable } from "../../types";
 import AbstractObject from "./private/AbstractObject";
 import config from "../../config"
-import delay from "delay"
+import RateLimit from "../utils/RateLimit"
 
-let lastDelay: Promise<void> = Promise.resolve()
+const rateLimit = new RateLimit(config.get("SCHEDULING_CONCURRENCY"), config.get("NODE_HEALTH_INTERVAL"))
 
 const getUtilizationPercent = (nodeHealth: NodeHealth): number => {
     return Math.max(
@@ -27,8 +27,7 @@ class NodeHealthController extends AbstractObject<NodeHealth> {
     public async getLeastBusyServerName(): Promise<string> {
         await this.ready()
 
-        await lastDelay//await for the next health reports to come since last schedule
-        lastDelay = delay(config.get("NODE_HEALTH_INTERVAL"))
+        await rateLimit.waitForMyTurn()//await for the next health reports to come since last schedule
 
         const allServers = this.getAll()
 

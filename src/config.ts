@@ -8,13 +8,14 @@ const genConsulKey = base => sha256(sha256(base) + base)
 
 const config: keyable<any> = {
     CLUSTER_API_PORT: 8000,
-    DEPLOYMENT_MAX_SCALING: 5,
+    DEPLOYMENT_MAX_SCALING: 20,
     API_PASSWORD: "dev",
     CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.1',
     NODE_NAME: os.hostname(),
     NODE_HEALTH_INTERVAL: 5 * 1000,
     CPU_OVERBOOKING_RATE: 3,
     MEMORY_OVERBOOKING_RATE: 3,
+    SCHEDULING_CONCURRENCY: 5
 }
 
 set("CONSUL_ENCRYPTION_KEY", genConsulKey(get("API_PASSWORD")))
