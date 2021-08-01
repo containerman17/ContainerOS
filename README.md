@@ -1,6 +1,6 @@
 # ContainerOS
 
-Lightweight ready-to-use container management system. Intended to replace Kubernetes in 98% of use cases. Batteries [to be] included. Intended date of 1.0 release is December 2021.
+Lightweight ready-to-use container management system. Batteries [to be] included. Intended date of 1.0 release is December 2021.
 
 ## Goal of the project
 
@@ -21,6 +21,10 @@ To create a system, that able to replace Kubernetes in 95% of projects. Requirem
 ## Usage 
 
 TODO
+
+```
+curl -sSL https://get.docker.com/ | sh
+```
 
 ## Release notes
 

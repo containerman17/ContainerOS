@@ -1,4 +1,4 @@
-VERSION=`cat ../../version.txt`
+VERSION=`cat ../../VERSION`
 
 
 deploy: dummy_certs push-auth push-reg

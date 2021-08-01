@@ -1,9 +1,10 @@
 import delay from "delay"
 import { keyable } from "./types"
-import md5 from "md5"
+import crypto from "crypto"
 import os from "os"
 
-const genConsulKey = base => Buffer.from(md5(md5(base) + base)).toString('base64')
+const sha256 = str => crypto.createHash('sha256').update(str).digest('base64');
+const genConsulKey = base => sha256(sha256(base) + base)
 
 const config: keyable<any> = {
     CLUSTER_API_PORT: 8000,
@@ -46,6 +47,7 @@ const looksLikeTestEnv = process.env.NODE_ENV === "test"
     || process.env.npm_lifecycle_event === "test"
     || process.env.npm_lifecycle_event === "test-watch"
     || String(process.env._).endsWith('mocha')
+    || process.argv[1].endsWith('mocha')
 
 set("ENV", looksLikeTestEnv ? "test" : "dev")
 set("IS_TEST", get("ENV") === "test")

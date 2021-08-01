@@ -3,17 +3,13 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "test": "mocha"
+        "test": "mocha",
+        "build": "tsc  "
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@types/chai-as-promised": "^7.1.4",
-        "@types/consul": "^0.23.35",
-        "@types/dockerode": "^3.2.6",
-        "@types/md5": "^2.3.1",
         "axios": "^0.21.1",
-        "chai-as-promised": "^7.1.1",
         "consul": "^0.40.0",
         "cors": "^2.8.5",
         "deep-equal": "^2.0.5",
@@ -21,7 +17,6 @@
         "dockerode": "^3.3.0",
         "express": "^4.17.1",
         "express-async-handler": "^1.1.4",
-        "md5": "^2.3.0",
         "network": "^0.5.0",
         "os-utils": "0.0.14",
         "randomstring": "^1.2.1",
@@ -29,6 +24,10 @@
         "tslog": "^3.2.0"
     },
     "devDependencies": {
+        "chai-as-promised": "^7.1.1",
+        "@types/chai-as-promised": "^7.1.4",
+        "@types/consul": "^0.23.35",
+        "@types/dockerode": "^3.2.6",
         "@types/chai": "^4.2.21",
         "@types/chai-http": "^4.2.0",
         "@types/cors": "^2.8.12",

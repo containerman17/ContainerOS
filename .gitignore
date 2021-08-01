@@ -4,4 +4,6 @@ playground
 .env
 **nogit**
 *.rsls
+*.rslsc
+*.rslsd
 .DS_Store
