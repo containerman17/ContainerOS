@@ -28,7 +28,7 @@ curl -sSL https://get.docker.com/ | sh
 
 Run ContainerOS:
 ```bash
-docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.0 
+docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.1 
 ```
 
 Start your first container
@@ -67,6 +67,30 @@ docker logs -f containeros
 - Exposing microservice containers to random ports
 - Auth with master password
 - Container pre-pulling
+
+## Roadmap
+
+### August 2021: 
+- Register exposed ports with Consul
+- ClusterDaemons
+- Ingress with automatic SSL
+- Multi-node deployments
+- Docker registry with external S3
+- Production build
+
+### Later:
+- Affinity to database and anti-affinity in microservice deployments
+- Separate microservices into different projects with network isolation
+- Support for popular open-source databases (MySQL, Redis, MongoDB)
+- Support log in into remote docker registry
+- CLI (something in between Heroku CLI and Kubernetes CLI)
+- Web GUI and mobile app
+- Collect container, node and ingree metrics
+- HTTP health checks
+- A nicer website
+- Move ClusterAPI to a service with a separate container
+- Store container images inside of cluster by default
+- Predict deployment load using historical data and schedule accordingly
 
 ## Modules
 

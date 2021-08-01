@@ -35,9 +35,11 @@ async function waitAndGet(key: string) {
     for (let i = 0; i < 100; i++) {
         if (typeof config[key] === "undefined") {
             await delay(i * 100)
+        } else {
+            return config[key]
         }
     }
-    return config[key]
+    throw Error(`Could not load config value for ${key}`)
 }
 
 //TODO: get from CLI
