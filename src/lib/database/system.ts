@@ -11,7 +11,7 @@ class SystemCtrl {
 
         if (!this.started) {
             this.started = true
-            setTimeout(this.checkForLeader, 60 * 1000)//TODO: such a dirty hack :/
+            setTimeout(() => this.checkForLeader(), 60 * 1000)//TODO: such a dirty hack :/
         }
 
         this.checkForLeader() // recheck for a fresh subscriber
