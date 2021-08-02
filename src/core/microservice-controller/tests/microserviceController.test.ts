@@ -12,7 +12,7 @@ describe('Microservice controller', () => {
         const addListChangedCallback = sinon.replace(database.microservice, "addListChangedCallback", sinon.fake())
         const removeListChangedCallback = sinon.replace(database.microservice, "removeListChangedCallback", sinon.fake())
 
-        sinon.stub(database.system, "onLeaderChanged").callsFake(function fakeFn(cb) {
+        sinon.stub(database.consulLib, "onLeaderChanged").callsFake(function fakeFn(cb) {
             cb('127.0.0.1', true)
             expect(addListChangedCallback.callCount).to.be.equal(1)
             expect(removeListChangedCallback.callCount).to.be.equal(0)// not called

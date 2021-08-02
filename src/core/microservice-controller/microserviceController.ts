@@ -12,7 +12,7 @@ let subscribed = false
 
 const start = async function () {
     await database.pod.ready()
-    database.system.onLeaderChanged(function (leader, isMe) {
+    database.consulLib.onLeaderChanged(function (leader, isMe) {
         if (isMe) {
             subscribe()
         } else {

@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/build/index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "console": "internalConsole",
+            "type": "node",
+            "outputCapture": "std"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha Tests",

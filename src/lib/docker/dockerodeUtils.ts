@@ -38,9 +38,12 @@ export async function getContainerByName(name: string): Promise<Dockerode.Contai
 export async function removeContainerHelper(containerId: string, timeout = 30) {
     try {
         const container = dockerode.getContainer(containerId)
-        const inspected = await container.inspect()
-        if (inspected.State.Running) {
-            await container.stop({ t: timeout })
+
+        if (timeout > 0) {
+            const inspected = await container.inspect()
+            if (inspected.State.Running) {
+                await container.stop({ t: timeout })
+            }
         }
         await container.remove({ force: true })
     } catch (e) {

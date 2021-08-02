@@ -1,8 +1,10 @@
 import consul from "./private/consul"
+import Consul from "consul"
 
 type LeaderChangedCallback = (leadername: string, isMe: boolean) => void
 
-class SystemCtrl {
+
+class ConsulCtrl {
     private leaderChangedCallbacks: LeaderChangedCallback[] = []
     private started = false
 
@@ -28,6 +30,28 @@ class SystemCtrl {
 
         this.leaderChangedCallbacks.map(cb => cb(newLeader, isLeader))
     }
+
+
+    public async registerService(service: {
+        id: string,
+        name: string,
+        port: number,
+        tags: string[],
+    }) {
+        // @ts-ignore
+        await consul.agent.service.register({
+            id: service.id,
+            name: service.name,
+            port: service.port,
+            tags: service.tags,
+
+            check: {
+                tcp: `host.docker.internal:${service.port}`,
+                interval: '3s',//TODO: change to 15 seconds
+                timeout: "3s"
+            }
+        })
+    }
 }
 
-export default new SystemCtrl
+export default new ConsulCtrl

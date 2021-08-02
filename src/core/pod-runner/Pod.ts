@@ -46,12 +46,14 @@ export default class Pod {
             }
         }
 
-        //start
+
         await database.podStatus.report(this.storedPod.name, {
             status: "Pending",
             reason: "StartingContainers",
             message: ""
         })
+
+        //create containers
 
         let createdContainers = []
         try {
@@ -77,6 +79,8 @@ export default class Pod {
             return;
         }
 
+
+        //start containers
         try {
             await Promise.all(
                 createdContainers.map(async cont => {
@@ -92,10 +96,45 @@ export default class Pod {
             await database.podStatus.report(this.storedPod.name, {
                 status: "Failed",
                 reason: "ContainerFailedStarting",
-                message: "Failed starting containers " + String(e).slice(0, 100)
+                message: "Failed starting containers " + String(e).slice(0, 500)
             })
             return;
         }
+
+        //register with consul
+        // await database.consulLib.registerService({
+        //     id: string,
+        //     name: string,
+        //     port: number,
+        //     tags: string[],
+        // })
+
+        //report running
+
+        createdContainers.map(async cont => {
+            if (cont.State !== 'running') {
+                const containerToStart = dockerode.getContainer(cont.Id);
+
+                await containerToStart.start()
+            }
+        })
+
+        createdContainers.map(async cont => {
+            cont
+            if (cont.State !== 'running') {
+                const contByname = await getContainerByName(cont.Names[0].slice(1))
+                const exposedPorts = contByname.Ports.filter(port => port.PublicPort)
+                for (let { PublicPort, PrivatePort } of exposedPorts) {
+                    const serviceName = this.storedPod.parentName + '-' + contByname.Labels['org.containeros.container.name'] + '-' + PrivatePort
+                    await database.consulLib.registerService({
+                        id: cont.Id,
+                        name: serviceName,
+                        port: PublicPort,
+                        tags: []
+                    })
+                }
+            }
+        })
 
         await database.podStatus.report(this.storedPod.name, {
             status: "Running",

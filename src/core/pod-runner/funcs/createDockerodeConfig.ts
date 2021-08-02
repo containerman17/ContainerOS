@@ -6,12 +6,12 @@ export default function (pod: StoredPod, container: StoredContainer): Dockerode.
     const PortBindings = {}
     const Labels = {
         "org.containeros.pod.name": pod.name,
-        "org.containeros.container.containerName": container.name,
+        "org.containeros.container.name": container.name,
     }
 
     for (let portNumber of Object.keys(container.httpPorts)) {
         ExposedPorts[`${portNumber}/tcp`] = {}
-        PortBindings[`${portNumber}/tcp`] = [{ HostPort: '' }]
+        PortBindings[`${portNumber}/tcp`] = [{}]
     }
 
     const containerName = pod.name.split('/').slice(-1)[0] + '-' + container.name
