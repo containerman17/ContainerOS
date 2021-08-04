@@ -7,6 +7,7 @@ import dockerode from "../../../lib/docker/dockerode"
 import { StoredPodStatus, keyable } from "../../../types"
 import { expect } from "chai"
 import { after } from "mocha"
+import delay from "delay"
 
 const randomNumber = 12347//Math.floor(Math.random() * 100000)
 const POD_NAME = `pod-${randomNumber}`
@@ -16,6 +17,7 @@ describe.only('Pod runner integration test', function () {
     before(async () => {
         sinon.restore()
         await setUpNode()
+        await database.services.deregisterAllServices()
     })
 
     beforeEach(async () => {
@@ -27,23 +29,18 @@ describe.only('Pod runner integration test', function () {
         // await dockerUtils.removeContainerHelper(POD_NAME + '-other-container', 0)
         // await dockerUtils.removeContainerHelper(POD_NAME + '-some-container', 0)
         // sinon.restore()
+        // await database.services.deregisterAllServices()
         await database.podStatus.dropAll()
     })
 
     it('registers consul service', async () => {
-        //TODO: mock pull function
+        let services = await database.services.getList()
+        expect(Object.keys(services).length).to.equal(0)
+
         const pod = new Pod({
             name: "fake-server/" + POD_NAME,
             parentName: 'fake-deployment-123',
             containers: [
-                // {
-                //     name: "some-container",
-                //     image: "quay.io/bitnami/nginx:latest",
-                //     httpPorts: { 80: 'test1.localhost' },
-                //     memLimit: 100000000,
-                //     cpus: 150000,
-                //     env: []
-                // },
                 {
                     name: "other-container",
                     image: "tutum/hello-world",
@@ -55,6 +52,7 @@ describe.only('Pod runner integration test', function () {
         })
 
         await pod.waitForStart()
-
+        services = await database.services.getList()
+        expect(Object.keys(services).length).to.equal(1)
     })
 })
