@@ -78,7 +78,7 @@ describe('Pod runner failures', () => {
             }],
         })
 
-        await pod.waitForStart()
+        await pod.awaitForStart()
         const podStatus = database.podStatus.get("fake-server/pod-123")
 
         //check health has pending and failed states
@@ -115,7 +115,7 @@ describe('Pod runner failures', () => {
         })
 
         //check health has pending and failed states
-        await pod.waitForStart()
+        await pod.awaitForStart()
         const podStatus = database.podStatus.get("fake-server/pod-123")
 
         expect(podStatus.history[0].status).to.equal('Failed')
@@ -147,7 +147,7 @@ describe('Pod runner failures', () => {
                 env: []
             }],
         })
-        await pod.waitForStart()
+        await pod.awaitForStart()
 
         const podStatus = database.podStatus.get("fake-server/pod-123")
 
@@ -184,7 +184,7 @@ describe('Pod runner failures', () => {
             }],
         })
 
-        await pod1.waitForStart()
+        await pod1.awaitForStart()
         expect(isImagePulledSuccessfullyStub.called).to.be.true
 
         isImagePulledSuccessfullyStub.resetHistory()
@@ -209,7 +209,7 @@ describe('Pod runner failures', () => {
                 env: []
             }],
         })
-        await pod2.waitForStart()
+        await pod2.awaitForStart()
 
         expect(isImagePulledSuccessfullyStub.called).to.be.false
     })

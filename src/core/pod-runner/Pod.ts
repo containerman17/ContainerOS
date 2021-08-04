@@ -12,7 +12,7 @@ export default class Pod {
         this.storedPod = _storedPod
         this.startPromise = this.start()
     }
-    public async waitForStart() {
+    public async awaitForStart() {
         await this.startPromise
     }
     private async start() {

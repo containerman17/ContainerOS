@@ -87,6 +87,7 @@ export default class AbstractObject<Type> {
         })
     }
     public async update(name: string, data: Type) {
+        //TODO: name here is redudant, we can get it from data
         await consul.kv.set({
             key: this.prefix + '/' + name,
             value: JSON.stringify(data, null, 2)

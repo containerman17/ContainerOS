@@ -12,7 +12,7 @@ import delay from "delay"
 const randomNumber = 12347//Math.floor(Math.random() * 100000)
 const POD_NAME = `pod-${randomNumber}`
 
-describe.only('Pod runner integration test', function () {
+describe('Pod runner integration test', function () {
     this.timeout(30000)
     before(async () => {
         sinon.restore()
@@ -26,10 +26,10 @@ describe.only('Pod runner integration test', function () {
         await database.podStatus.dropAll()
     })
     afterEach(async () => {
-        // await dockerUtils.removeContainerHelper(POD_NAME + '-other-container', 0)
-        // await dockerUtils.removeContainerHelper(POD_NAME + '-some-container', 0)
-        // sinon.restore()
-        // await database.services.deregisterAllServices()
+        await dockerUtils.removeContainerHelper(POD_NAME + '-other-container', 0)
+        await dockerUtils.removeContainerHelper(POD_NAME + '-some-container', 0)
+        sinon.restore()
+        await database.services.deregisterAllServices()
         await database.podStatus.dropAll()
     })
 
@@ -51,8 +51,9 @@ describe.only('Pod runner integration test', function () {
                 }],
         })
 
-        await pod.waitForStart()
+        await pod.awaitForStart()
         services = await database.services.getList()
         expect(Object.keys(services).length).to.equal(1)
+        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-other-container-80`)
     })
 })

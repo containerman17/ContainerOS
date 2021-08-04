@@ -4,7 +4,9 @@
     "description": "",
     "scripts": {
         "test": "mocha",
-        "build": "tsc  "
+        "test:unit": "npm run test:interation -- --invert",
+        "test:integration": "mocha --grep integration",
+        "build": "tsc"
     },
     "author": "",
     "license": "ISC",
