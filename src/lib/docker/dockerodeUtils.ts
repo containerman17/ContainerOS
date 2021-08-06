@@ -53,3 +53,8 @@ export async function removeContainerHelper(containerId: string, timeout = 30) {
         throw e
     }
 }
+
+export async function getRunningContainersNames() {
+    const list = await dockerode.listContainers()
+    return list.map(cont => cont.Names[0].slice(1))
+}

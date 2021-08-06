@@ -76,6 +76,10 @@ export type StoredPodStatusElement = {
     status: "Unknown",
     reason: "Unknown",
     message: string
+} | {
+    status: "Removed",
+    reason: "RemovedOk",
+    message: string
 }
 
 export type podStatusValue = StoredPodStatusElement['status']

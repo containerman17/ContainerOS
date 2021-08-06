@@ -1,6 +1,6 @@
 import { StoredPod, StoredPodStatus } from "../../types";
 import logger from "../../lib/logger"
-import { getContainerByName, isImagePulledSuccessfully } from "../../lib/docker/dockerodeUtils"
+import { getContainerByName, isImagePulledSuccessfully, removeContainerHelper } from "../../lib/docker/dockerodeUtils"
 import dockerode from "../../lib/docker/dockerode"
 import createDockerodeConfig from "./funcs/createDockerodeConfig";
 import database from "../../lib/database"
@@ -45,7 +45,6 @@ export default class Pod {
                 return;
             }
         }
-
 
         await database.podStatus.report(this.storedPod.name, {
             status: "Pending",
@@ -101,16 +100,6 @@ export default class Pod {
             return;
         }
 
-        //register with consul
-        // await database.consulLib.registerService({
-        //     id: string,
-        //     name: string,
-        //     port: number,
-        //     tags: string[],
-        // })
-
-        //report running
-
         createdContainers.map(async cont => {
             if (cont.State !== 'running') {
                 const containerToStart = dockerode.getContainer(cont.Id);
@@ -139,6 +128,25 @@ export default class Pod {
         await database.podStatus.report(this.storedPod.name, {
             status: "Running",
             reason: "Started",
+            message: ""
+        })
+    }
+    private stopStarted = false
+    public async stop() {
+        if (this.stopStarted) return
+        this.stopStarted = true
+        logger.info("Stopping pod", this.storedPod.name)
+
+        await Promise.all(
+            this.storedPod.containers.map(async cont => {
+                const conf = createDockerodeConfig(this.storedPod, cont)
+                await removeContainerHelper(conf.name)
+            })
+        )
+
+        await database.podStatus.report(this.storedPod.name, {
+            status: "Removed",
+            reason: "RemovedOk",
             message: ""
         })
     }

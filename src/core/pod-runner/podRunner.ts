@@ -12,6 +12,8 @@ let lastCleanUpExecution = Promise.resolve()
 class PodRunner {
     private pods: keyable<Pod> = {}
 
+    public getPodNames = () => Object.keys(this.pods)
+
     //test function. can we do it without extra code?
     public awaitForPodStart(podName: string): Promise<void> {
         if (!this.pods[podName]) {
@@ -32,6 +34,14 @@ class PodRunner {
                     if (!this.pods[podName]) {
                         this.pods[podName] = new Pod(storedPod)
                     }
+                }
+
+                const podsToStop = Object.keys(this.pods).filter(name => !podList[name])
+
+                for (let podName of podsToStop) {
+                    this.pods[podName].stop().then(() => {
+                        delete this.pods[podName]
+                    })
                 }
 
                 lastCleanUpExecution = cleanUpDangling(Object.keys(podList))
