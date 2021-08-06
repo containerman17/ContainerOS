@@ -11,7 +11,7 @@ async function cleanUp() {
     await removeContainerHelper("pod-123-some-container", 0)
 }
 
-describe.only('Pod runner integration', function () {
+describe('Pod runner integration', function () {
     this.timeout(30000);
     before(async () => {
         await cleanUp()

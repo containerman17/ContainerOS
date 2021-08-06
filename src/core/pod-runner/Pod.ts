@@ -8,6 +8,7 @@ import database from "../../lib/database"
 export default class Pod {
     storedPod: StoredPod
     private startPromise: Promise<void> = null
+    private registeredServiceIds = []
     constructor(_storedPod: StoredPod) {
         this.storedPod = _storedPod
         this.startPromise = this.start()
@@ -115,6 +116,9 @@ export default class Pod {
                 const exposedPorts = contByname.Ports.filter(port => port.PublicPort)
                 for (let { PublicPort, PrivatePort } of exposedPorts) {
                     const serviceName = this.storedPod.parentName + '-' + contByname.Labels['org.containeros.container.name'] + '-' + PrivatePort
+
+                    this.registeredServiceIds.push(cont.Id)
+
                     await database.consulLib.registerService({
                         id: cont.Id,
                         name: serviceName,
@@ -132,7 +136,7 @@ export default class Pod {
         })
     }
     private stopStarted = false
-    public async stop() {
+    public async stop(force = false) {
         if (this.stopStarted) return
         this.stopStarted = true
         logger.info("Stopping pod", this.storedPod.name)
@@ -140,7 +144,13 @@ export default class Pod {
         await Promise.all(
             this.storedPod.containers.map(async cont => {
                 const conf = createDockerodeConfig(this.storedPod, cont)
-                await removeContainerHelper(conf.name)
+                await removeContainerHelper(conf.name, force ? 0 : 30)
+            })
+        )
+
+        await Promise.all(
+            this.registeredServiceIds.map(id => {
+                return database.consulLib.deregisterService(id)
             })
         )
 
@@ -149,5 +159,6 @@ export default class Pod {
             reason: "RemovedOk",
             message: ""
         })
+
     }
 }

@@ -31,6 +31,10 @@ class ConsulStore {
         this.leaderChangedCallbacks.map(cb => cb(newLeader, isLeader))
     }
 
+    public async deregisterService(id) {
+        // @ts-ignore
+        await consul.agent.service.deregister(id)
+    }
 
     public async registerService(service: {
         id: string,
