@@ -13,8 +13,8 @@ const randomNumber = 12347//Math.floor(Math.random() * 100000)
 const POD_NAME = `pod-${randomNumber}`
 
 async function cleanUp() {
-    await dockerUtils.removeContainerHelper(POD_NAME + '-other-container', 0)
-    await dockerUtils.removeContainerHelper(POD_NAME + '-some-container', 0)
+    await dockerUtils.removeContainerHelper(POD_NAME + '-mycont', 0)
+    await dockerUtils.removeContainerHelper(POD_NAME + '-2' + '-mycont', 0)
     await database.podStatus.dropAll()
     await database.services.deregisterAllServices()
 }
@@ -42,7 +42,7 @@ describe('Pod runner integration test', function () {
             parentName: 'fake-deployment-123',
             containers: [
                 {
-                    name: "other-container",
+                    name: "mycont",
                     image: "tutum/hello-world",
                     httpPorts: { 80: 'test2.localhost' },
                     memLimit: 100000000,
@@ -54,7 +54,7 @@ describe('Pod runner integration test', function () {
         await pod.awaitForStart()
         services = await database.services.getList()
         expect(Object.keys(services).length).to.equal(1)
-        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-other-container-80`)
+        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-mycont-80`)
     })
 
     it('removes consul service on pod removal', async () => {
@@ -66,7 +66,7 @@ describe('Pod runner integration test', function () {
             parentName: 'fake-deployment-123',
             containers: [
                 {
-                    name: "other-container",
+                    name: "mycont",
                     image: "tutum/hello-world",
                     httpPorts: { 80: 'test2.localhost' },
                     memLimit: 100000000,
@@ -78,10 +78,50 @@ describe('Pod runner integration test', function () {
         await pod.awaitForStart()
         services = await database.services.getList()
         expect(Object.keys(services).length).to.equal(1)
-        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-other-container-80`)
+        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-mycont-80`)
 
         await pod.stop(true)
         services = await database.services.getList()
         expect(Object.keys(services).length).to.equal(0)
+    })
+
+    it.only('registers 2 containers with the same service name', async () => {
+        let services = await database.services.getList()
+        expect(Object.keys(services).length).to.equal(0)
+
+        const pod1 = new Pod({
+            name: "fake-server/" + POD_NAME,
+            parentName: 'fake-deployment-123',
+            containers: [
+                {
+                    name: "mycont",
+                    image: "tutum/hello-world",
+                    httpPorts: { 80: 'test2.localhost' },
+                    memLimit: 100000000,
+                    cpus: 150000,
+                    env: []
+                }],
+        })
+        const pod2 = new Pod({
+            name: "fake-server/" + POD_NAME + '-2',
+            parentName: 'fake-deployment-123',
+            containers: [
+                {
+                    name: "mycont",
+                    image: "tutum/hello-world",
+                    httpPorts: { 80: 'test2.localhost' },
+                    memLimit: 100000000,
+                    cpus: 150000,
+                    env: []
+                }],
+        })
+
+        await pod1.awaitForStart()
+        await pod2.awaitForStart()
+
+        services = await database.services.getList()
+        expect(Object.keys(services).length).to.equal(2)
+        expect(Object.values(services)[0].Service).to.equal(`fake-deployment-123-mycont-80`)
+        expect(Object.values(services)[1].Service).to.equal(`fake-deployment-123-mycont-80`)
     })
 })
