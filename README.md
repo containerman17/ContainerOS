@@ -58,7 +58,7 @@ docker logs -f containeros
 ## Release notes
 
 
-### v0.1.1
+### v0.1.2
 - Register services with consul
 - Pod runner is now faster
 
