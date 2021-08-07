@@ -1,6 +1,7 @@
 VERSION=`cat ../VERSION`
 
 test_cont: build_cont
+#	npm test
 	cd ../e2e-tests && npm install && npm test
 	
 release: test_cont

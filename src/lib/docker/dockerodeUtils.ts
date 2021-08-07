@@ -36,18 +36,31 @@ export async function getContainerByName(name: string): Promise<Dockerode.Contai
 }
 
 export async function removeContainerHelper(containerId: string, timeout = 30) {
-    try {
-        const container = dockerode.getContainer(containerId)
+    const container = dockerode.getContainer(containerId)
 
-        if (timeout > 0) {
+    if (timeout > 0) {
+        try {
             const inspected = await container.inspect()
             if (inspected.State.Running) {
                 await container.stop({ t: timeout })
             }
+        } catch (e) {
+            if (
+                e.reason === "container already stopped"
+                || e.reason === "no such container") {
+                //do nothing
+            } else {
+                throw e
+            }
         }
+
+    }
+    try {
         await container.remove({ force: true })
     } catch (e) {
-        if (e.reason === "container already stopped" || e.reason === "no such container") {
+        if (
+            e.reason === "no such container"
+            || (e?.json?.message.endsWith('is already in progress'))) {
             return//all good
         }
         throw e

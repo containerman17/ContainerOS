@@ -4,6 +4,7 @@ import { getContainerByName, isImagePulledSuccessfully, removeContainerHelper } 
 import dockerode from "../../lib/docker/dockerode"
 import createDockerodeConfig from "./funcs/createDockerodeConfig";
 import database from "../../lib/database"
+import Dockerode from "dockerode";
 
 export default class Pod {
     storedPod: StoredPod
@@ -55,7 +56,7 @@ export default class Pod {
 
         //create containers
 
-        let createdContainers = []
+        let createdContainers: Dockerode.ContainerInfo[] = []
         try {
             createdContainers = await Promise.all(
                 this.storedPod.containers.map(async cont => {
@@ -85,6 +86,7 @@ export default class Pod {
             await Promise.all(
                 createdContainers.map(async cont => {
                     if (cont.State !== 'running') {
+                        logger.info('starting container', cont.Names[0].slice(1))
                         const containerToStart = dockerode.getContainer(cont.Id);
 
                         await containerToStart.start()
@@ -100,14 +102,6 @@ export default class Pod {
             })
             return;
         }
-
-        createdContainers.map(async cont => {
-            if (cont.State !== 'running') {
-                const containerToStart = dockerode.getContainer(cont.Id);
-
-                await containerToStart.start()
-            }
-        })
 
         createdContainers.map(async cont => {
             cont

@@ -34,7 +34,13 @@ describe('Pod runner failures', () => {
             }
         })
 
-        sinon.stub(dockerUtils, "getContainerByName").callsFake(name => createdContainers.has(name))
+        sinon.stub(dockerUtils, "getContainerByName").callsFake(name => {
+            if (createdContainers.has(name)) {
+                return { Names: ['/something'] }
+            } else {
+                return null
+            }
+        })
 
         sinon.stub(dockerode, "createContainer").callsFake(function fakeFn(config) {
             if (config.name === "pod-123-failed-creating") {
@@ -151,7 +157,7 @@ describe('Pod runner failures', () => {
 
         const podStatus = database.podStatus.get("fake-server/pod-123")
 
-        expect(podStatus.history[0].status).to.equal('Running')
+        expect(podStatus.history[0].status).to.equal('Running', JSON.stringify(podStatus.history[0]))
         expect(podStatus.history[0].reason).to.equal("Started")
 
         expect(podStatus.history[1].status).to.equal('Pending')

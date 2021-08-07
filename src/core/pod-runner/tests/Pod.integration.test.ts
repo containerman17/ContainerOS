@@ -85,7 +85,7 @@ describe('Pod runner integration test', function () {
         expect(Object.keys(services).length).to.equal(0)
     })
 
-    it.only('registers 2 containers with the same service name', async () => {
+    it('registers 2 containers with the same service name', async () => {
         let services = await database.services.getList()
         expect(Object.keys(services).length).to.equal(0)
 

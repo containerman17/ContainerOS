@@ -3,7 +3,7 @@ import { expect } from "chai"
 import delay from "delay"
 import axios from "axios"
 
-describe.only('Microservice logic', () => {
+describe('Microservice logic', () => {
     before(async () => {
         await stopConsul()
         await reStartContainerOS()
@@ -127,8 +127,8 @@ describe.only('Microservice logic', () => {
 
         for (let i = 0; i < 20; i++) {
             const containers = await getRunningContainers()
-            const nginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 0
-            if (nginxFound) break
+            const scaleComplete = containers.filter(name => name.startsWith('nginx-test')).length === 0
+            if (scaleComplete) break
             await delay(1000)
         }
 
@@ -139,10 +139,10 @@ describe.only('Microservice logic', () => {
         body = { ...body, scale: 5 }
         await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             const containers = await getRunningContainers()
-            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 5
-            if (secondNginxFound) break
+            const scaleComplete = containers.filter(name => name.startsWith('nginx-test')).length === 5
+            if (scaleComplete) break
             await delay(1000)
         }
 
@@ -150,18 +150,18 @@ describe.only('Microservice logic', () => {
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(5)
 
         //scale down microservice
-        body = { ...body, scale: 0 }
+        body = { ...body, scale: 3 }
         await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 20; i++) {
             const containers = await getRunningContainers()
-            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 0
+            const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 3
             if (secondNginxFound) break
             await delay(1000)
         }
 
         containers = await getRunningContainers()
-        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(0)
+        expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(3)
 
         //up and down again
         body = { ...body, scale: 5 }
@@ -169,12 +169,15 @@ describe.only('Microservice logic', () => {
         body = { ...body, scale: 2 }
         await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
 
+        // for (let i = 0; i < 3; i++) {
+        //     await delay(1000)
         for (let i = 0; i < 10; i++) {
             const containers = await getRunningContainers()
             const secondNginxFound = containers.filter(name => name.startsWith('nginx-test')).length === 2
             if (secondNginxFound) break
             await delay(1000)
         }
+        // }
 
         containers = await getRunningContainers()
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(2)

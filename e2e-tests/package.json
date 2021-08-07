@@ -5,7 +5,7 @@
     "main": "microservice.test.js",
     "type": "module",
     "scripts": {
-        "test": "mocha 'tests/*.test.js' --timeout 20000"
+        "test": "mocha 'tests/*.test.js' --timeout 60000"
     },
     "keywords": [],
     "author": "",

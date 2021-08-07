@@ -6,7 +6,8 @@
         "test": "mocha",
         "test:unit": "npm run test:interation -- --invert",
         "test:integration": "mocha --grep integration",
-        "build": "tsc"
+        "build": "tsc",
+        "dev": "ts-node index.ts"
     },
     "author": "",
     "license": "ISC",

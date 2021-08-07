@@ -28,7 +28,7 @@ curl -sSL https://get.docker.com/ | sh
 
 Run ContainerOS:
 ```bash
-docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.1 
+docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.2 
 ```
 
 Start your first container:
@@ -57,6 +57,11 @@ docker logs -f containeros
 
 ## Release notes
 
+
+### v0.1.1
+- Register services with consul
+- Pod runner is now faster
+
 ### v0.1.1
 - Optimized pod-runner for frequent changes
 
@@ -71,7 +76,7 @@ docker logs -f containeros
 ## Roadmap
 
 ### August 2021: 
-- Register exposed ports with Consul
+- ~~Register exposed ports with Consul~~
 - ClusterDaemons
 - Ingress with automatic SSL
 - Multi-node deployments
