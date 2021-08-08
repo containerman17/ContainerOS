@@ -109,7 +109,8 @@ export default class Pod {
                 const contByname = await getContainerByName(cont.Names[0].slice(1))
                 const exposedPorts = contByname.Ports.filter(port => port.PublicPort)
                 for (let { PublicPort, PrivatePort } of exposedPorts) {
-                    const serviceName = this.storedPod.parentName + '-' + contByname.Labels['org.containeros.container.name'] + '-' + PrivatePort
+                    const containerNameInPod = contByname.Labels['org.containeros.container.name']
+                    const serviceName = this.storedPod.containers.find(c => c.name === containerNameInPod).services[PrivatePort]
 
                     this.registeredServiceIds.push(cont.Id)
 

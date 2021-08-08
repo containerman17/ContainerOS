@@ -1,7 +1,7 @@
 import Dockerode from "dockerode";
-import { StoredContainer, StoredPod } from "../../../types";
+import { PodContainer, StoredContainer, StoredPod } from "../../../types";
 
-export default function (pod: StoredPod, container: StoredContainer): Dockerode.ContainerCreateOptions {
+export default function (pod: StoredPod, container: PodContainer): Dockerode.ContainerCreateOptions {
     const ExposedPorts = {}
     const PortBindings = {}
     const Labels = {
@@ -9,7 +9,7 @@ export default function (pod: StoredPod, container: StoredContainer): Dockerode.
         "org.containeros.container.name": container.name,
     }
 
-    for (let portNumber of Object.keys(container.httpPorts)) {
+    for (let portNumber of Object.keys(container.services)) {
         ExposedPorts[`${portNumber}/tcp`] = {}
         PortBindings[`${portNumber}/tcp`] = [{}]
     }

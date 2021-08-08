@@ -70,14 +70,14 @@ describe('Pod runner failures', () => {
             containers: [{
                 name: "some-container",
                 image: "should:fail",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
             }, {
                 name: "other-container",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
@@ -106,14 +106,14 @@ describe('Pod runner failures', () => {
             containers: [{
                 name: "failed-creating",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
             }, {
                 name: "fail-starting",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
@@ -140,14 +140,14 @@ describe('Pod runner failures', () => {
             containers: [{
                 name: "good-one",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
             }, {
                 name: "another-good-one",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
@@ -176,14 +176,14 @@ describe('Pod runner failures', () => {
             containers: [{
                 name: "some-container",
                 image: "should:fail",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
             }, {
                 name: "other-container",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
@@ -202,14 +202,14 @@ describe('Pod runner failures', () => {
             containers: [{
                 name: "some-container",
                 image: "should:fail",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []
             }, {
                 name: "other-container",
                 image: "should:pass",
-                httpPorts: {},
+                services: {},
                 memLimit: 10000,
                 cpus: 10000,
                 env: []

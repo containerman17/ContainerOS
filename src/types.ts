@@ -41,7 +41,18 @@ export interface StoredMicroservice {
 export interface StoredPod {
     name: string,
     parentName: string,
-    containers: StoredContainer[]
+    containers: PodContainer[]
+}
+
+export interface PodContainer {
+    name: string,
+    image: string,
+    services: {
+        [key: number]: string;
+    },
+    memLimit: number,
+    cpus: number,
+    env: string[],
 }
 
 export interface StoredContainer {

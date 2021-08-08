@@ -31,7 +31,7 @@ describe('Pod runner integration', function () {
             containers: [{
                 name: "some-container",
                 image: "tutum/hello-world",
-                httpPorts: { 80: 'test2.localhost' },
+                services: {},
                 memLimit: 100000000,
                 cpus: 150000,
                 env: []

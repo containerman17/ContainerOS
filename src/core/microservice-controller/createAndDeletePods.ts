@@ -26,13 +26,16 @@ export default async function (microserviceList: keyable<StoredMicroservice>) {
 
         for (let containerName in microservice.currentConfig.containers) {
             const container = microservice.currentConfig.containers[containerName]
+
+            const services = {}//TODO put service names
+
             newPod.containers.push({
                 name: containerName,
                 image: container.image,
                 memLimit: container.memLimit,
                 cpus: container.cpus,
                 env: container.env,
-                httpPorts: container.httpPorts,
+                services: services,
             })
         }
 
