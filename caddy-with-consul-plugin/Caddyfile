@@ -9,4 +9,16 @@
     }
 
     cert_issuer zerossl
+
+    supervisor {
+        node worker.js {
+            dir /app/worker
+            
+            env APP_ENV production
+                        
+            restart_policy always 
+                        
+            replicas 1
+        }
+    }
 }
