@@ -7,11 +7,11 @@ const body: MicroserviceUpdate = {
     "scale": 1,
     "containers": {
         "reg": {
-            "image": "quay.io/bitnami/nginx:latest",
+            "image": "tutum/hello-world",
             "httpPorts": { "80": "reg.rd.dev.containeros.org" }
         },
         "nginx": {
-            "image": "quay.io/bitnami/nginx",
+            "image": "tutum/hello-world",
             "cpus": 2, "httpPorts": { "80": "nginx2.rd.dev.containeros.org" }
         }
     }

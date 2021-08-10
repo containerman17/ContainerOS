@@ -38,7 +38,7 @@ export interface StoredMicroservice {
     currentPodNames: string[]
 }
 
-export interface StoredIngress {
+export interface StoredRoute {
     name: string,
     service: string,
     domain: string,

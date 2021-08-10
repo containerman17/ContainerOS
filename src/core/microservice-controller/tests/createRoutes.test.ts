@@ -4,7 +4,7 @@ import sinon from "sinon"
 import database from "../../../lib/database"
 import microserviceController from '../microserviceController'
 
-describe('Ingress controller', () => {
+describe('Route controller', () => {
     before(async () => {
         await setUpNode()
         sinon.replace(database.nodeHealth, "getLeastBusyServerName", sinon.fake.returns(Promise.resolve('fake-server')))
@@ -12,12 +12,12 @@ describe('Ingress controller', () => {
 
     beforeEach(async () => {
         await database.microservice.dropAll()
-        await database.ingress.dropAll()
+        await database.routes.dropAll()
 
-        await database.ingress.ready()
+        await database.routes.ready()
         await database.microservice.ready()
 
-        expect(Object.values(await database.ingress.getAll())).to.have.length(0, 'ingress reset failed')
+        expect(Object.values(await database.routes.getAll())).to.have.length(0, 'route reset failed')
         expect(Object.values(await database.microservice.getAll())).to.have.length(0, 'microservice reset failed')
     })
 
@@ -25,14 +25,14 @@ describe('Ingress controller', () => {
     after(async () => {
         sinon.restore()
         await database.microservice.dropAll()
-        await database.ingress.dropAll()
+        await database.routes.dropAll()
     })
 
     afterEach(() => {
         microserviceController.stop()
     })
 
-    it('creates an ingress for every port of every container of every microservice', async () => {
+    it('creates an route for every port of every container of every microservice', async () => {
         await database.microservice.update('test-ms', {
             currentConfig: {
                 name: 'test-ms',
@@ -54,27 +54,27 @@ describe('Ingress controller', () => {
         })
         await microserviceController.start()
 
-        const ingressList = await database.ingress.getAll()
-        expect(Object.values(ingressList).length).to.equal(2)
+        const routeList = await database.routes.getAll()
+        expect(Object.values(routeList).length).to.equal(2)
 
-        for (let [ingressName, ingressValue] of Object.entries(ingressList)) {
-            expect(ingressName).to.equal(ingressValue.service)
+        for (let [routeName, routeValue] of Object.entries(routeList)) {
+            expect(routeName).to.equal(routeValue.service)
 
-            if (ingressName.startsWith('test-ms-test-cont-80-')) {
-                expect(ingressValue.domain).to.equal('eighty.test')
-            } else if (ingressName.startsWith('test-ms-test-cont-8080-')) {
-                expect(ingressValue.domain).to.equal('eightyeighty.test')
+            if (routeName.startsWith('test-ms-test-cont-80-')) {
+                expect(routeValue.domain).to.equal('eighty.test')
+            } else if (routeName.startsWith('test-ms-test-cont-8080-')) {
+                expect(routeValue.domain).to.equal('eightyeighty.test')
             } else {
-                expect(true).to.be.false('Unexpected ingress name')
+                expect(true).to.be.false('Unexpected route name')
             }
         }
     })
 
-    it('kills ingress for microservice scale=0', async () => {
-        let ingressList
+    it('kills route for microservice scale=0', async () => {
+        let routeList
 
-        ingressList = await database.ingress.getAll()
-        expect(Object.values(ingressList).length).to.equal(0, 'on init')
+        routeList = await database.routes.getAll()
+        expect(Object.values(routeList).length).to.equal(0, 'on init')
 
         await database.microservice.update('test-ms', {
             currentConfig: {
@@ -97,8 +97,8 @@ describe('Ingress controller', () => {
         })
         await microserviceController.start()
 
-        ingressList = await database.ingress.getAll()
-        expect(Object.values(ingressList).length).to.equal(0, 'after update')
+        routeList = await database.routes.getAll()
+        expect(Object.values(routeList).length).to.equal(0, 'after update')
     })
     it('avoids naming conflict', async () => {
         await database.microservice.update('test-ms', {
@@ -139,7 +139,7 @@ describe('Ingress controller', () => {
         })
         await microserviceController.start()
 
-        const ingressList = await database.ingress.getAll()
-        expect(Object.values(ingressList).length).to.equal(2)
+        const routeList = await database.routes.getAll()
+        expect(Object.values(routeList).length).to.equal(2)
     })
 })

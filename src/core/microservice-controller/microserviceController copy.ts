@@ -3,7 +3,7 @@ import PuppetPromise from "../../lib/utils/createPuppetPromise"
 import { StoredMicroservice, keyable } from "../../types"
 import assignPods from "./assignPods"
 import createAndDeletePods from "./createAndDeletePods"
-import createIngress from "./createIngress"
+import createRoute from "./createRoute"
 
 //todo: refactor this weird mix of class instance and global variables
 let startCompletePuppet: PuppetPromise<any>
@@ -15,7 +15,7 @@ class MicroserviceController {
     public async start() {
         startCompletePuppet = new PuppetPromise()
         await database.pod.ready()
-        await database.ingress.ready()
+        await database.routes.ready()
         database.consulLib.onLeaderChanged((leader, isMe) => {
             if (isMe) {
                 this.subscribe()
@@ -31,7 +31,7 @@ class MicroserviceController {
     private async onMicroservicesChanged(microservices: keyable<StoredMicroservice>) {
         await assignPods(microservices)
         await createAndDeletePods(microservices)
-        await createIngress(microservices)
+        await createRoute(microservices)
         startCompletePuppet.resolve()
     }
 

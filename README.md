@@ -28,7 +28,7 @@ curl -sSL https://get.docker.com/ | sh
 
 Run ContainerOS:
 ```bash
-docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.2 
+docker run -d --name containeros --net=host -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/containeros:v0.1.3
 ```
 
 Start your first container:
@@ -56,6 +56,11 @@ docker logs -f containeros
 ```
 
 ## Release notes
+
+### v0.1.3
+- Ingresses introduced
+- Auto-generating ingresses for microservices
+- Single naming system for service names
 
 
 ### v0.1.2

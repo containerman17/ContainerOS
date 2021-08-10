@@ -4,8 +4,8 @@ import pod from "./pod"
 import consulLib from "./consulLib"
 import podStatus from "./podStatus"
 import services from "./services"
-import ingress from "./ingress"
+import routes from "./routes"
 
 export default {
-    microservice, nodeHealth, pod, consulLib, podStatus, services, ingress
+    microservice, nodeHealth, pod, consulLib, podStatus, services, routes
 }

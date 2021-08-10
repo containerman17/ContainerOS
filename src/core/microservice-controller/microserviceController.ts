@@ -2,7 +2,7 @@ import database from "../../lib/database"
 import { StoredMicroservice, keyable } from "../../types"
 import assignPods from "./assignPods"
 import createAndDeletePods from "./createAndDeletePods"
-import createIngress from "./createIngress"
+import createRoutes from "./createRoutes"
 import PuppetPromise from "../../lib/utils/createPuppetPromise"
 import logger from "../../lib/logger"
 
@@ -10,7 +10,7 @@ const onMicroservicesChanged = async function (microservices: keyable<StoredMicr
     try {
         await assignPods(microservices)
         await createAndDeletePods(microservices)
-        await createIngress(microservices)
+        await createRoutes(microservices)
 
         puppetPromise.resolve()
     } catch (e) {
@@ -24,12 +24,11 @@ let subscribed = false
 let puppetPromise = new PuppetPromise()
 
 const start = async function () {
-    puppetPromise.reject('it was never started')
     puppetPromise = new PuppetPromise()
 
     await database.pod.ready()
     await database.microservice.ready()
-    await database.ingress.ready()
+    await database.routes.ready()
     database.consulLib.onLeaderChanged(function (leader, isMe) {
         if (isMe) {
             subscribe()
