@@ -58,8 +58,8 @@ docker logs -f containeros
 ## Release notes
 
 ### v0.1.3
-- Ingresses introduced
-- Auto-generating ingresses for microservices
+- Routes introduced (a.k.a Kuberetes Ingress)
+- Auto-generating routes for microservices
 - Single naming system for service names
 
 

@@ -13,7 +13,7 @@
         "dev": "ts-node index.ts"
     },
     "author": "",
-    "license": "ISC",
+    "license": "GNU GPL v3.0",
     "dependencies": {
         "axios": "^0.21.1",
         "consul": "^0.40.0",
