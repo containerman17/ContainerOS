@@ -38,6 +38,12 @@ export interface StoredMicroservice {
     currentPodNames: string[]
 }
 
+export interface StoredIngress {
+    name: string,
+    service: string,
+    domain: string,
+}
+
 export interface StoredPod {
     name: string,
     parentName: string,

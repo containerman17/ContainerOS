@@ -25,12 +25,13 @@ export default async function safePatch(key: string, patch: (oldValue: any) => a
             if (typeof beforeModification.ModifyIndex !== "undefined") {
                 setParam.cas = String(beforeModification.ModifyIndex)
             }
+            // console.log('cas', setParam.cas, 'val=' + value)
 
             const setResult = await consul.kv.set(setParam)
             if (setResult === true) {
                 return
             }
-            await delay(Math.round(Math.random() * 20) + i * 10) // i*10 + 10 on avg
+            await delay(Math.round(Math.random() * 10) + i * 10) // i*10 + 5 on avg
         } catch (e) {
             if (e?.statusCode === 429) {
                 await delay(Math.round(Math.random() * 1000)) // 500 ms on average

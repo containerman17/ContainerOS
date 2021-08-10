@@ -12,9 +12,10 @@ describe('pod assignment on real database', () => {
     })
 
     beforeEach(async () => {
-        await microserviceController.start()
         await database.microservice.dropAll()
         await database.pod.dropAll()
+        microserviceController.stop()
+        await microserviceController.start()
     })
 
     afterEach(async () => {

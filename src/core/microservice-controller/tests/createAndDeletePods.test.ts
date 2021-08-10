@@ -33,7 +33,7 @@ describe('creating pods on real database', () => {
         await database.microservice.update('test-ms', {
             currentConfig: {
                 name: 'test-ms',
-                scale: 3,
+                scale: 1,
                 containers: {
                     'test-cont': {
                         httpPorts: {},

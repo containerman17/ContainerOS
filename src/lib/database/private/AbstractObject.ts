@@ -42,13 +42,13 @@ export default class AbstractObject<Type> {
     }
     public getAll(): keyable<Type> {
         if (this.collection === null) {
-            throw new Error(`You have to call method "await ${this.prefix}.ready()" first`)
+            throw new Error(`You have to call method "await database.${this.prefix}.ready()" first`)
         }
         return this.collection
     }
     public get(name: string): Type {
         if (this.collection === null) {
-            throw new Error(`You have to call method "await ${this.prefix}.ready()" first`)
+            throw new Error(`You have to call method "await database.${this.prefix}.ready()" first`)
         }
         return this.collection[name] || null
     }
