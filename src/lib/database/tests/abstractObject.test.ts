@@ -80,7 +80,7 @@ describe('AbstractObject', () => {
             currentPodNames: []
         })
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 4; i++) {
             await database.microservice.safePatch('test-ms', function (oldValue: StoredMicroservice): StoredMicroservice {
                 oldValue.currentConfig.scale = i
                 return oldValue
@@ -101,12 +101,12 @@ describe('AbstractObject', () => {
         })
 
         await Promise.all(
-            Array.from(Array(7)).map(() => database.microservice.safePatch('safe-patch-concurrent', function (oldValue: StoredMicroservice): StoredMicroservice {
+            Array.from(Array(4)).map(() => database.microservice.safePatch('safe-patch-concurrent', function (oldValue: StoredMicroservice): StoredMicroservice {
                 oldValue.currentConfig.scale++
                 return oldValue
             }))
         )
         const updated = database.microservice.get('safe-patch-concurrent')
-        expect(updated.currentConfig.scale).to.equal(7)
+        expect(updated.currentConfig.scale).to.equal(4)
     })
 })

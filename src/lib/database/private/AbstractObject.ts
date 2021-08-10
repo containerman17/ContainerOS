@@ -74,12 +74,14 @@ export default class AbstractObject<Type> {
 
     }
     public async waitForVersion(lastVersion = null): Promise<void> {
+
         return new Promise((resolve) => {
             if (lastVersion === null) lastVersion = this.dataVersion
 
             const cb = (newList: keyable<Type>) => {
-                if (this.dataVersion >= this.dataVersion) {
+                if (this.dataVersion >= lastVersion) {
                     this.removeListChangedCallback(cb)
+                    // console.log('resolved with ', this.dataVersion)
                     resolve()
                 }
             }
