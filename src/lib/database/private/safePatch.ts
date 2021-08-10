@@ -25,7 +25,6 @@ export default async function safePatch(key: string, patch: (oldValue: any) => a
             if (typeof beforeModification.ModifyIndex !== "undefined") {
                 setParam.cas = String(beforeModification.ModifyIndex)
             }
-            // console.log('cas', setParam.cas, 'val=' + value)
 
             const setResult = await consul.kv.set(setParam)
             if (setResult === true) {

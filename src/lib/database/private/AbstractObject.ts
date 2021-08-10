@@ -81,7 +81,6 @@ export default class AbstractObject<Type> {
             const cb = (newList: keyable<Type>) => {
                 if (this.dataVersion >= lastVersion) {
                     this.removeListChangedCallback(cb)
-                    // console.log('resolved with ', this.dataVersion)
                     resolve()
                 }
             }

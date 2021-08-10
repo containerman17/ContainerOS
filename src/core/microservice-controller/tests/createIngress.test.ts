@@ -14,6 +14,9 @@ describe('Ingress controller', () => {
         await database.microservice.dropAll()
         await database.ingress.dropAll()
 
+        await database.ingress.ready()
+        await database.microservice.ready()
+
         expect(Object.values(await database.ingress.getAll())).to.have.length(0, 'ingress reset failed')
         expect(Object.values(await database.microservice.getAll())).to.have.length(0, 'microservice reset failed')
     })
