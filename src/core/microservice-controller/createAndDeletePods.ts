@@ -1,5 +1,6 @@
 import { keyable, StoredMicroservice, StoredPod } from "../../types";
 import database from "../../lib/database"
+import generateServiceName from "./generateServiceName";
 
 export default async function (microserviceList: keyable<StoredMicroservice>) {
     const pods: keyable<StoredPod> = database.pod.getAll()
@@ -28,6 +29,9 @@ export default async function (microserviceList: keyable<StoredMicroservice>) {
             const container = microservice.currentConfig.containers[containerName]
 
             const services = {}//TODO put service names
+            for (let port in container.httpPorts) {
+                services[port] = generateServiceName(microservice.currentConfig.name, containerName, Number(port))
+            }
 
             newPod.containers.push({
                 name: containerName,

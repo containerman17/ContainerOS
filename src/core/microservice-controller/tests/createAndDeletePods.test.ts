@@ -12,18 +12,19 @@ describe('creating pods on real database', () => {
     })
 
     beforeEach(async () => {
-        await microserviceController.start()
         await database.microservice.dropAll()
         await database.pod.dropAll()
+        await database.ingress.dropAll()
     })
 
     afterEach(async () => {
-        await database.microservice.dropAll()
-        await database.pod.dropAll()
         microserviceController.stop();
     })
 
     after(async () => {
+        await database.microservice.dropAll()
+        await database.pod.dropAll()
+        await database.ingress.dropAll()
         sinon.restore();
     })
 
@@ -36,7 +37,10 @@ describe('creating pods on real database', () => {
                 scale: 1,
                 containers: {
                     'test-cont': {
-                        httpPorts: {},
+                        httpPorts: {
+                            80: 'eighty.com',
+                            8080: 'eightyeighty.com',
+                        },
                         memLimit: 1000000,
                         cpus: 100000,
                         env: [],
@@ -47,24 +51,30 @@ describe('creating pods on real database', () => {
             currentPodNames: []
         })
 
-        await new Promise((resolve, reject) => {
-            const podsListener = function (pods: keyable<StoredPod>) {
-                const mservice = database.microservice.get('test-ms')
-                let podName = mservice.currentPodNames[0]
-                if (podName && pods[podName]) {
-                    expect(pods[podName].parentName).to.be.equal('microservice/test-ms')
-                    expect(pods[podName].containers.length).to.be.equal(1)
-                    database.pod.removeListChangedCallback(podsListener)
-                    resolve(undefined)
-                }
-            }
-            database.pod.addListChangedCallback(podsListener)
+        await microserviceController.start()
+        //TODO: pod is not always created here
+
+        const podName = database.microservice.get('test-ms').currentPodNames[0]
+        const pod: StoredPod = database.pod.getAll()[podName]
+
+        const ingress80 = Object.values(database.ingress.getAll()).find(ingress => ingress.domain === 'eighty.com')
+        const ingress8080 = Object.values(database.ingress.getAll()).find(ingress => ingress.domain === 'eightyeighty.com')
+
+        //todo: check for ingress name
+        expect(pod.parentName).to.be.equal('microservice/test-ms')
+        expect(pod.containers.length).to.be.equal(1)
+
+        expect(pod.containers[0].services).to.be.deep.equal({
+            80: ingress80.service,
+            8080: ingress8080.service,
         })
     })
 
     it('deletes unnecessary pods on downscale', async () => {
         let allPods = database.pod.getAll()
         expect(Object.keys(allPods)).to.have.length(0)
+
+        microserviceController.start()
 
         //create 3 pods
         await database.microservice.update('test-ms', {
@@ -110,6 +120,8 @@ describe('creating pods on real database', () => {
     it('deletes pods on deployment delete', async () => {
         let allPods = database.pod.getAll()
         expect(Object.keys(allPods)).to.have.length(0)
+
+        microserviceController.start()
 
         //create 3 pods
         await database.microservice.update('test-ms', {
