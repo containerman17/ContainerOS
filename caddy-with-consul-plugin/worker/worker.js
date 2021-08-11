@@ -1,1 +1,0 @@
-setInterval(() => console.log('From worker: ' + new Date), 1000)
