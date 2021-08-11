@@ -3,11 +3,11 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "test": "mocha",
-        "test:watch": "mocha --watch",
+        "test": "mocha --exit",
+        "test:watch": "npm run test --watch --exit",
         "test:unit": "npm run test:integration -- --invert",
         "test:unit:watch": "npm run test:unit -- --watch",
-        "test:integration": "mocha --grep integration",
+        "test:integration": "npm run test -- --grep integration",
         "test:integration:watch": "npm run test:integration -- --watch",
         "build": "tsc",
         "dev": "ts-node index.ts"
@@ -17,6 +17,7 @@
     "dependencies": {
         "axios": "^0.21.1",
         "consul": "^0.40.0",
+        "containeros-sdk": "file:../sdk/containeros-sdk-0.1.2.tgz",
         "cors": "^2.8.5",
         "deep-equal": "^2.0.5",
         "delay": "^5.0.0",
@@ -33,10 +34,8 @@
     "devDependencies": {
         "@types/chai": "^4.2.21",
         "@types/chai-as-promised": "^7.1.4",
-        "@types/chai-http": "^4.2.0",
         "@types/consul": "^0.23.35",
         "@types/cors": "^2.8.12",
-        "@types/delay": "^3.1.0",
         "@types/dockerode": "^3.2.6",
         "@types/mocha": "^9.0.0",
         "@types/node": "^16.4.1",

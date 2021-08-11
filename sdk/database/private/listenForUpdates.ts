@@ -1,7 +1,6 @@
 import consul from "./consul"
-import { keyable } from "../../../types"
+import { keyable } from "../../types"
 import { truncate } from "fs";
-import logger from "../../logger"
 const watches = {}
 const lastStates: keyable<any> = {}
 const lastVersions: keyable<number> = {}
@@ -17,7 +16,7 @@ export default function (key: string, callback: (result: keyable<any>, version: 
         });
 
         watches[key].on('error', function (err) {
-            logger.error(`watch error on key ${key}:`, err);
+            console.error(`watch error on key ${key}:`, err);
             process.exit(1)
         });
     }
@@ -41,4 +40,11 @@ export default function (key: string, callback: (result: keyable<any>, version: 
         lastVersions[key] = res.headers['x-consul-index']
         callback(lastStates[key], lastVersions[key])
     });
+
+    return {
+        stop() {
+            watches[key].end()
+            delete watches[key]
+        }
+    }
 }

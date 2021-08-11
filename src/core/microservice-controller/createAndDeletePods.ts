@@ -1,5 +1,5 @@
-import { keyable, StoredMicroservice, StoredPod } from "../../types";
-import database from "../../lib/database"
+import { keyable, StoredMicroservice, StoredPod } from "containeros-sdk";
+import { database } from "containeros-sdk"
 import generateServiceName from "./generateServiceName";
 
 export default async function (microserviceList: keyable<StoredMicroservice>) {

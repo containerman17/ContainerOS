@@ -1,10 +1,11 @@
 import Pod from "../Pod"
 import setUpNode from "../../set-up-node/setUpNode"
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import sinon from "sinon"
 import * as dockerUtils from "../../../lib/docker/dockerodeUtils"
 import dockerode from "../../../lib/docker/dockerode"
-import { StoredPodStatus, keyable } from "../../../types"
+import { StoredPodStatus, keyable } from "containeros-sdk"
+
 import { expect } from "chai"
 import { after } from "mocha"
 import delay from "delay"

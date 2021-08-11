@@ -1,5 +1,4 @@
-import database from '../../lib/database'
-import { keyable, StoredRoute } from '../../types'
+import { database, keyable, StoredRoute } from 'containeros-sdk'
 
 type CaddyConfig = any//TOOD: define type
 

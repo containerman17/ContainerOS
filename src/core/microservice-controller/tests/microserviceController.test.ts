@@ -1,6 +1,6 @@
 import { expect } from "chai"
 import sinon from "sinon"
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import microserviceController from "../microserviceController"
 
 describe('Microservice controller', () => {

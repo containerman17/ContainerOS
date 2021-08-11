@@ -1,4 +1,4 @@
-import { MicroserviceUpdate } from "../../types";
+import { MicroserviceUpdate } from "containeros-sdk";
 import config from "../../config";
 const axios = require('axios');
 

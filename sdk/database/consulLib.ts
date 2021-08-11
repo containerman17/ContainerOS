@@ -4,7 +4,7 @@ import Consul from "consul"
 type LeaderChangedCallback = (leadername: string, isMe: boolean) => void
 
 
-class ConsulStore {
+export class ConsulStore {
     private leaderChangedCallbacks: LeaderChangedCallback[] = []
     private started = false
 

@@ -1,10 +1,10 @@
-import { MicroserviceUpdate, StoredMicroservice, keyable } from "../../types"
+import { MicroserviceUpdate, StoredMicroservice, keyable } from "../types"
 import safePatch from "./private/safePatch"
 import deepEqual from "deep-equal"
 import AbstractObject from "./private/AbstractObject"
 
 
-class Microservice extends AbstractObject<StoredMicroservice> {
+export class Microservice extends AbstractObject<StoredMicroservice> {
     constructor() {
         super('microservices')
     }

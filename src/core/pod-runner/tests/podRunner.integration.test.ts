@@ -1,5 +1,6 @@
-import database from "../../../lib/database"
-import { StoredPod } from "../../../types";
+import { database } from "containeros-sdk"
+import { StoredPod } from "containeros-sdk"
+    ;
 import podRunner from "../podRunner"
 import { getRunningContainersNames, removeContainerHelper } from "../../../lib/docker/dockerodeUtils"
 import { expect } from "chai"

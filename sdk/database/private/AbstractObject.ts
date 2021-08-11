@@ -1,11 +1,8 @@
-import { MicroserviceUpdate, StoredMicroservice, keyable } from "../../../types"
+import { MicroserviceUpdate, StoredMicroservice, keyable } from "../../types"
 import safePatch from "./safePatch"
 import listenForUpdates from "./listenForUpdates"
 import consul from "./consul"
 import delay from "delay"
-import config from "../../../config"
-import deepequal from "deep-equal"
-import { object } from "superstruct"
 
 export default class AbstractObject<Type> {
     private listeningStarted = false
@@ -13,6 +10,7 @@ export default class AbstractObject<Type> {
     private collection = null
     private dataVersion = 0
     protected readonly prefix
+    private consulListener: ({ stop: () => void }) = null
 
     constructor(prefix: string) {
         this.prefix = prefix
@@ -21,7 +19,7 @@ export default class AbstractObject<Type> {
         if (this.listeningStarted) return
         this.listeningStarted = true
 
-        listenForUpdates(this.prefix, (newData: keyable<Type>, version: number) => {
+        this.consulListener = listenForUpdates(this.prefix, (newData: keyable<Type>, version: number) => {
             this.dataVersion = Number(version)
 
             this.collection = newData

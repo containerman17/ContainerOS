@@ -1,5 +1,5 @@
 import express from 'express';
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import { assert, create } from 'superstruct'
 import { MicroserviceUpdate, ScaleCheck } from "../validators"
 

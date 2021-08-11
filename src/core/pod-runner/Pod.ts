@@ -1,9 +1,9 @@
-import { StoredPod, StoredPodStatus } from "../../types";
+import { StoredPod, StoredPodStatus } from "containeros-sdk";
 import logger from "../../lib/logger"
 import { getContainerByName, isImagePulledSuccessfully, removeContainerHelper } from "../../lib/docker/dockerodeUtils"
 import dockerode from "../../lib/docker/dockerode"
 import createDockerodeConfig from "./funcs/createDockerodeConfig";
-import database from "../../lib/database"
+import { database } from "containeros-sdk"
 import Dockerode from "dockerode";
 
 export default class Pod {

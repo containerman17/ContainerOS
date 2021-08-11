@@ -1,9 +1,12 @@
 import { expect } from "chai"
-import { StoredMicroservice } from "../../../types"
+import { StoredMicroservice } from "../../types"
 import database from "../index"
 
 describe('AbstractObject', () => {
     beforeEach(async () => {
+        await database.microservice.dropAll()
+    })
+    after(async () => {
         await database.microservice.dropAll()
     })
 

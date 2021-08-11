@@ -1,6 +1,6 @@
 import delay from "delay"
 import Consul from "consul";
-import { ConsulItemResponse } from "../../../types";
+import { ConsulItemResponse } from "../../types";
 import consul from "./consul"
 
 

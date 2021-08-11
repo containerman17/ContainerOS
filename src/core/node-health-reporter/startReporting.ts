@@ -1,5 +1,5 @@
-import database from "../../lib/database"
-import { NodeHealth } from "../../types"
+import { database } from "containeros-sdk"
+import { NodeHealth } from "containeros-sdk"
 import config from "../../config"
 import getSmoothedCpuUtlization from "./getSmoothedCpuUtilization"
 

@@ -1,7 +1,7 @@
 import { expect } from "chai"
 import setUpNode from "../../set-up-node/setUpNode"
 import sinon from "sinon"
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import microserviceController from '../microserviceController'
 
 describe('Route controller', () => {

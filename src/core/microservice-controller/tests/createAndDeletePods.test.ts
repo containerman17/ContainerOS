@@ -1,8 +1,9 @@
 import setUpNode from "../../set-up-node/setUpNode"
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import microserviceController from '../microserviceController'
 import sinon from "sinon"
-import { StoredPod, keyable } from "../../../types"
+import { StoredPod, keyable } from "containeros-sdk"
+
 import { expect } from "chai"
 
 describe('creating pods on real database', () => {

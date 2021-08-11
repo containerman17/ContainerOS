@@ -1,5 +1,6 @@
 import Dockerode from "dockerode";
-import { PodContainer, StoredContainer, StoredPod } from "../../../types";
+import { PodContainer, StoredContainer, StoredPod } from "containeros-sdk"
+    ;
 
 export default function (pod: StoredPod, container: PodContainer): Dockerode.ContainerCreateOptions {
     const ExposedPorts = {}

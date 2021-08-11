@@ -1,0 +1,27 @@
+{
+    "name": "containeros-sdk",
+    "version": "0.1.2",
+    "description": "ContainerOS sdk for operators",
+    "scripts": {
+        "test": "mocha --exit",
+        "build": "npm i && npm run prepublish && npm pack && ls *.tgz",
+        "prepublish": "tsc"
+    },
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "author": "Ilia Solokhin",
+    "license": "GPL-3.0-or-later",
+    "devDependencies": {
+        "@types/consul": "^0.23.35",
+        "@types/mocha": "^9.0.0",
+        "chai": "^4.3.4",
+        "mocha": "^9.0.3",
+        "sinon": "^11.1.2",
+        "ts-node": "^10.2.0"
+    },
+    "dependencies": {
+        "consul": "^0.40.0",
+        "deep-equal": "^2.0.5",
+        "delay": "^5.0.0"
+    }
+}

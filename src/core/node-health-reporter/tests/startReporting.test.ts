@@ -3,11 +3,11 @@ import chai, { expect } from 'chai';
 // import chaiHttp from 'chai-http';
 // import api from '../api';
 import config from "../../../config"
-// import database from "../../../lib/database"
+// import {database} from "containeros-sdk"
 // // import { ImportMock } from 'ts-mock-imports';
 import sinon from "sinon"
 import startReporing from "../startReporting"
-import database from "../../../lib/database"
+import { database } from "containeros-sdk"
 import delay from "delay"
 import { nextTick } from 'process';
 // // Configure chai

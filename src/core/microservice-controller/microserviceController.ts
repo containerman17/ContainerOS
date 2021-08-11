@@ -1,5 +1,5 @@
-import database from "../../lib/database"
-import { StoredMicroservice, keyable } from "../../types"
+import { database } from "containeros-sdk"
+import { StoredMicroservice, keyable } from "containeros-sdk"
 import assignPods from "./assignPods"
 import createAndDeletePods from "./createAndDeletePods"
 import createRoutes from "./createRoutes"

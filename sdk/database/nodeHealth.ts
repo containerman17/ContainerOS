@@ -1,6 +1,6 @@
-import { NodeHealth, keyable } from "../../types";
+import { NodeHealth, keyable } from "../types";
 import AbstractObject from "./private/AbstractObject";
-import config from "../../config"
+import config from "../config"
 import RateLimit from "../utils/RateLimit"
 
 const rateLimit = new RateLimit(config.get("SCHEDULING_CONCURRENCY"), config.get("NODE_HEALTH_INTERVAL"))
@@ -20,7 +20,7 @@ const isAlive = (nodeHealth: NodeHealth): boolean => {
     return healthReportDelay < (config.get('NODE_HEALTH_INTERVAL') * 3)
 }
 
-class NodeHealthController extends AbstractObject<NodeHealth> {
+export class NodeHealthController extends AbstractObject<NodeHealth> {
     constructor() {
         super('nodeHealth')
     }

@@ -1,8 +1,8 @@
 import consul from "./private/consul"
 import Consul from "consul"
-import { keyable } from "../../types"
+import { keyable } from "../types"
 
-class ServiceStore {
+export class ServiceStore {
     public async getList() {
         const servicesInConsul = await consul.agent.service.list()
         return servicesInConsul

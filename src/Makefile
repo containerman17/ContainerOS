@@ -1,7 +1,8 @@
 VERSION=`cat ../VERSION`
 
 test_cont: build_cont
-#	npm test
+	# cd ../sdk && npm test
+	# npm test
 	cd ../e2e-tests && npm install && npm test
 	
 release: test_cont
@@ -9,4 +10,4 @@ release: test_cont
 	docker push quay.io/containeros/containeros:$(VERSION)
 
 build_cont:
-	docker build -t quay.io/containeros/containeros:$(VERSION) .
+	docker build -f ./Dockerfile -t quay.io/containeros/containeros:$(VERSION) ../

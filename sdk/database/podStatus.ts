@@ -1,7 +1,7 @@
-import { StoredPodStatus, keyable, StoredPodStatusElement } from "../../types"
+import { StoredPodStatus, keyable, StoredPodStatusElement } from "../types"
 import AbstractObject from "./private/AbstractObject"
 
-class PodStatusStore extends AbstractObject<StoredPodStatus> {
+export class PodStatusStore extends AbstractObject<StoredPodStatus> {
     constructor() {
         super('podStatus')
     }

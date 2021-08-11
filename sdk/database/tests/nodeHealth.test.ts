@@ -1,11 +1,11 @@
 import nodeHealth from "../nodeHealth"
 import sinon from "sinon"
-import config from "../../../config"
+import config from "../../config"
 import chai from "chai"
-import chaiAsPromised from "chai-as-promised"
-import { NodeHealth, keyable } from "../../../types";
+// import chaiAsPromised from "chai-as-promised"
+import { NodeHealth, keyable } from "../../types";
 const { expect } = chai;
-chai.use(chaiAsPromised);
+// chai.use(chaiAsPromised);
 
 
 describe('NodeHealth test', () => {

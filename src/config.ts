@@ -1,5 +1,5 @@
 import delay from "delay"
-import { keyable } from "./types"
+import { keyable } from "containeros-sdk"
 import crypto from "crypto"
 import os from "os"
 
@@ -13,9 +13,6 @@ const config: keyable<any> = {
     CONSUL_IMAGE: 'quay.io/containeros/consul:1.10.1',
     NODE_NAME: os.hostname(),
     NODE_HEALTH_INTERVAL: 5 * 1000,
-    CPU_OVERBOOKING_RATE: 3,
-    MEMORY_OVERBOOKING_RATE: 3,
-    SCHEDULING_CONCURRENCY: 5
 }
 
 set("CONSUL_ENCRYPTION_KEY", genConsulKey(get("API_PASSWORD")))
