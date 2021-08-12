@@ -1,4 +1,4 @@
-import consul from "./private/consul"
+import consul from "../../../sdk/database/private/consul"
 import Consul from "consul"
 
 type LeaderChangedCallback = (leadername: string, isMe: boolean) => void
@@ -46,12 +46,12 @@ export class ConsulStore {
         await consul.agent.service.register({
             id: service.id,
             name: service.name,
-            port: service.port,
+            port: service.port,//service.port
             tags: service.tags,
 
             check: {
-                tcp: `host.docker.internal:${service.port}`,
-                interval: '3s',//TODO: change to 15 seconds
+                tcp: `168.119.182.4:${service.port}`,//${service.port}
+                interval: '8s',//TODO: change to 15 seconds
                 timeout: "3s"
             }
         })

@@ -61,6 +61,7 @@ docker logs -f containeros
 - Routes introduced (a.k.a Kuberetes Ingress)
 - Auto-generating routes for microservices
 - Single naming system for service names
+- SDK introduced. Now side apps can manage ContainerOS internal objects
 
 
 ### v0.1.2

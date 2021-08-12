@@ -10,7 +10,7 @@
         "test:integration": "npm run test -- --grep integration",
         "test:integration:watch": "npm run test:integration -- --watch",
         "build": "tsc",
-        "dev": "ts-node index.ts"
+        "dev": "nodemon --exec ts-node index.ts"
     },
     "author": "",
     "license": "GNU GPL v3.0",

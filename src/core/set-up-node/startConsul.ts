@@ -43,17 +43,17 @@ export default async function () {
             Env: ["CONSUL_BIND_INTERFACE=eth0"]
         }
 
+        conf.HostConfig.NetworkMode = "host"
         if (IS_PROD) {
-            conf.HostConfig.NetworkMode = "host"
             conf.HostConfig.Binds.push(`${consulDataFolder}:/data`)
         } else {
-            conf.HostConfig.PortBindings = {
-                "8500/tcp": [
-                    {
-                        "HostPort": "8500"
-                    }
-                ]
-            }
+            // conf.HostConfig.PortBindings = {
+            //     "8500/tcp": [
+            //         {
+            //             "HostPort": "8500"
+            //         }
+            //     ]
+            // }
         }
 
         await dockerode.createContainer(conf)

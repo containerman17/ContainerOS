@@ -12,7 +12,7 @@ COPY ./src/package*.json ./
 COPY ./sdk /sdk
 RUN cd /sdk && npm run build && cd /app
 
-RUN ls -lth /sdk && npm install
+RUN npm install
 
 COPY ./src .
 
@@ -23,8 +23,7 @@ FROM node:16-alpine
 
 WORKDIR /app
 COPY ./src/package*.json ./
-COPY ./sdk/*.tgz /sdk/
-
+COPY --from=typescript-builder /sdk/*.tgz /sdk/
 
 
 RUN npm install

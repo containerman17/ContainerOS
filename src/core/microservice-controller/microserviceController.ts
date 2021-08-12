@@ -5,6 +5,7 @@ import createAndDeletePods from "./createAndDeletePods"
 import createRoutes from "./createRoutes"
 import PuppetPromise from "../../lib/utils/createPuppetPromise"
 import logger from "../../lib/logger"
+import consulLib from "../../lib/consul/consulLib"
 
 const onMicroservicesChanged = async function (microservices: keyable<StoredMicroservice>) {
     try {
@@ -29,7 +30,7 @@ const start = async function () {
     await database.pod.ready()
     await database.microservice.ready()
     await database.routes.ready()
-    database.consulLib.onLeaderChanged(function (leader, isMe) {
+    consulLib.onLeaderChanged(function (leader, isMe) {
         if (isMe) {
             subscribe()
         } else {

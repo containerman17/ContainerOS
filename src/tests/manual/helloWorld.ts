@@ -6,13 +6,13 @@ const body: MicroserviceUpdate = {
     "name": "test",
     "scale": 1,
     "containers": {
-        "reg": {
+        "test1": {
             "image": "tutum/hello-world",
-            "httpPorts": { "80": "reg.rd.dev.containeros.org" }
+            "httpPorts": { "80": "test1.rd.dev.containeros.org" }
         },
-        "nginx": {
+        "test2": {
             "image": "tutum/hello-world",
-            "cpus": 2, "httpPorts": { "80": "nginx2.rd.dev.containeros.org" }
+            "cpus": 2, "httpPorts": { "80": "test2.rd.dev.containeros.org" }
         }
     }
 }

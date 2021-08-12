@@ -5,6 +5,8 @@ import dockerode from "../../lib/docker/dockerode"
 import createDockerodeConfig from "./funcs/createDockerodeConfig";
 import { database } from "containeros-sdk"
 import Dockerode from "dockerode";
+import consulLib from "../../lib/consul/consulLib"
+
 
 export default class Pod {
     storedPod: StoredPod
@@ -114,7 +116,7 @@ export default class Pod {
 
                     this.registeredServiceIds.push(cont.Id)
 
-                    await database.consulLib.registerService({
+                    await consulLib.registerService({
                         id: cont.Id,
                         name: serviceName,
                         port: PublicPort,
@@ -145,7 +147,7 @@ export default class Pod {
 
         await Promise.all(
             this.registeredServiceIds.map(id => {
-                return database.consulLib.deregisterService(id)
+                return consulLib.deregisterService(id)
             })
         )
 

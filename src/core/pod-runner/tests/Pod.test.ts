@@ -60,6 +60,7 @@ describe('Pod runner failures', () => {
     after(async () => {
         sinon.restore()
         await database.podStatus.dropAll()
+        await database.pod.dropAll()
     })
 
     it('reports failed pulls', async () => {
