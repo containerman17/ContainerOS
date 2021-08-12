@@ -83,13 +83,13 @@ docker logs -f containeros
 
 ### August 2021: 
 - ~~Register exposed ports with Consul~~
-- ClusterDaemons
 - Ingress with automatic SSL
 - Multi-node deployments
 - Docker registry with external S3
 - Production build
 
 ### Later:
+- ClusterDaemons
 - Affinity to database and anti-affinity in microservice deployments
 - Separate microservices into different projects with network isolation
 - Support for popular open-source databases (MySQL, Redis, MongoDB)
