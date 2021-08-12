@@ -1,18 +1,54 @@
 import { database, keyable, StoredRoute } from 'containeros-sdk'
 
-type CaddyConfig = any//TOOD: define type
+export type CaddySrvConfig = {
+    listen: string[]
+    routes: CaddyRoute[]
+}
+
+export type CaddyRoute = {
+    handle: {
+        handler: string,
+        routes: {
+            handle: {
+                handler: "reverse_proxy",
+                upstreams: {
+                    dial: string
+                }[]
+            }[]
+        }[]
+    }[],
+    match: { host: [string] }[],
+    terminal: boolean,
+}
 
 function ConfigGenerator() {
     const callbacks: ((CaddyConfig) => void)[] = []
 
     const regenerateConfig = function (routes: keyable<StoredRoute>) {
-        const config: CaddyConfig = {
-            routes: Object.keys(routes).map(key => {
-                const route = routes[key]
-                return route
+        const caddyConf: CaddySrvConfig = {
+            "listen": [":443"],
+            "routes": []
+        }
+
+        for (let route of Object.values(routes)) {
+            caddyConf.routes.push({
+                "handle": [{
+                    "handler": "subroute",
+                    "routes": [{
+                        "handle": [{
+                            "handler": "reverse_proxy",
+                            "upstreams": [
+                                { "dial": `srv+http://${route.service}.service.consul` }
+                            ]
+                        }]
+                    }]
+                }],
+                "match": [{ "host": [route.domain] }],
+                "terminal": true
             })
         }
-        callbacks.forEach(callback => callback(config))
+
+        callbacks.forEach(callback => callback(caddyConf))
     }
 
     return {

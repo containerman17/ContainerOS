@@ -13,6 +13,11 @@ export class ServiceStore {
             Object.keys(servicesInConsul).map(id => consul.agent.service.deregister(id))
         )
     }
+    public async getServiceEndpoints(serviceName: string) {
+        return (await consul.catalog.service.nodes(serviceName))
+            //@ts-ignore
+            .map(line => `${line.Address}:${line.ServicePort}`)
+    }
 }
 
 export default new ServiceStore();

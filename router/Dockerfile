@@ -1,5 +1,5 @@
 
-FROM caddy:builder-alpine AS builder
+FROM caddy:2.4.3-builder-alpine AS builder
 
 # Build caddy
 RUN xcaddy build \
@@ -18,7 +18,7 @@ COPY worker ./
 RUN tsc
 
 # Final container
-FROM caddy:alpine
+FROM caddy:2.4.3-alpine
 RUN apk add --update nodejs npm
 
 # Caddy settings

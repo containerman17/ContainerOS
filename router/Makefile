@@ -9,4 +9,4 @@ push:
 deploy: build push
 
 dev: build
-	docker run --net=host -it --rm  quay.io/containeros/router:$(VERSION)
+	docker run --net=host -it --rm quay.io/containeros/router:$(VERSION)

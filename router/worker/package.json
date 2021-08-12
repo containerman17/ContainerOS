@@ -9,6 +9,8 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@types/node": "^16.6.0",
+        "axios": "^0.21.1",
         "containeros-sdk": "^0.1.2"
     }
 }
