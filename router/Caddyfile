@@ -11,7 +11,7 @@
     cert_issuer zerossl
 
     supervisor {
-        node /nodejs-app/apps/caddy-configurator/configurator.js {
+        node /worker/worker.js {
             #dir /app/worker
             
             env APP_ENV production

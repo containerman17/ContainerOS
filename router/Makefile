@@ -1,7 +1,7 @@
 VERSION=v2
 
 build:
-	docker build -f ./Dockerfile -t quay.io/containeros/router:$(VERSION) ../
+	docker build -f ./Dockerfile -t quay.io/containeros/router:$(VERSION) ./
 
 push:
 	docker push quay.io/containeros/router:$(VERSION)
@@ -9,4 +9,4 @@ push:
 deploy: build push
 
 dev: build
-	docker run --net=host -it --rm -v $$(pwd)/worker:/app/worker  quay.io/containeros/router:$(VERSION)
+	docker run --net=host -it --rm  quay.io/containeros/router:$(VERSION)

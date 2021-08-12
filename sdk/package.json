@@ -1,11 +1,12 @@
 {
     "name": "containeros-sdk",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "description": "ContainerOS sdk for operators",
     "scripts": {
         "test": "mocha --exit",
         "build": "npm i && npm run prepublish && npm pack && ls *.tgz",
-        "prepublish": "tsc"
+        "prepublish": "tsc",
+        "release": "npm run build && npm publish"
     },
     "main": "dist/index.js",
     "types": "dist/index.d.ts",

@@ -1,27 +1,31 @@
-# Build
+
 FROM caddy:builder-alpine AS builder
 
+# Build caddy
 RUN xcaddy build \
     --with github.com/pteich/caddy-tlsconsul \
     --with github.com/baldinof/caddy-supervisor
 
+# Install nodejs
 RUN apk add --update nodejs npm \
     && npm i -g typescript
 
-WORKDIR /src
-COPY src/package*.json ./
+# npm i and build
+WORKDIR /worker
+COPY worker/package*.json ./
 RUN npm install
-COPY src ./
+COPY worker ./
 RUN tsc
-
 
 # Final container
 FROM caddy:alpine
 RUN apk add --update nodejs npm
 
-COPY ./router/Caddyfile /etc/caddy/Caddyfile
-COPY --from=builder /src/build /nodejs-app/
-COPY src/package*.json /nodejs-app/
-RUN cd /nodejs-app/ && npm ci --only=prod
-
+# Caddy settings
+COPY ./Caddyfile /etc/caddy/Caddyfile
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+# Worker
+COPY --from=builder /worker/build /worker/
+COPY worker/package*.json /worker/
+RUN cd /worker && npm ci --only=prod
