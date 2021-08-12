@@ -19,20 +19,18 @@ COPY ./src .
 RUN npm run build
 
 # main container
-# FROM node:16-alpine
+FROM node:16-alpine
 
-# WORKDIR /app
-# COPY ./src/package*.json ./
-# COPY ./sdk /sdk
+WORKDIR /app
+COPY ./src/package*.json ./
+COPY ./sdk/*.tgz /sdk/
 
-# # npm ci would be more compact
-# #RUN npm ci --only=production
 
-# RUN npm install
-# RUN npm install ../sdk
-# COPY --from=typescript-builder ./app/build .
 
-# EXPOSE 8000
+RUN npm install
+COPY --from=typescript-builder ./app/build .
 
-# CMD [ "node", "index.js" ]
+EXPOSE 8000
+
+CMD [ "node", "index.js" ]
 
