@@ -3,7 +3,7 @@ import { expect } from "chai"
 import delay from "delay"
 import axios from "axios"
 
-describe('Microservice logic', () => {
+describe('Microservice logic', function () {
     before(async () => {
         await stopConsul()
         await reStartContainerOS()
@@ -25,7 +25,7 @@ describe('Microservice logic', () => {
     })
 
     it('should expose an http server', async () => {
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 20; i++) {
             try {
                 let response = await axios.get('http://localhost:8000/')
                 if (response.status === 200) {
@@ -33,7 +33,7 @@ describe('Microservice logic', () => {
                 }
             } catch (e) {
             }
-            await delay(100)
+            await delay(1000)
         }
         expect(false).to.be.true
     })
