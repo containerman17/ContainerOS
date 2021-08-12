@@ -25,8 +25,8 @@ describe('Cluster api / update microservice', () => {
                     "name": "test",
                     "scale": 2,
                     "containers": {
-                        "reg": { "image": "quay.io/bitnami/nginx:latest", "httpPorts": { "5000": "reg.rd.dev.containeros.org" } },
-                        "nginx": { "image": "quay.io/bitnami/nginx", "cpus": 2, "httpPorts": { "80": "nginx2.rd.dev.containeros.org" } }
+                        "reg": { "image": "quay.io/bitnami/nginx:latest", "httpPorts": { "5000": "test1.com" } },
+                        "nginx": { "image": "quay.io/bitnami/nginx", "cpus": 2, "httpPorts": { "80": "test2.com" } }
                     }
                 })
         } catch (e) {

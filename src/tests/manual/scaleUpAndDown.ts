@@ -5,13 +5,21 @@ const axios = require('axios');
 
 const run = async function () {
 
+    const myIp = (
+        await axios.get('http://ifconfig.co', {
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+    ).data.ip
+
     const body: MicroserviceUpdate = {
         "name": "scaling-test",
         "scale": 1,
         "containers": {
             "main": {
-                "image": "quay.io/bitnami/nginx:latest",
-                "httpPorts": { "5000": "reg.rd.dev.containeros.org" }
+                "image": "tutum/hello-world",
+                "httpPorts": { "80": `scaling.${myIp}.nip.io` }
             },
         }
     }
