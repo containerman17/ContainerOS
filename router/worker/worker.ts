@@ -2,23 +2,33 @@ import configGenerator, { CaddyRoute, CaddySrvConfig } from "./configGenerator";
 import axios from "axios";
 import { database } from "containeros-sdk"
 import util from "util"
+import { printCaddyFile } from "./dbg"
+
+printCaddyFile()
+
+//everything happening here is so dirty and has to be done using srv
+
+let lastConfig = null
+async function hackReapplyConfig() {
+    if (lastConfig === null) return
+
+    const newConfig = await transformSRVHack(lastConfig)
+    await axios.post("http://localhost:2019/config/apps/http/", { "servers": { "srv0": newConfig } })
+    console.log('New config pushed to caddy', util.inspect(newConfig, false, null, true /* enable colors */))
+}
+
+setInterval(hackReapplyConfig, 5000)
 
 configGenerator.onConfigChanged(async config => {
     console.log("Config changed", config);
-
-    //start of srv hack - I don't know how to point Caddy to consul
-    const newConfig = await transformSRVHack(config)
-    //end of srv hack
-
-    await axios.post("http://localhost:2019/config/apps/http/", { "servers": { "srv0": newConfig } })
-    console.log('New config pushed to caddy', util.inspect(config, false, null, true /* enable colors */))
-
+    lastConfig = config
+    await hackReapplyConfig()
 })
 
 async function transformSRVHack(config: CaddySrvConfig) {
     const newCaddyConf = JSON.parse(JSON.stringify(config))//could be slow especially with 1000+ routes
     newCaddyConf.routes = await Promise.all(
-        config.routes.map(async route => await SRVHackSignleRoute(route))
+        newCaddyConf.routes.map(async route => await SRVHackSignleRoute(route))
     )
     return newCaddyConf
 }

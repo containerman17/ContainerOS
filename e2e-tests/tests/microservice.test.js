@@ -4,9 +4,18 @@ import delay from "delay"
 import axios from "axios"
 
 describe('Microservice logic', function () {
+    let myIp
     before(async () => {
         await stopConsul()
         await reStartContainerOS()
+
+        myIp = (
+            await axios.get('http://ifconfig.co', {
+                headers: {
+                    'accept': 'application/json'
+                }
+            })
+        ).data.ip
 
         //make sure containers from a failed run cleaned up
         for (let i = 0; i < 50; i++) {
@@ -20,11 +29,12 @@ describe('Microservice logic', function () {
     })
     after(async () => {
         console.log('Logs: ', await getContainerOsLogs())
+
         await stopConsul()
         await stopContainerOS()
     })
 
-    it('should expose an http server', async () => {
+    it.only('should expose an http server', async () => {
         for (let i = 0; i < 20; i++) {
             try {
                 let response = await axios.get('http://localhost:8000/')
@@ -46,8 +56,8 @@ describe('Microservice logic', function () {
             "scale": 1,
             "containers": {
                 "reg": {
-                    "image": "quay.io/bitnami/nginx:latest",
-                    "httpPorts": { "80": "hello.world" }
+                    "image": "tutum/hello-world",
+                    "httpPorts": { "80": `ms-e2e.${myIp}.nip.io` }
                 },
             }
         }
@@ -69,8 +79,8 @@ describe('Microservice logic', function () {
             "scale": 2,
             "containers": {
                 "reg": {
-                    "image": "quay.io/bitnami/nginx:latest",
-                    "httpPorts": { "80": "hello.world" }
+                    "image": "tutum/hello-world",
+                    "httpPorts": { "80": `ms-e2e.${myIp}.nip.io` }
                 },
             }
         }
@@ -92,8 +102,8 @@ describe('Microservice logic', function () {
             "scale": 0,
             "containers": {
                 "reg": {
-                    "image": "quay.io/bitnami/nginx:latest",
-                    "httpPorts": { "80": "hello.world" }
+                    "image": "tutum/hello-world",
+                    "httpPorts": { "80": `ms-e2e.${myIp}.nip.io` }
                 },
             }
         }
@@ -118,8 +128,8 @@ describe('Microservice logic', function () {
             "scale": 0,
             "containers": {
                 "reg": {
-                    "image": "quay.io/bitnami/nginx:latest",
-                    "httpPorts": { "80": "hello.world" }
+                    "image": "tutum/hello-world",
+                    "httpPorts": { "80": `ms-e2e.${myIp}.nip.io` }
                 },
             }
         }
@@ -181,5 +191,31 @@ describe('Microservice logic', function () {
 
         containers = await getRunningContainers()
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(2)
+    })
+
+    it.only('should respond on https requests', async function () {
+        let body = {
+            "name": "nginx-test",
+            "scale": 1,
+            "containers": {
+                "reg": {
+                    "image": "tutum/hello-world",
+                    "httpPorts": { "80": `ms-e2e.${myIp}.nip.io` }
+                },
+            }
+        }
+        await axios.post(`http://127.0.0.1:8000/v1/microservice?password=dev`, body)
+
+        let response
+        for (let i = 0; i < 240; i++) {
+            try {
+                response = await axios.get(`https://ms-e2e.${myIp}.nip.io`)
+                break
+            } catch (e) {
+            }
+            await delay(1000)
+        }
+        expect(response.status).to.equal(200)
+        expect(response.data).to.contain('nginx-test')
     })
 })

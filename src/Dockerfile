@@ -4,14 +4,6 @@ FROM node:16-alpine AS typescript-builder
 WORKDIR /app
 COPY ./src/package*.json ./
 
-# fresh sdk from tarball
-# RUN mkdir /sdk
-# COPY ./sdk/sdk.tgz /sdk/sdk.tgz
-# # TODO: DEBUG
-# RUN cd /sdk && npm update && cd /app
-COPY ./sdk /sdk
-RUN cd /sdk && npm run build && cd /app
-
 RUN npm install
 
 COPY ./src .
@@ -23,13 +15,13 @@ FROM node:16-alpine
 
 WORKDIR /app
 COPY ./src/package*.json ./
-COPY --from=typescript-builder /sdk/*.tgz /sdk/
-
-
-RUN npm install
+RUN npm ci --only=prod
 COPY --from=typescript-builder ./app/build .
 
 EXPOSE 8000
+
+ARG COS_VERSION
+ENV COS_VERSION $COS_VERSION
 
 CMD [ "node", "index.js" ]
 

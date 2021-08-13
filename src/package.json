@@ -18,7 +18,7 @@
     "dependencies": {
         "axios": "^0.21.1",
         "consul": "^0.40.0",
-        "containeros-sdk": "file:../sdk/containeros-sdk-0.1.2.tgz",
+        "containeros-sdk": "^0.1.4",
         "cors": "^2.8.5",
         "deep-equal": "^2.0.5",
         "delay": "^5.0.0",

@@ -1,5 +1,9 @@
-import consul from "../../../sdk/database/private/consul"
-import Consul from "consul"
+import Consul from "consul";
+
+const consul = new Consul({
+    promisify: true,
+    host: '127.0.0.1'
+})
 
 type LeaderChangedCallback = (leadername: string, isMe: boolean) => void
 

@@ -2,6 +2,9 @@ import delay from "delay"
 import { keyable } from "containeros-sdk"
 import crypto from "crypto"
 import os from "os"
+import fs from "fs"
+import path from "path"
+
 
 const sha256 = str => crypto.createHash('sha256').update(str).digest('base64');
 const genConsulKey = base => sha256(sha256(base) + base)
@@ -14,6 +17,9 @@ const config: keyable<any> = {
     NODE_NAME: os.hostname(),
     NODE_HEALTH_INTERVAL: 5 * 1000,
 }
+
+const routerVersion = process.env.COS_VERSION || fs.readFileSync(path.join(__dirname, "..", "VERSION"))
+set("ROUTER_IMAGE", `quay.io/containeros/router:${routerVersion}`)
 
 set("CONSUL_ENCRYPTION_KEY", genConsulKey(get("API_PASSWORD")))
 

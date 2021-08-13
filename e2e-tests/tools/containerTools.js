@@ -62,6 +62,7 @@ export async function reStartContainerOS() {
     const version = fs.readFileSync(path.join(fs.realpathSync('.'), '..', 'VERSION'))
     const imageName = `quay.io/containeros/containeros:${version}`
 
+    await stopContainer('cos-router')
     await stopContainer(TEST_CONTAINER_NAME)
 
     let container = await dockerode.createContainer({

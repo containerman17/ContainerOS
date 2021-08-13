@@ -9,6 +9,7 @@
     }
 
     cert_issuer zerossl
+    auto_https disable_redirects # doesn't work 
 
     supervisor {
         node /worker/worker.js {
