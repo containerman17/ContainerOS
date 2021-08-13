@@ -62,7 +62,7 @@ docker logs -f containeros
 - Auto-generating routes for microservices
 - Single naming system for service names
 - SDK introduced. Now side apps can manage ContainerOS internal objects
-
+- Ingress with SSL
 
 ### v0.1.2
 - Register services with consul
