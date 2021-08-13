@@ -3,10 +3,9 @@ VERSION=`cat ../VERSION`
 build_cont:
 	docker build -f ./Dockerfile -t quay.io/containeros/router:$(VERSION) ./
 
-push:
+release: build_cont
 	docker push quay.io/containeros/router:$(VERSION)
 
-deploy: build_cont push
 
 try-to-start-consul:
 	docker run -d --name=consul --net=host quay.io/containeros/consul:1.10.1 agent -dev	

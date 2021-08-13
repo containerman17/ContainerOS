@@ -11,6 +11,7 @@ e2e:  build_cont
 release: full_test
 	@echo "Release version: $${VERSION}" 
 	docker push quay.io/containeros/containeros:$(VERSION)
+	cd ../router && make release
 
 build_cont:
 	docker build -f ./Dockerfile --build-arg COS_VERSION=$(VERSION) -t quay.io/containeros/containeros:$(VERSION) ../

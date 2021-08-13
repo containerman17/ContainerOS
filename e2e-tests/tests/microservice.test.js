@@ -34,7 +34,7 @@ describe('Microservice logic', function () {
         await stopContainerOS()
     })
 
-    it.only('should expose an http server', async () => {
+    it('should expose an http server', async () => {
         for (let i = 0; i < 20; i++) {
             try {
                 let response = await axios.get('http://localhost:8000/')
@@ -193,7 +193,7 @@ describe('Microservice logic', function () {
         expect(containers.filter(name => name.startsWith('nginx-test'))).to.have.length(2)
     })
 
-    it.only('should respond on https requests', async function () {
+    it('should respond on https requests', async function () {
         let body = {
             "name": "nginx-test",
             "scale": 1,
