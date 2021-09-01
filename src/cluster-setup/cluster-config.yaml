@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  consul1:
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    image: consul:1.10.0
+    networks:
+      - containeros-system
+    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+
+  consul2:
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    image: consul:1.10.0
+    ports: 
+      - 8500:8500
+    networks:
+      - containeros-system
+    command: "agent -server -ui --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+
+  consul3:
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    image: consul:1.10.0
+    networks:
+      - containeros-system
+    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+
+networks:
+  containeros-system:
+
+volumes: 
+  consul-vol-1:
+    driver: local
