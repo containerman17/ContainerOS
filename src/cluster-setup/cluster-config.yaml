@@ -13,7 +13,23 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - caddy_data:/data
-    restart: unless-stopped
+
+  registry: 
+    image: registry:2
+    networks:
+      - containeros-system
+    <%#IS_DEV%>
+    ports:
+      - 5000:5000
+    <%/IS_DEV%>
+    environment:
+      REGISTRY_STORAGE_S3_ACCESSKEY: <%REGISTRY_STORAGE_S3_ACCESSKEY%>
+      REGISTRY_STORAGE_S3_SECRETKEY: <%REGISTRY_STORAGE_S3_SECRETKEY%>
+      REGISTRY_STORAGE_S3_BUCKET: <%REGISTRY_STORAGE_S3_BUCKET%>
+      REGISTRY_STORAGE_S3_REGIONENDPOINT: <%REGISTRY_STORAGE_S3_REGIONENDPOINT%>
+      REGISTRY_STORAGE_S3_REGION: <%REGISTRY_STORAGE_S3_REGION%>
+      REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
+      REGISTRY_STORAGE: s3
 
   consul1:
     environment:
@@ -27,8 +43,10 @@ services:
     environment:
       CONSUL_BIND_INTERFACE: eth0
     image: consul:1.10.0
-    ports: 
+    <%#IS_DEV%>
+    ports:
       - 8500:8500
+    <%/IS_DEV%>
     networks:
       - containeros-system
     command: "agent -server -ui --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
