@@ -31,7 +31,7 @@ function start(skipListening: boolean = false): express.Router {
             if (err.failures()[0]) {
                 message += `. Expected format: ${err.failures()[0].refinement}`
             }
-            err = new HttpError(message, HttpCodes.BadRequest)
+            err = new HttpError(HttpCodes.BadRequest, message)
         }
 
         if (err instanceof HttpError) {

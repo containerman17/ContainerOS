@@ -12,7 +12,7 @@ export enum HttpCodes {
 
 export class HttpError extends Error {
     statusCode: number
-    constructor(message: string, statusCode: HttpCodes) {
+    constructor(statusCode: HttpCodes, message: string) {
         super(message);
         this.statusCode = statusCode;
 

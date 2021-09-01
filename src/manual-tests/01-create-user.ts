@@ -7,7 +7,7 @@ const start = async function () {
         console.log(`Set token...`)
         let response
 
-        response = await axios.post(SERVER + '/v1/users/testovyivan@gmail.com/token', {
+        response = await axios.post(SERVER + '/v1/users/test@gmail.com/token', {
             tokenHash: sha256('123')
         })
         console.log('Successs')
@@ -15,7 +15,7 @@ const start = async function () {
 
         console.log(`Add to team...`)
 
-        response = await axios.post(SERVER + '/v1/users/testovyivan@gmail.com/teams/add', {
+        response = await axios.post(SERVER + '/v1/users/test@gmail.com/teams/add', {
             team: 'testns'
         })
         console.log('Successs')
