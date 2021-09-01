@@ -1,1 +1,2 @@
 docker stack deploy --prune -c cluster-config.yaml containeros-system
+docker stack rm containeros-system
