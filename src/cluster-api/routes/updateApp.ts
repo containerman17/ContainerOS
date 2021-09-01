@@ -1,9 +1,10 @@
 import express from 'express';
 import { assert, create } from 'superstruct'
 import { AppUpdate, ScaleCheck } from "../validators"
-import updateService from '../../lib/docker/updateService';
-import { DockerStack, updateStack as updateStackInDatabase } from "../../lib/database"
-
+import stackDeploy from '../../lib/docker/stackDeploy';
+import { DockerStack, updateStack as updateStackInDatabase, getStack } from "../../lib/database"
+import yaml from "js-yaml"
+import logger from '../../lib/logger';
 export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, AppUpdate)
     assert(validatedBody.scale, ScaleCheck)
@@ -19,6 +20,11 @@ export default async function (req: express.Request, res: express.Response) {
         }
         return stack
     })
+
+    const stack = await getStack(validatedBody.namespace)
+    logger.debug("Deployin stack", yaml.dump(stack))
+
+    await stackDeploy(yaml.dump(stack), validatedBody.namespace)
 
     return res.send({
         success: true,

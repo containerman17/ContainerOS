@@ -1,8 +1,9 @@
 import consulInstance from "./consul/consulInstance";
 import safePatch from "./consul/safepatch";
 
-export function getStack(stackName: string) {
-    const result = consulInstance.kv.get(`stacks/${stackName}`)
+export async function getStack(stackName: string): Promise<DockerStack> {
+    const result = await consulInstance.kv.get(`stacks/${stackName}`)
+    console.log('getStack result', result)
     return JSON.parse(result?.Value || JSON.stringify(getEmptyStack(stackName)))
 }
 
