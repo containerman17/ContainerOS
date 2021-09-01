@@ -12,7 +12,8 @@ function getEmptyStack(stackName: string): DockerStack {
         version: "3.7",
         services: {},
         networks: {
-            [stackName]: null
+            [stackName]: null,
+            caddy: { external: true }
         },
     }
 }
@@ -29,7 +30,7 @@ export interface DockerStack {
         [key: string]: DockerStackService;
     };
     networks: {
-        [key: string]: null
+        [key: string]: null | { external: boolean };
     };
 }
 
@@ -45,4 +46,7 @@ export interface DockerStackService {
     };
     command?: string;
     ports?: string[];
+    labels?: {
+        [key: string]: string;
+    }
 }

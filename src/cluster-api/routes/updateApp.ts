@@ -18,11 +18,24 @@ export default async function (req: express.Request, res: express.Response) {
                 }
             },
         }
+
+        const internetPort = validatedBody.internetPort || 80
+
+        if (validatedBody.internetDomain) {
+            stack.services[validatedBody.name].networks["caddy"] = {
+                aliases: [`${validatedBody.namespace}--${validatedBody.namespace}`]
+            }
+            stack.services[validatedBody.name].labels = {
+                "caddy": validatedBody.internetDomain,
+                "caddy.reverse_proxy": `{{upstreams ${internetPort}}}`,
+            }
+        }
+
         return stack
     })
 
     const stack = await getStack(validatedBody.namespace)
-    logger.debug("Deployin stack", yaml.dump(stack))
+    logger.debug("Deploing stack", yaml.dump(stack))
 
     await stackDeploy(yaml.dump(stack), validatedBody.namespace)
 

@@ -5,7 +5,9 @@ const SERVER = 'http://localhost:8080'
 const start = async function () {
     try {
         const response = await axios.post(SERVER + '/v1/app/testns/testapp', {
-            image: "tutum/hello-world"
+            image: "tutum/hello-world",
+            internetPort: 80,
+            internetDomain: "testservice.168.119.182.4.nip.io",
         })
         console.log('Successs')
         console.log(response.data)
