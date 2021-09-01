@@ -1,5 +1,8 @@
+import { DockerStack, StoredUser } from "../../types";
 import consulInstance from "./consul/consulInstance";
 import safePatch from "./consul/safepatch";
+import { uuid } from 'uuidv4';
+import { sha256 } from "../utils";
 
 export async function getStack(stackName: string): Promise<DockerStack> {
     const result = await consulInstance.kv.get(`stacks/${stackName}`)
@@ -23,30 +26,20 @@ export function updateStack(stackName: string, patch: (oldValue: DockerStack) =>
     return safePatch(`stacks/${stackName}`, patch, defaultString)
 }
 
-
-export interface DockerStack {
-    version: "3.9";
-    services: {
-        [key: string]: DockerStackService;
-    };
-    networks: {
-        [key: string]: null | { external: boolean };
-    };
+function getEmptyUser(name: string): StoredUser {
+    return {
+        tokenHash: sha256(uuid()),
+        name,
+        teams: [],
+    }
+}
+export function updateUser(name: string, patch: (oldValue: StoredUser) => StoredUser): Promise<void> {
+    const defaultString = JSON.stringify(getEmptyUser(name))
+    return safePatch(`users/${name}`, patch, defaultString)
 }
 
-export interface DockerStackService {
-    environment?: {
-        [key: string]: string;
-    };
-    image: string;
-    networks: {
-        [key: string]: {
-            aliases: string[];
-        }
-    };
-    command?: string;
-    ports?: string[];
-    labels?: {
-        [key: string]: string;
-    }
+export async function getUser(name: string): Promise<DockerStack> {
+    const result = await consulInstance.kv.get(`users/${name}`)
+    console.log('getUser result', result)
+    return JSON.parse(result?.Value || JSON.stringify(getEmptyUser(name)))
 }

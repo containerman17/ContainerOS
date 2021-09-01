@@ -3,11 +3,13 @@ import config from '../config';
 import middleware from "./middleware"
 import { HttpError, StructError, HttpCodes } from '../lib/http/Error';
 import logger from '../lib/logger';
-import { createProxyMiddleware } from "http-proxy-middleware"
+//typescript problem
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 app.get('/', (req, res) => res.send('ContainerOS cluster API server'));
 
+//@ts-ignore
 app.use('/v2', createProxyMiddleware({
     target: `http://${config.REGISTRY_HOST}:5000`,
     changeOrigin: true

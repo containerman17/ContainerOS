@@ -2,19 +2,20 @@ import express from 'express';
 import { assert, create } from 'superstruct'
 import { AppUpdate, ScaleCheck } from "../validators"
 import stackDeploy from '../../lib/docker/stackDeploy';
-import { DockerStack, updateStack as updateStackInDatabase, getStack } from "../../lib/database"
+import { updateStack as updateStackInDatabase, getStack } from "../../lib/database"
 import yaml from "js-yaml"
 import logger from '../../lib/logger';
+import { DockerStack } from '../../types';
 export default async function (req: express.Request, res: express.Response) {
     const validatedBody = create(req.body, AppUpdate)
     assert(validatedBody.scale, ScaleCheck)
 
-    await updateStackInDatabase(validatedBody.namespace, function (stack: DockerStack): DockerStack {
+    await updateStackInDatabase(validatedBody.team, function (stack: DockerStack): DockerStack {
         stack.services[validatedBody.name] = {
             image: validatedBody.image,
             networks: {
-                [validatedBody.namespace]: {
-                    aliases: [`${validatedBody.namespace}--${validatedBody.namespace}`]
+                [validatedBody.team]: {
+                    aliases: [`${validatedBody.team}--${validatedBody.team}`]
                 }
             },
         }
@@ -23,7 +24,7 @@ export default async function (req: express.Request, res: express.Response) {
 
         if (validatedBody.internetDomain) {
             stack.services[validatedBody.name].networks["caddy"] = {
-                aliases: [`${validatedBody.namespace}--${validatedBody.namespace}`]
+                aliases: [`${validatedBody.team}--${validatedBody.team}`]
             }
             stack.services[validatedBody.name].labels = {
                 "caddy": validatedBody.internetDomain,
@@ -34,13 +35,13 @@ export default async function (req: express.Request, res: express.Response) {
         return stack
     })
 
-    const stack = await getStack(validatedBody.namespace)
+    const stack = await getStack(validatedBody.team)
     logger.debug("Deploing stack", yaml.dump(stack))
 
-    await stackDeploy(yaml.dump(stack), validatedBody.namespace)
+    await stackDeploy(yaml.dump(stack), validatedBody.team)
 
     return res.send({
         success: true,
-        acceptedValues: validatedBody
+        debug: validatedBody
     })
 }
