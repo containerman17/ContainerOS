@@ -1,5 +1,9 @@
 {
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "http-proxy-middleware": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/http-proxy-middleware": "^1.0.0"
   }
 }

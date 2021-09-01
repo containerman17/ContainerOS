@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.9"
 
 services:
   caddy:
@@ -21,6 +21,7 @@ services:
     <%#IS_DEV%>
     ports:
       - 5000:5000
+      - 5001:5001
     <%/IS_DEV%>
     environment:
       REGISTRY_STORAGE_S3_ACCESSKEY: <%REGISTRY_STORAGE_S3_ACCESSKEY%>
@@ -30,6 +31,7 @@ services:
       REGISTRY_STORAGE_S3_REGION: <%REGISTRY_STORAGE_S3_REGION%>
       REGISTRY_HTTP_ADDR: "0.0.0.0:5000"
       REGISTRY_STORAGE: s3
+      REGISTRY_HTTP_DEBUG_ADDR: "0.0.0.0:5001"
 
   consul1:
     environment:

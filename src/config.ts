@@ -9,6 +9,7 @@ const config = {
     IS_DEV: undefined,
     IS_PROD: undefined,
     CONSUL_HOST: undefined,
+    REGISTRY_HOST: undefined,
     REGISTRY_STORAGE_S3_ACCESSKEY: process.env.REGISTRY_STORAGE_S3_ACCESSKEY,
     REGISTRY_STORAGE_S3_SECRETKEY: process.env.REGISTRY_STORAGE_S3_SECRETKEY,
     REGISTRY_STORAGE_S3_BUCKET: process.env.REGISTRY_STORAGE_S3_BUCKET,
@@ -34,6 +35,12 @@ if (config.IS_DEV) {
     config.CONSUL_HOST = 'localhost'
 } else {
     config.CONSUL_HOST = 'consul1'
+}
+
+if (config.IS_DEV) {
+    config.REGISTRY_HOST = 'localhost'
+} else {
+    config.REGISTRY_HOST = 'registry'
 }
 
 var proxy = new Proxy(

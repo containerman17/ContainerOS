@@ -9,7 +9,7 @@ export async function getStack(stackName: string): Promise<DockerStack> {
 
 function getEmptyStack(stackName: string): DockerStack {
     return {
-        version: "3.7",
+        version: "3.9",
         services: {},
         networks: {
             [stackName]: null,
@@ -25,7 +25,7 @@ export function updateStack(stackName: string, patch: (oldValue: DockerStack) =>
 
 
 export interface DockerStack {
-    version: "3.7";
+    version: "3.9";
     services: {
         [key: string]: DockerStackService;
     };
