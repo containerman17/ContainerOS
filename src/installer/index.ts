@@ -4,6 +4,7 @@ import path from "path";
 import mustache from "mustache";
 import config from "../config"
 import logger from "../lib/logger"
+import { resetRootPassword } from "../resetRootPassword"
 
 async function start() {
     //set up stack

@@ -20,6 +20,7 @@
         "delay": "^5.0.0",
         "dockerode": "^3.3.0",
         "dotenv": "^10.0.0",
+        "es-main": "^1.0.2",
         "execa": "^5.1.1",
         "express": "^4.17.1",
         "express-async-handler": "^1.1.4",
