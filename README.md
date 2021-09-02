@@ -14,13 +14,11 @@ The goal of the project is to provide as simple as possible interface for cluste
 - Manages users saving them in configs and secrets
 - Stateless except for log streaming
 
-### Management container
-
-- Creates a swarm or joins already existing one
+# Install container
 - Starts router, API server, and docker registry and addon controllers
-- Runs on a single controller node
-- Enables and disables nodes for scheduling (for real life load balancing)
-- Installs neccecary software
+
+### Node management container
+- Auth docker into registry
 
 ### Registry proxy
 
