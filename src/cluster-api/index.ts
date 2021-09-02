@@ -9,14 +9,14 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const app = express();
 app.get('/', (req, res) => res.send('ContainerOS cluster API server'));
 
+//middleware
+middleware.init(app);
+
 //@ts-ignore
 app.use('/v2', createProxyMiddleware({
     target: `http://${config.REGISTRY_HOST}:5000`,
     changeOrigin: true
 }));
-
-//middleware
-middleware.init(app);
 
 //routes
 import routes from "./routes"

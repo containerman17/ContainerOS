@@ -1,11 +1,11 @@
 import { assert, object, size, map, number, record, string, array, boolean, optional, defaulted, refine, create, pattern } from 'superstruct'
 import config from "../config"
 
-export const validName = pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/)
+export const validDNSName = pattern(string(), /^[a-z]{1}[a-z0-9-]{2,}$/)
 
 export const AppWithTeam = object({
-    name: validName,
-    team: validName,
+    name: validDNSName,
+    team: validDNSName,
 })
 
 export const AppUpdate = object({
@@ -15,18 +15,18 @@ export const AppUpdate = object({
     scale: defaulted(number(), () => 1),
     hardCpuLimit: defaulted(number(), () => 1),
     hardMemoryLimit: defaulted(number(), () => 2000),
-    name: validName,
-    team: validName,
+    name: validDNSName,
+    team: validDNSName,
 })
 
 export const UserTokenUpdate = object({
-    name: validName,
+    name: size(string(), 3, 99),
     tokenHash: size(string(), 64, 66),
 })
 
 export const UserTeamUpdate = object({
-    team: validName,
-    name: validName,
+    team: validDNSName,
+    name: size(string(), 3, 99),
 })
 
 export const ScaleCheck = refine(
@@ -35,7 +35,7 @@ export const ScaleCheck = refine(
     v => v >= 0 && v <= config.MAX_APP_SCALING
 )
 // export const namesArray = object({
-//     names: array(validName)
+//     names: array(validDNSName)
 // })
 
 // export const ContainerUpdate = object({
@@ -47,16 +47,16 @@ export const ScaleCheck = refine(
 // })
 
 // export const updateProject = object({
-//     name: validName,
+//     name: validDNSName,
 //     token: size(string(), 5, 34)
 // })
 
 // export const MicroserviceUpdate = object({
-//     name: validName,
+//     name: validDNSName,
 //     scale: defaulted(number(), () => 1),
-//     containers: record(validName, ContainerUpdate)
+//     containers: record(validDNSName, ContainerUpdate)
 // })
 
 // export const OnlyNameValidator = object({
-//     name: validName,
+//     name: validDNSName,
 // })
