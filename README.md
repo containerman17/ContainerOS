@@ -2,6 +2,20 @@
 
 The goal of the project is to provide as simple as possible interface for cluster deployments.
 
+## Instalation
+- Create swarm cluster
+```bash
+docker swarm init
+```
+- Create `caddy` swarm overlay network
+```bash
+docker network create -d overlay --attachable caddy
+```
+- Create secret `root` containing root token
+```bash
+printf "my super secret token" | docker secret create root_token -
+```
+
 ## Components
 
 ### Cluster API
