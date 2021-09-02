@@ -41,7 +41,6 @@ export function updateUser(name: string, patch: (oldValue: StoredUser) => Stored
 
 export async function getUser(name: string, returnEmptyByDefault = true): Promise<StoredUser> {
     const result = await consulInstance.kv.get(`users/${name}`)
-    console.log('getUser result', result)
     if (!result && !returnEmptyByDefault) {
         return null
     }

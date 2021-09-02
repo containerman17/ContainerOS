@@ -6,6 +6,7 @@ import config from "../config"
 import logger from "../lib/logger"
 
 async function start() {
+    //set up stack
     const templateYaml = fs.readFileSync(path.join(__dirname, "../..", "cluster-setup/cluster-config.yaml"), "utf8");
     const resultYaml = mustache.render(templateYaml, config, {}, ['<%', '%>'])
     logger.debug(resultYaml)
