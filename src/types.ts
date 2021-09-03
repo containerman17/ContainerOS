@@ -41,5 +41,17 @@ export interface DockerStackService {
     labels?: {
         [key: string]: string;
     }
-    deploy: { replicas: number };
+    deploy: {
+        replicas: number,
+        resources: {
+            limits: {
+                cpus: string,
+                memory: string
+            },
+            reservations: {
+                cpus: string,
+                memory: string
+            }
+        }
+    };
 }
