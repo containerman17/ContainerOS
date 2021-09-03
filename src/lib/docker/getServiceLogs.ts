@@ -3,7 +3,7 @@ import parseDockerBuffer from "./parseDockerBuffer";
 
 const docker = new Dockerode();
 
-export default async function getContainerLogs(serviceId: String, includeTs = false) {
+export default async function getServiceLogs(serviceId: String, includeTs = false) {
     // @ts-ignore: wrong ts typing
     const buffer: Buffer = await docker.getService(serviceId).logs({
         follow: false,

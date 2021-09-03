@@ -13,6 +13,9 @@ export default function parseDockerBuffer(buffer: Buffer, extractTimestamp: bool
 
     for (let i = 0; i < 50000; i++) {//TODO infinite loop protection
         info = theRest.slice(0, 8)
+        if (info.length < 8) {
+            break;//quick fix
+        }
         theRest = theRest.slice(8)
         contentSize = info.readUIntBE(4, 4)
 
