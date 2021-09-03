@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import fs from 'fs'
 dotenv.config()
 
 const config = {
@@ -15,6 +16,8 @@ const config = {
     REGISTRY_STORAGE_S3_BUCKET: process.env.REGISTRY_STORAGE_S3_BUCKET,
     REGISTRY_STORAGE_S3_REGIONENDPOINT: process.env.REGISTRY_STORAGE_S3_REGIONENDPOINT,
     REGISTRY_STORAGE_S3_REGION: process.env.REGISTRY_STORAGE_S3_REGION,
+    ROOT_TOKEN: undefined,
+    API_HOST: undefined
 }
 
 if (process.env.ENV === "production") {
@@ -38,9 +41,21 @@ if (config.IS_DEV) {
 }
 
 if (config.IS_DEV) {
+    config.ROOT_TOKEN = 'dev'
+} else {
+    config.ROOT_TOKEN = fs.readFileSync('/var/run/secrets/root_token', 'utf8')
+}
+
+if (config.IS_DEV) {
     config.REGISTRY_HOST = 'localhost'
 } else {
     config.REGISTRY_HOST = 'registry'
+}
+
+if (config.IS_DEV) {
+    config.API_HOST = 'localhost:8080'
+} else {
+    config.API_HOST = undefined//TODO
 }
 
 var proxy = new Proxy(

@@ -6,6 +6,7 @@ import { getUserCached } from "../lib/database";
 import { HttpCodes, HttpError } from "../lib/http/Error";
 import { sha256 } from "../lib/utils";
 import { StoredUser } from "../types";
+import config from "../config"
 
 export default {
     init(app: express.Application) {
@@ -29,13 +30,16 @@ export default {
                     login, password, user
                 })
 
+                if (login === 'root' && password === config.ROOT_TOKEN) {
+                    return next();
+                }
                 if (user === null) {
                     return next(new HttpError(HttpCodes.Unauthorized, `Unknown user "${login}"`))
                 }
                 if (sha256(password) !== user.tokenHash) {
                     return next(new HttpError(HttpCodes.Unauthorized, `Wrong password or token for user "${login}"`))
                 }
-                next();
+                return next();
             } catch (e) {
                 next(e)
             }

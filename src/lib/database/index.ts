@@ -13,7 +13,7 @@ export async function getStack(stackName: string): Promise<DockerStack> {
 
 function getEmptyStack(stackName: string): DockerStack {
     return {
-        version: "3.9",
+        version: "3.7",
         services: {},
         networks: {
             [stackName]: null,

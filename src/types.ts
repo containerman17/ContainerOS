@@ -17,7 +17,7 @@ export type StoredUser = {
 
 
 export interface DockerStack {
-    version: "3.9";
+    version: "3.7";
     services: {
         [key: string]: DockerStackService;
     };

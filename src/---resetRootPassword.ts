@@ -15,7 +15,7 @@ export async function resetRootPassword() {
 
 
 if (esMain) {
-    start().catch(e => {
+    resetRootPassword().catch(e => {
         console.error(e)
         process.exit(1)
     }).then(() => process.exit(0))

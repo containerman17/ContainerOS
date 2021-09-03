@@ -3,17 +3,21 @@
 The goal of the project is to provide as simple as possible interface for cluster deployments.
 
 ## Instalation
-- Create swarm cluster
+1. Create swarm cluster
 ```bash
 docker swarm init
 ```
-- Create `caddy` swarm overlay network
+2. Create `caddy` swarm overlay network
 ```bash
 docker network create -d overlay --attachable caddy
 ```
-- Create secret `root` containing root token
+3. Create secret `root` containing root token
 ```bash
 printf "my super secret token" | docker secret create root_token -
+```
+4. Run installer
+```
+docker run --rm quay.io/containeros/installer:latest --secret root_token -v "/var/run/docker.sock:/var/run/docker.sock"
 ```
 
 ## Components
