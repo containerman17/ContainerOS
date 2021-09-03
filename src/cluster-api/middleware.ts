@@ -17,6 +17,10 @@ export default {
         //docker registry auth
         app.use('/v2/', async (req, res, next) => {
             try {
+                if (new RegExp('^/.+/.+/blobs/uploads/.+-.+-?_state=.+$').test(req.url)) {
+                    return res.status(200).end()
+                }
+
                 if (!req.headers.authorization) {
                     res.set('WWW-Authenticate', `Basic realm="Dockerize"`)
                     return res.status(401).end()
@@ -27,7 +31,7 @@ export default {
 
                 console.log({
                     'req.headers.authorization': req.headers.authorization,
-                    login, password, user
+                    url: req.url, login, password, user
                 })
 
                 if (login === 'root' && password === config.ROOT_TOKEN) {
@@ -38,6 +42,14 @@ export default {
                 }
                 if (sha256(password) !== user.tokenHash) {
                     return next(new HttpError(HttpCodes.Unauthorized, `Wrong password or token for user "${login}"`))
+                }
+                if (req.url === '/') {//auth request
+                    return next()
+                }
+                const namespace = req.url.split('/')[1]
+                console.log({ url: req.url, namespace })
+                if (user.teams.indexOf(namespace) === -1) {
+                    return next(new HttpError(HttpCodes.Forbiddenn, `User "${login}" is not a member of ${namespace}`))
                 }
                 return next();
             } catch (e) {

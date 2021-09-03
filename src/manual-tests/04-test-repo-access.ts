@@ -4,10 +4,12 @@ import assert from "assert"
 
 async function isPushSuccessful(img: string) {
     try {
-        const response = await execa("docker", `push ${img}`.split(' '))
-        console.log(response)
+        await execa("docker", `push ${img}`.split(' '))
+        console.log('Pushing ' + img + ' successful')
         return true
     } catch (e) {
+        console.log('Pushing ' + img + ' failed')
+
         return false
     }
 }
@@ -15,18 +17,19 @@ async function isPushSuccessful(img: string) {
 const start = async function () {
     try {
         //expect create user to be called
-        execa("docker", "login localhost:8080 -u test@gmail.com -p 123".split(' '))
+        await execa("docker", "login localhost:8080 -u test@gmail.com -p 123".split(' '))
         // execa("docker", "pull alpine".split(' '))
-        execa("docker", `tag alpine localhost:8080/testns/myimage`.split(' '))
-        // execa("docker", `tag alpine localhost:8080/notmyns/myimage`.split(' '))
-        // execa("docker", `tag alpine localhost:8080/nons`.split(' '))
-        // execa("docker", `tag alpine localhost:8080/too/damn/deep`.split(' '))
-
+        await execa("docker", `tag alpine localhost:8080/testns/myimage`.split(' '))
+        await execa("docker", `tag alpine localhost:8080/notmyns/myimage`.split(' '))
+        await execa("docker", `tag alpine localhost:8080/nons`.split(' '))
+        assert(false === await isPushSuccessful('localhost:8080/notmyns/myimage'))
+        assert(false === await isPushSuccessful('localhost:8080/nons'))
         assert(true === await isPushSuccessful('localhost:8080/testns/myimage'))
+
+        console.log('Passed')
     } catch (e) {
         console.error('Fail')
-        console.error(String(e).slice(0, 100))
-        console.error(e.response.data)
+        console.error(String(e).slice(0, 300))
     }
 }
 start()
