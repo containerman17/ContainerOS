@@ -12,6 +12,7 @@ const start = async function () {
             image: "tutum/hello-world",
             internetPort: 80,
             internetDomain: `testservice.${ip}.nip.io`,
+            scale: 2,
         }, {
             auth: {
                 username: 'root',

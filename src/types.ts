@@ -41,4 +41,5 @@ export interface DockerStackService {
     labels?: {
         [key: string]: string;
     }
+    deploy: { replicas: number };
 }

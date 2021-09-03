@@ -18,6 +18,7 @@ export default async function (req: express.Request, res: express.Response) {
                     aliases: [`${validatedBody.team}--${validatedBody.team}`]
                 }
             },
+            deploy: { replicas: validatedBody.scale },
         }
 
         const internetPort = validatedBody.internetPort || 80
