@@ -16,8 +16,8 @@ docker network create -d overlay --attachable caddy
 printf "my super secret token" | docker secret create root_token -
 ```
 4. Run installer
-```
-docker run --rm quay.io/containeros/installer:latest --secret root_token -v "/var/run/docker.sock:/var/run/docker.sock"
+```bash
+docker run -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
 ```
 
 ## Components
