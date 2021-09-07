@@ -15,9 +15,15 @@ docker network create -d overlay --attachable caddy
 ```bash
 printf "my super secret token" | docker secret create root_token -
 ```
-4. Run installer
+4. Copy .env.example to .env and set S3 credentials
+
+5. Run installer
 ```bash
-docker run -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
+docker run --env-file .env -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
+```
+5. Optional: tear down
+```bash
+docker service rm $(docker service ls -q)
 ```
 
 ## Components

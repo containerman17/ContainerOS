@@ -1,6 +1,7 @@
 version: "3.7"
 
 services:
+  <%#IS_PROD%>
   api:
     image: quay.io/containeros/api
     networks:
@@ -13,6 +14,7 @@ services:
       - containeros-system
     deploy:
       mode: global
+  <%/IS_PROD%>
 
   caddy:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine

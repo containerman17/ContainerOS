@@ -20,7 +20,7 @@ const config = {
     API_HOST: undefined
 }
 
-if (process.env.ENV === "production") {
+if (process.env.NODE_ENV === "production") {
     config.IS_TEST = false
     config.IS_DEV = false
     config.IS_PROD = true
@@ -43,8 +43,9 @@ if (config.IS_DEV) {
 if (config.IS_DEV) {
     config.ROOT_TOKEN = 'dev'
 } else {
-    config.ROOT_TOKEN = fs.readFileSync('/var/run/secrets/root_token', 'utf8')
+    config.ROOT_TOKEN = () => fs.readFileSync('/var/run/secrets/root_token', 'utf8')
 }
+
 
 if (config.IS_DEV) {
     config.REGISTRY_HOST = 'localhost'
@@ -58,6 +59,10 @@ if (config.IS_DEV) {
     config.API_HOST = undefined//TODO
 }
 
+function isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
+
 var proxy = new Proxy(
     config,
     {
@@ -68,7 +73,11 @@ var proxy = new Proxy(
                 process.exit(1)
             }
 
-            return obj[name];
+            if (isFunction(obj[name])) {
+                return obj[name]()
+            } else {
+                return obj[name]
+            }
         },
     }
 );
