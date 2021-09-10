@@ -23,7 +23,7 @@ printf "$(curl -4 ifconfig.co).nip.io" | docker config create api_host -
 
 5. Run installer
 ```bash
-docker run --env-file .env -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
+docker run --env-file .env -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest 
 ```
 5. Optional: tear down
 ```bash
