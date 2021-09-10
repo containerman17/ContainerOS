@@ -17,7 +17,7 @@ printf "dev" | docker secret create root_token -
 ```
 3. Create config `api_host` containing your domain
 ```bash
-printf "1.2.3.4.nip.io" | docker config create api_host -
+printf "$(curl -4 ifconfig.co).nip.io" | docker config create api_host -
 ```
 4. Copy .env.example to .env and set S3 credentials
 

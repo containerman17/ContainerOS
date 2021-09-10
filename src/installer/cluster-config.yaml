@@ -28,12 +28,15 @@ services:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
     ports:
       - 80:80
-      - 8090:80
+      - 8090:80 # dev
       - 443:443
     environment:
       - CADDY_INGRESS_NETWORKS=caddy
-    # networks:
-    #   - caddy
+    labels:
+      caddy: <%API_HOST%>
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+    networks:
+      - caddy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - caddy_data:/data
