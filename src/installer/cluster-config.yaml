@@ -7,6 +7,10 @@ services:
     networks:
       - caddy
       - containeros-system
+    labels:
+      caddy: <%API_HOST%>
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+
 
   node-setup:
     image: quay.io/containeros/node-setup
@@ -14,17 +18,22 @@ services:
       - containeros-system
     deploy:
       mode: global
+    configs: 
+      - api_host
+    secrets:
+      - root_token
   <%/IS_PROD%>
 
   caddy:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
     ports:
       - 80:80
+      - 8090:80
       - 443:443
     environment:
       - CADDY_INGRESS_NETWORKS=caddy
-    networks:
-      - caddy
+    # networks:
+    #   - caddy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - caddy_data:/data
@@ -83,3 +92,11 @@ networks:
 
 volumes:
   caddy_data: {}
+
+configs:
+  api_host:
+    external: true
+
+secrets:
+  root_token:
+    external: true

@@ -11,9 +11,13 @@ docker swarm init
 ```bash
 docker network create -d overlay --attachable caddy
 ```
-3. Create secret `root` containing root token
+3. Create secret `root_token` containing root token
 ```bash
-printf "my super secret token" | docker secret create root_token -
+printf "dev" | docker secret create root_token -
+```
+3. Create config `api_host` containing your domain
+```bash
+printf "1.2.3.4.nip.io" | docker config create api_host -
 ```
 4. Copy .env.example to .env and set S3 credentials
 
