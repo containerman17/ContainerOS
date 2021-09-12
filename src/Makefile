@@ -1,6 +1,6 @@
 VERSION=`cat ../VERSION`
 
-release: a i n push
+release: a i n pushall
 
 i: 
 	docker build -f ./Dockerfile.installer -t quay.io/containeros/installer:${VERSION} ./
@@ -14,10 +14,12 @@ n:
 	docker build -f ./Dockerfile.node-setup -t quay.io/containeros/node-setup:${VERSION} ./
 	docker tag quay.io/containeros/node-setup:${VERSION} quay.io/containeros/node-setup:latest
 
-push:
+pushall:
 	docker push quay.io/containeros/installer:${VERSION}
-    docker push quay.io/containeros/installer:latest
+	docker push quay.io/containeros/installer:latest
 	docker push quay.io/containeros/api:${VERSION}
 	docker push quay.io/containeros/api:latest
 	docker push quay.io/containeros/node-setup:${VERSION}
 	docker push quay.io/containeros/node-setup:latest
+
+
