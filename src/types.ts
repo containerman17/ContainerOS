@@ -38,10 +38,10 @@ export interface DockerStackService {
     };
     command?: string;
     ports?: string[];
-    labels?: {
-        [key: string]: string;
-    }
     deploy: {
+        labels?: {
+            [key: string]: string;
+        },
         replicas: number,
         resources: {
             limits: {

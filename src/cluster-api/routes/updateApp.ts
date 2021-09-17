@@ -39,7 +39,7 @@ export default async function (req: express.Request, res: express.Response) {
             stack.services[validatedBody.name].networks["caddy"] = {
                 aliases: [`${validatedBody.team}--${validatedBody.team}`]
             }
-            stack.services[validatedBody.name].labels = {
+            stack.services[validatedBody.name].deploy.labels = {
                 "caddy": validatedBody.internetDomain,
                 "caddy.reverse_proxy": `{{upstreams ${internetPort}}}`,
             }

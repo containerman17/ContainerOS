@@ -1,5 +1,6 @@
 import axios from "axios"
-const SERVER = 'http://localhost:8080'
+import fs from 'fs'
+const SERVER = fs.readFileSync(__dirname + '/host.txt')
 
 const start = async function () {
     try {

@@ -1,6 +1,7 @@
 import axios from "axios"
 import { getMyExternalIP } from "../lib/utils"
-const SERVER = 'http://localhost:8080'
+import fs from 'fs'
+const SERVER = fs.readFileSync(__dirname + '/host.txt').toString().trim()
 
 const start = async function () {
     try {
@@ -11,7 +12,8 @@ const start = async function () {
         response = await axios.post(SERVER + '/v1/app/testns/testapp', {
             image: "tutum/hello-world",
             internetPort: 80,
-            internetDomain: `testservice.${ip}.nip.io`,
+            // internetDomain: `testservice.${ip}.nip.io`,
+            internetDomain: `testservice.${SERVER.replace('https://', '')}`,
             scale: 2,
         }, {
             auth: {

@@ -11,8 +11,13 @@ services:
       labels:
         caddy: <%API_HOST%>
         caddy.reverse_proxy: "{{upstreams 8080}}"
+      placement:
+        constraints:
+          - "node.role==manager"
     secrets:
       - root_token
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock     
 
   node-setup:
     image: quay.io/containeros/node-setup
@@ -24,6 +29,8 @@ services:
       - root_token
     environment:
       - API_HOST=<%API_HOST%>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   <%/IS_PROD%>
 
   caddy:

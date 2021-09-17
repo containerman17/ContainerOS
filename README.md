@@ -23,7 +23,7 @@ printf "API_HOST=$(curl -4 ifconfig.co).nip.io\n" > .env.api_host
 
 5. Run installer
 ```bash
-docker service rm $(docker service ls -q) && docker pull quay.io/containeros/installer:latest && docker run --env-file .env --env-file .env.api_host -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
+docker pull quay.io/containeros/installer:latest && docker run --env-file .env --env-file .env.api_host -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
 ```
 5. Optional: tear down
 ```bash

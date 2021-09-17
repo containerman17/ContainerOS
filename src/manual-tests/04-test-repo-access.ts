@@ -1,6 +1,8 @@
 import axios from "axios"
 import execa from "execa"
 import assert from "assert"
+import fs from 'fs'
+const SERVER = fs.readFileSync(__dirname + '/host.txt')
 
 async function isPushSuccessful(img: string) {
     try {
