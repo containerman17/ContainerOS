@@ -15,15 +15,15 @@ docker network create -d overlay --attachable caddy
 ```bash
 printf "dev" | docker secret create root_token -
 ```
-3. Create config `api_host` containing your domain
+3. Create config `.env.api_host` containing your domain
 ```bash
-printf "$(curl -4 ifconfig.co).nip.io" | docker config create api_host -
+printf "API_HOST=$(curl -4 ifconfig.co).nip.io\n" > .env.api_host
 ```
 4. Copy .env.example to .env and set S3 credentials
 
 5. Run installer
 ```bash
-docker run --env-file .env -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
+docker service rm $(docker service ls -q) && docker pull quay.io/containeros/installer:latest && docker run --env-file .env --env-file .env.api_host -it --rm -v "/var/run/docker.sock:/var/run/docker.sock" quay.io/containeros/installer:latest
 ```
 5. Optional: tear down
 ```bash

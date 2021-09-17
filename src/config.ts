@@ -56,7 +56,7 @@ if (config.IS_DEV) {
 if (config.IS_DEV) {
     config.API_HOST = 'localhost:8080'
 } else {
-    config.API_HOST = () => process.env.API_HOST || fs.readFileSync('/api_host', 'utf8')
+    config.API_HOST = () => process.env.API_HOST
 }
 
 function isFunction(functionToCheck) {

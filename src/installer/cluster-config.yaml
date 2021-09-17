@@ -3,16 +3,16 @@ version: "3.7"
 services:
   <%#IS_PROD%>
   api:
-    image: quay.io/containeros/api
+    image: quay.io/containeros/api:latest
     networks:
-      - caddy
       - containeros-system
-    labels:
-      caddy: <%API_HOST%>
-      caddy.reverse_proxy: "{{upstreams 8080}}"
+      - caddy
+    deploy:
+      labels:
+        caddy: <%API_HOST%>
+        caddy.reverse_proxy: "{{upstreams 8080}}"
     secrets:
       - root_token
-
 
   node-setup:
     image: quay.io/containeros/node-setup
@@ -20,28 +20,28 @@ services:
       - containeros-system
     deploy:
       mode: global
-    configs: 
-      - api_host
     secrets:
       - root_token
+    environment:
+      - API_HOST=<%API_HOST%>
   <%/IS_PROD%>
 
   caddy:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
     ports:
       - 80:80
-      - 8090:80 # dev
       - 443:443
     environment:
       - CADDY_INGRESS_NETWORKS=caddy
-    labels:
-      caddy: <%API_HOST%>
-      caddy.reverse_proxy: "{{upstreams 8080}}"
     networks:
       - caddy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - caddy_data:/data
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
 
   registry: 
     image: registry:2
@@ -98,9 +98,6 @@ networks:
 volumes:
   caddy_data: {}
 
-configs:
-  api_host:
-    external: true
 
 secrets:
   root_token:
