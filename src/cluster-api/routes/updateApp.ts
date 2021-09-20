@@ -30,6 +30,12 @@ export default async function (req: express.Request, res: express.Response) {
                         cpus: '0.1',
                         memory: '100m'
                     }
+                },
+                update_config: {
+                    parallelism: 1,
+                    delay: '10s',
+                    order: 'start-first',
+                    failure_action: 'rollback'
                 }
             },
         }

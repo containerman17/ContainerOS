@@ -50,6 +50,12 @@ export interface DockerStackService {
                 cpus: string,
                 memory: string
             }
+        },
+        update_config: {
+            parallelism: number,
+            delay: string,
+            order: 'start-first',
+            failure_action: 'rollback'
         }
     };
 }
