@@ -27,9 +27,7 @@ export interface DockerStack {
 }
 
 export interface DockerStackService {
-    environment?: {
-        [key: string]: string;
-    };
+    environment?: string[];
     image: string;
     networks: {
         [key: string]: {

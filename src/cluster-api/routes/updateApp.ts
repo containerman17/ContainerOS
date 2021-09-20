@@ -18,6 +18,7 @@ export default async function (req: express.Request, res: express.Response) {
                     aliases: [`${validatedBody.name}`]
                 }
             },
+            environment: validatedBody.env,
             deploy: {
                 replicas: validatedBody.scale,
                 resources: {

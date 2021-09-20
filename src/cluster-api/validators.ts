@@ -10,6 +10,7 @@ export const AppWithTeam = object({
 
 export const AppUpdate = object({
     image: size(string(), 3, 99),
+    env: defaulted(array(string()), []),
     internetPort: optional(number()),
     internetDomain: optional(string()),
     scale: defaulted(number(), () => 1),
