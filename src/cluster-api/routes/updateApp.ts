@@ -15,7 +15,7 @@ export default async function (req: express.Request, res: express.Response) {
             image: validatedBody.image,
             networks: {
                 [validatedBody.team]: {
-                    aliases: [`${validatedBody.team}--${validatedBody.team}`]
+                    aliases: [`${validatedBody.name}`]
                 }
             },
             deploy: {
@@ -37,7 +37,7 @@ export default async function (req: express.Request, res: express.Response) {
 
         if (validatedBody.internetDomain) {
             stack.services[validatedBody.name].networks["caddy"] = {
-                aliases: [`${validatedBody.team}--${validatedBody.team}`]
+                aliases: [`${validatedBody.team}--${validatedBody.name}`]
             }
             stack.services[validatedBody.name].deploy.labels = {
                 "caddy": validatedBody.internetDomain,
