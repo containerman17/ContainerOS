@@ -7,7 +7,7 @@ import logger from '../lib/logger';
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
-app.get('/', (req, res) => res.send('ContainerOS cluster API server'));
+app.get('/', (req, res) => res.send('ContainerOS cluster API server v12'));
 
 //middleware
 middleware.init(app);
@@ -15,7 +15,7 @@ middleware.init(app);
 //@ts-ignore
 app.use('/v2', createProxyMiddleware({
     target: `http://${config.REGISTRY_HOST}:5000`,
-    changeOrigin: true
+    changeOrigin: false
 }));
 
 //routes

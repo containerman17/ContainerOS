@@ -11,15 +11,35 @@ import logger from "../lib/logger";
 
 export default {
     init(app: express.Application) {
+
+        app.use(function (req, res, next) {
+            function afterResponse() {
+                res.removeListener('finish', afterResponse);
+                res.removeListener('close', afterResponse);
+
+                console.log({
+                    url: req.url,
+                    method: req.method,
+                    status: res.statusCode
+                })
+            }
+
+            res.on('finish', afterResponse);
+            res.on('close', afterResponse);
+
+            // do smth before request eventually calling `next()`
+            next();
+        });
+
         app.use(bodyParser.json());
         app.use(cors())
         app.use(requestJoinMiddleware)
 
-        //docker registry auth
+        // //docker registry auth
         app.use('/', async (req, res, next) => {
             try {
                 if (new RegExp('^/.+/.+/blobs/uploads/.+-.+-?_state=.+$').test(req.url)) {
-                    return res.status(200).end()
+                    return next()
                 }
 
                 if (!req.headers.authorization) {
