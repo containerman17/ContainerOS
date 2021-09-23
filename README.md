@@ -3,6 +3,11 @@
 The goal of the project is to provide as simple as possible interface for cluster deployments.
 
 ## Instalation
+0. Install docker
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh && chmod +x get-docker.sh && ./get-docker.sh
+```
+
 1. Create swarm cluster
 ```bash
 docker swarm init

@@ -8,3 +8,4 @@ playground
 *.rslsd
 .DS_Store
 IDEAS.MD
+.prod.env
