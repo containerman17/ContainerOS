@@ -6,3 +6,4 @@
 **/tests/
 Makefile
 *.Dockerfile
+panel

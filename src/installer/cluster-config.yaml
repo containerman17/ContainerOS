@@ -71,13 +71,15 @@ services:
       REGISTRY_STORAGE: s3
       REGISTRY_HTTP_DEBUG_ADDR: "0.0.0.0:5001"
 
+#TODO: generate consul secret on the fly
+
   consul1:
     environment:
       CONSUL_BIND_INTERFACE: eth0
     image: consul:1.10.0
     networks:
       - containeros-system
-    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul2 -retry-join=consul3"
 
   consul2:
     environment:
@@ -98,6 +100,23 @@ services:
     networks:
       - containeros-system
     command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+
+  consul4:
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    image: consul:1.10.0
+    networks:
+      - containeros-system
+    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+ 
+  consul5:
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    image: consul:1.10.0
+    networks:
+      - containeros-system
+    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
+
 
 networks:
   containeros-system:

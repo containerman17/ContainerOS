@@ -1,9 +1,0 @@
-FROM cesanta/docker_auth:latest  
-RUN apk add --update nodejs
-
-COPY ./dummy_certs /dummy_certs
-
-COPY ./docker_auth_ext_auth/auth.js /auth.js
-RUN chmod +x /auth.js
-
-COPY auth_config.yml /config/auth_config.yml

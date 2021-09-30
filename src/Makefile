@@ -30,6 +30,6 @@ push-node-setup: n
 
 dev-env:
 	docker rm -f consul || true
-	 docker run --name consul -d --net=host consul agent -dev -ui
+	docker run --name consul -d --net=host consul agent -dev -ui
 	docker rm -f registry || true
-	 docker run --name registry -d -p 5000:5000 --net=host --env-file=.env -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 -e REGISTRY_STORAGE=s3 -e REGISTRY_HTTP_DEBUG_ADDR=0.0.0.0:5001 registry:2
+	docker run --name registry -d -p 5000:5000 --net=host --env-file=.env -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 -e REGISTRY_STORAGE=s3 -e REGISTRY_HTTP_DEBUG_ADDR=0.0.0.0:5001 registry:2
