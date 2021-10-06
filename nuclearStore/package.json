@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.22.0",
     "fastify": "^3.22.0"
   }
 }
