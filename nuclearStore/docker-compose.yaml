@@ -1,0 +1,14 @@
+services:
+  gate:
+    build:
+      context: .
+    ports: 
+      3000:3000
+    command: node store/store.js
+
+  store:
+    deploy: 
+      replicas: 3
+    build:
+      context: .
+    command: node gate/gate.js
