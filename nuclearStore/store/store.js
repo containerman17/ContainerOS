@@ -1,7 +1,18 @@
 const fastify = require('fastify')({ logger: true })
+const data = require('./data')
 
 fastify.get('/', async (request, reply) => {
     return { hello: 'store' }
+})
+
+fastify.post('/replication/set', async (request, reply) => {
+    const { key, value, ts } = request.body
+    console.log('Got set request', { key, value, ts })
+    return await data.set(key, value, ts)
+})
+fastify.get('/replication/get/:key', async (request, reply) => {
+    const { key } = request.params
+    return await data.get(key)
 })
 
 fastify.get('/healthz', async (request, reply) => {

@@ -46,4 +46,4 @@ async function start() {
     setInterval(checkHosts, 5000)
 }
 
-module.exports = { start }
+module.exports = { start, getStores: () => [...aliveStores.values()] }

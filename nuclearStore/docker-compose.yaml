@@ -4,13 +4,17 @@ services:
       context: .
     ports: 
       - 3000:3000
+    volumes:
+      - ./:/app:ro
     environment:
       - "NUCLEAR_STORES=store"
-    command: node gate/gate.js
+    command: nodemon gate/gate.js
 
   store:
     deploy: 
-      replicas: 3
+      replicas: 1
     build:
       context: .
-    command: node store/store.js
+    volumes:
+      - ./:/app:ro
+    command: nodemon store/store.js
