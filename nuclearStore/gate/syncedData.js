@@ -69,8 +69,21 @@ async function set(key, value, ts = null, checkTs = null) {
     }
 }
 
+async function getRecursive(prefix) {
+    await awaitSync()
+
+    const result = {}
+    for (let key in data) {
+        if (key.startsWith(prefix)) {
+            result[key] = data[key]
+        }
+    }
+    return result
+}
+
 async function get(key) {
     await awaitSync()
+
     if (data[key]) {
         return data[key]
     } else {
@@ -79,4 +92,4 @@ async function get(key) {
         }
     };
 }
-module.exports = { set, get }
+module.exports = { set, get, getRecursive }

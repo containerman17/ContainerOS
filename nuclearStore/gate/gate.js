@@ -21,7 +21,11 @@ fastify.post('/kv/', async (request, reply) => {
 })
 
 fastify.get('/kv/*', async (request, reply) => {
-    return await syncedData.get(request.params['*'])
+    if (request.query.recurse) {
+        return await syncedData.getRecursive(request.params['*'])
+    } else {
+        return await syncedData.get(request.params['*'])
+    }
 })
 
 const start = async () => {
