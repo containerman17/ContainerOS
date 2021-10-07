@@ -3,7 +3,7 @@ const storeLocator = require('./storeLocator')
 const storeProxy = require('./storeProxy')
 
 fastify.get('/', async (request, reply) => {
-    return { hello: 'gate' }
+    return { 'app': `KrakenKV-gate` }
 })
 
 fastify.post('/kv/', async (request, reply) => {

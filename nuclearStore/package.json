@@ -1,15 +1,19 @@
 {
-  "name": "nuclearstore",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "axios": "^0.22.0",
-    "fastify": "^3.22.0"
-  }
+    "name": "nuclearstore",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha --recursive"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^0.22.0",
+        "fastify": "^3.22.0",
+        "pino-pretty": "^7.0.1"
+    },
+    "devDependencies": {
+        "mocha": "^9.1.2"
+    }
 }

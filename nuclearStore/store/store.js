@@ -1,21 +1,32 @@
-const fastify = require('fastify')({ logger: true })
+const fastify = require('fastify')({
+    logger: {
+        prettyPrint: true
+    }
+})
 const data = require('./data')
 
 fastify.get('/', async (request, reply) => {
-    return { hello: 'store' }
+    return { app: 'KrakenKV-store', alive: true }
 })
-fastify.post('/replication/set', async (request, reply) => {
-    const { key, value, ts } = request.body
-    console.log('Got set request', { key, value, ts })
-    return await data.set(key, value, ts)
+
+fastify.post('/sync/bulk', async (request, reply) => {
+    for (let [key, val] of Object.entries(request.body)) {
+        data.set(key, val.value, val.ts)
+    }
+
+    return { success: true }
 })
-fastify.get('/replication/get/*', async (request, reply) => {
-    const key = request.params['*']
-    return await data.get(key)
+
+fastify.get('/sync/bulk', async (request, reply) => {
+    return await data.getAll()
+})
+
+fastify.get('/test/reset', async (request, reply) => {
+    return data.reset()
 })
 
 fastify.get('/healthz', async (request, reply) => {
-    return { app: 'nuclear-store', alive: true }
+    return { app: 'KrakenKV-store', alive: true }
 })
 
 // Run the server!

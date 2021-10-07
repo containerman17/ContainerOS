@@ -13,7 +13,7 @@ Returns key-value pair. Add `recurse=true` for all keys starting with this value
 Update key. If `check_ts` is given, will update only if current `ts` equal given `check_ts`.
 
 ## Store
-
+[To be replaced with redis spiced up with Lua]
 #### GET `/sync/bulk`
 Returns all keys and values at the moment
 

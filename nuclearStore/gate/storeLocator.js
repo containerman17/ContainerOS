@@ -24,7 +24,7 @@ async function checkStoreLiveness() {
         console.log(`Check alive`, address)
         try {
             const reponse = await axios.get(`http://${address}:3000/healthz`)
-            if (reponse.data.app !== 'nuclear-store') {
+            if (reponse.data.app !== 'KrakenKV-store') {
                 throw new Error('Not a nuclear store')
             }
             aliveStores.add(address)

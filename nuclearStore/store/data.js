@@ -1,9 +1,13 @@
-const data = {}
+let data = {}
 
-async function get(key) {
-    return data[key] || { ts: 0, value: null }
+async function getAll() {
+    return Object.assign({}, data)
 }
 
+async function reset() {
+    data = {}
+    return data
+}
 
 async function set(key, value, ts) {
     if (data[key]?.ts > ts) {
@@ -14,4 +18,4 @@ async function set(key, value, ts) {
     return { success: true }
 }
 
-module.exports = { get, set }
+module.exports = { set, getAll, reset }
