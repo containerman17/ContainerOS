@@ -9,8 +9,8 @@ The goal is to prototype a database that keeps running as long as any single nod
 #### GET `/kv/some/key?recurse=true|false&wait=1633641109482`
 Returns key-value pair. Add `recurse=true` for all keys starting with this value. Add `wait=[ts]` to get only keys updated after ts as long as any information appears. `wait` works only with `recurse`.
 
-#### POST `/kv/some/key?check_ts=1633641109482`
-Update key. If `check_ts` is given, will update only if current `ts` equal given `check_ts`.
+#### POST `/kv/`
+Update key. If `checkTs` is given, will update only if current `ts` equal given `check_ts`. Also accepts `key` and `value`.
 
 ## Store
 [To be replaced with redis spiced up with Lua]

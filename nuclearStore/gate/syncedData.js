@@ -29,25 +29,43 @@ async function awaitSync() {
     }
 }
 
-async function set(key, value, ts = null) {
-    const stores = storeLocator.getStores()
-    let checks = 0
+let setLock = false
 
-    ts = ts || Number(new Date())
+async function set(key, value, ts = null, checkTs = null) {
+    while (setLock) {
+        await delay(20)
+    }
+    setLock = true
+    try {
+        const stores = storeLocator.getStores()
+        let checks = 0
 
-    const result = await Promise.allSettled(stores.map(async storeIp => {
-        await axios.post(`http://${storeIp}:3000/sync/bulk`, {
-            [key]: { value, ts }
-        }, { timeout: 2000 })
+        if (checkTs !== null) {
+            const existing = await get(key)
 
-        checks++
-    }))
+            if (existing.ts !== checkTs) {
+                return { success: false, error: `checkTs (${checkTs}) does not match existing (${existing.ts})` }
+            }
+        }
 
-    if (checks > 0) {
-        data[key] = { value, ts }
-        return { success: true }
-    } else {
-        return { success: false, error: 'All stores are down' }
+        ts = ts || Number(new Date())
+
+        const result = await Promise.allSettled(stores.map(async storeIp => {
+            await axios.post(`http://${storeIp}:3000/sync/bulk`, {
+                [key]: { value, ts }
+            }, { timeout: 2000 })
+
+            checks++
+        }))
+
+        if (checks > 0) {
+            data[key] = { value, ts }
+            return { success: true }
+        } else {
+            return { success: false, error: 'All stores are down' }
+        }
+    } finally {
+        setLock = false
     }
 }
 

@@ -16,8 +16,8 @@ fastify.get('/test/forceResync', async (request, reply) => {
 })
 
 fastify.post('/kv/', async (request, reply) => {
-    const result = await syncedData.set(request.body.key, request.body.value)
-    return reply.code(result.success ? 200 : 500).send(result)
+    const result = await syncedData.set(request.body.key, request.body.value, null, request.body.checkTs || null)
+    return reply.code(result.success ? 200 : 400).send(result)
 })
 
 fastify.get('/kv/*', async (request, reply) => {
