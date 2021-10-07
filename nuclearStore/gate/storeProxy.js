@@ -26,7 +26,6 @@ async function get(key) {
     if (!hasValue) {
         return { success: false, error: 'All storages are down' }
     }
-    console.log('promiseResults', promiseResults)
 
     let latestTs = 0
     let latestData = null

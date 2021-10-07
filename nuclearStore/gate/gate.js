@@ -6,8 +6,8 @@ fastify.get('/', async (request, reply) => {
     return { hello: 'gate' }
 })
 
-fastify.get('/test/set', async (request, reply) => {
-    const result = await storeProxy.set('test/key', 'val for test key')
+fastify.post('/kv/', async (request, reply) => {
+    const result = await storeProxy.set(request.body.key, request.body.value)
     return reply.code(result.success ? 200 : 500).send(result)
 })
 

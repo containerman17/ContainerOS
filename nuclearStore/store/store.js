@@ -4,7 +4,6 @@ const data = require('./data')
 fastify.get('/', async (request, reply) => {
     return { hello: 'store' }
 })
-
 fastify.post('/replication/set', async (request, reply) => {
     const { key, value, ts } = request.body
     console.log('Got set request', { key, value, ts })
