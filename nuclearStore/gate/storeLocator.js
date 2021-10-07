@@ -61,4 +61,10 @@ function burstHostChecks() {
     }
 }
 
-module.exports = { start, getStores: () => [...aliveStores.values()], subscribeNewStores, burstHostChecks }
+function forceResync() {
+    for (let adddress of [...aliveStores.values()]) {
+        newStoresCallbacks.forEach(callback => callback(address))
+    }
+}
+
+module.exports = { start, getStores: () => [...aliveStores.values()], subscribeNewStores, burstHostChecks, forceResync }

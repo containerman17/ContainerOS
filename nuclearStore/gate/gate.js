@@ -10,6 +10,10 @@ fastify.get('/test/burstHostChecks', async (request, reply) => {
     storeLocator.burstHostChecks()
     return { success: true }
 })
+fastify.get('/test/forceResync', async (request, reply) => {
+    storeLocator.forceResync()
+    return { success: true }
+})
 
 fastify.post('/kv/', async (request, reply) => {
     const result = await syncedData.set(request.body.key, request.body.value)

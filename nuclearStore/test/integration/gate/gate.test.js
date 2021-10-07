@@ -58,7 +58,7 @@ describe('Store integration', function () {
         }
         assert.strictEqual(res.data.value, myVal)
 
-        console.log(`store after restart 1`, (await axios.get('http://localhost:3001/sync/bulk')).data)
+
 
         //restart store
 
@@ -67,12 +67,7 @@ describe('Store integration', function () {
 
         //make sure hosts are re-checked very often after store restart
         //this is a bit hacky, but it works
-        for (let i = 0; i < 100; i++) {
-            try {
-                await axios.get('http://localhost:3000/test/burstHostChecks');
-                break;
-            } catch (e) { await delay(100) }
-        }
+        await axios.get('http://localhost:3000/test/burstHostChecks');
 
         for (let i = 0; i < 100; i++) {
             try {
@@ -82,7 +77,7 @@ describe('Store integration', function () {
             } catch (e) { await delay(100) }
         }
 
-        console.log(`store after restart 2`, (await axios.get('http://localhost:3001/sync/bulk')).data)
+
 
         assert.strictEqual(res.data.value, myVal)
 
@@ -102,13 +97,66 @@ describe('Store integration', function () {
             }
         }
 
-        console.log(`store after restart 3`, (await axios.get('http://localhost:3001/sync/bulk')).data)
+
 
         assert.strictEqual(res.data.value, myVal)
-
-
-
     })
 
-    it('should get newer data from store')
+    it('should get newer data from store', async function () {
+        const now = Number(new Date)
+        const futureTs = now + 1000 * 60 * 60 * 24 * 7
+        const pastTs = now - 1000 * 60 * 60 * 24 * 7
+
+        const myVal1 = 'testnewer1' + String(new Date)
+        const myVal2 = 'testnewer2' + String(new Date)
+
+
+        //set to database
+
+
+        await axios.post('http://localhost:3000/kv/', {
+            key: 'test/val1',
+            value: myVal1
+        })
+        await axios.post('http://localhost:3000/kv/', {
+            key: 'test/val2',
+            value: myVal2
+        })
+
+
+
+        //check it went through
+        res = await axios.get('http://localhost:3000/kv/test/val1');
+        assert.strictEqual(res.data.value, myVal1)
+        res = await axios.get('http://localhost:3000/kv/test/val2');
+        assert.strictEqual(res.data.value, myVal2)
+
+
+
+        //force push to store
+        const newVal2 = 'newval2' + String(new Date)
+        await axios.post('http://localhost:3001/sync/bulk', {
+            "test/val1": {
+                value: 'never should be here',
+                ts: pastTs
+            },
+            "test/val2": {
+                value: newVal2,
+                ts: futureTs
+            }
+        })
+
+
+
+        //force resync
+        await axios.get('http://localhost:3000/test/forceResync');
+
+
+
+        //check only val2 updated
+        res = await axios.get('http://localhost:3000/kv/test/val1');
+        assert.strictEqual(res.data.value, myVal1)
+        res = await axios.get('http://localhost:3000/kv/test/val2');
+        assert.strictEqual(res.data.value, newVal2)
+    })
 })
