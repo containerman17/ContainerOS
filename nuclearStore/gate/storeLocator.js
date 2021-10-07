@@ -19,6 +19,11 @@ async function discoverStores() {
     }
 }
 
+const newStoresCallbacks = []
+function subscribeNewStores(callback) {
+    newStoresCallbacks.push(callback)
+}
+
 async function checkStoreLiveness() {
     for (address of allKnownStores.values()) {
         console.log(`Check alive`, address)
@@ -27,7 +32,11 @@ async function checkStoreLiveness() {
             if (reponse.data.app !== 'KrakenKV-store') {
                 throw new Error('Not a nuclear store')
             }
-            aliveStores.add(address)
+
+            if (!aliveStores.has(address)) {
+                aliveStores.add(address)
+                newStoresCallbacks.forEach(callback => callback(address))
+            }
         } catch (e) {
             console.log(e)
             aliveStores.delete(address)
@@ -43,7 +52,13 @@ async function checkHosts() {
 
 async function start() {
     await checkHosts()
-    setInterval(checkHosts, 5000)
+    setInterval(checkHosts, 3000)
 }
 
-module.exports = { start, getStores: () => [...aliveStores.values()] }
+function burstHostChecks() {
+    for (let i = 0; i < 200; i++) {
+        setTimeout(checkHosts, i * 100)
+    }
+}
+
+module.exports = { start, getStores: () => [...aliveStores.values()], subscribeNewStores, burstHostChecks }

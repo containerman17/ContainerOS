@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "mocha --recursive"
+        "test": "mocha --recursive --timeout 20000"
     },
     "author": "",
     "license": "ISC",
@@ -14,6 +14,8 @@
         "pino-pretty": "^7.0.1"
     },
     "devDependencies": {
+        "delay": "^5.0.0",
+        "execa": "^5.1.1",
         "mocha": "^9.1.2"
     }
 }

@@ -6,6 +6,11 @@ fastify.get('/', async (request, reply) => {
     return { 'app': `KrakenKV-gate` }
 })
 
+fastify.get('/test/burstHostChecks', async (request, reply) => {
+    storeLocator.burstHostChecks()
+    return { success: true }
+})
+
 fastify.post('/kv/', async (request, reply) => {
     const result = await syncedData.set(request.body.key, request.body.value)
     return reply.code(result.success ? 200 : 500).send(result)
