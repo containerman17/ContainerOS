@@ -1,14 +1,14 @@
 services:
-  # gate:
-  #   build:
-  #     context: .
-  #   ports: 
-  #     - 3000:3000
-  #   volumes:
-  #     - ./:/app:ro
-  #   environment:
-  #     - "NUCLEAR_STORES=store"
-  #   command: nodemon gate/gate.js
+  gate:
+    build:
+      context: .
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./:/app:ro
+    environment:
+      - "NUCLEAR_STORES=store"
+    command: nodemon gate/gate.js
 
   store:
     deploy: 
