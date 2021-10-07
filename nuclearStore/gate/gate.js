@@ -7,8 +7,12 @@ fastify.get('/', async (request, reply) => {
 })
 
 fastify.get('/test/set', async (request, reply) => {
-    const result = await storeProxy.set('test-key', 'test-value')
+    const result = await storeProxy.set('test/key', 'val for test key')
     return reply.code(result.success ? 200 : 500).send(result)
+})
+
+fastify.get('/kv/*', async (request, reply) => {
+    return await storeProxy.get(request.params['*'])
 })
 
 const start = async () => {

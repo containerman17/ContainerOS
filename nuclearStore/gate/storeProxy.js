@@ -18,17 +18,23 @@ async function set(key, value) {
 
 async function get(key) {
     const stores = storeLocator.getStores()
-    const responses = await Promise.all(stores.map(async storeIp => {
-        await axios.get(`http://${storeIp}:3000/replication/get/${key}`)
+    const promiseResults = await Promise.allSettled(stores.map(async storeIp => {
+        return await axios.get(`http://${storeIp}:3000/replication/get/${key}`)
     }))
 
-    const latestTs = 0
-    const latestData = null
+    const hasValue = promiseResults.filter(res => res.status === 'fulfilled').length > 0
+    if (!hasValue) {
+        return { success: false, error: 'All storages are down' }
+    }
+    console.log('promiseResults', promiseResults)
 
-    for (let response of responses) {
-        if (response?.data?.ts > latestTs) {
-            latestTs = response.data.ts
-            latestData = response.data.value
+    let latestTs = 0
+    let latestData = null
+
+    for (let promiseResult of promiseResults) {
+        if (promiseResult?.value?.data?.ts > latestTs) {
+            latestTs = promiseResult.value.data.ts
+            latestData = promiseResult.value.data.value
         }
     }
 

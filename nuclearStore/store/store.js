@@ -10,8 +10,8 @@ fastify.post('/replication/set', async (request, reply) => {
     console.log('Got set request', { key, value, ts })
     return await data.set(key, value, ts)
 })
-fastify.get('/replication/get/:key', async (request, reply) => {
-    const { key } = request.params
+fastify.get('/replication/get/*', async (request, reply) => {
+    const key = request.params['*']
     return await data.get(key)
 })
 
