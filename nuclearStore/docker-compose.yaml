@@ -7,7 +7,7 @@ services:
     volumes:
       - ./:/app:ro
     environment:
-      - "NUCLEAR_STORES=store"
+      - "KRAKENKV_STORES=store"
     command: nodemon gate/gate.js
 
   store:

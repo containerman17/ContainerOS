@@ -14,7 +14,7 @@ KrakenKV is made for non-persistent/ephemeral storage. It works well with emptyD
 You can deploy it as services in docker swarm or deployments in Kubernetes.
 
 ## Roadmap
-[-] Release sdk to npm
+[+] Release sdk to npm
 [-] Release docker images to quay.io
 [-] Persist data on disk
 [-] Switch to leveldb or something like that persists data

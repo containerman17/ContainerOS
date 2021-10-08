@@ -1,5 +1,5 @@
 const { Resolver } = require('dns').promises;
-const storesFromConfig = process.env.NUCLEAR_STORES.split(',')
+const storesFromConfig = process.env.KRAKENKV_STORES.split(',')
 const IP_REGEXP = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
 const resolver = new Resolver();
 const axios = require('axios')
