@@ -1,30 +1,21 @@
 const assert = require('assert');
-const axios = require('axios')
+const sdk = require('../../../sdk')
 
 
-describe('Concurrent writes', () => {
+describe.only('Concurrent writes', () => {
     it('should allow only one concurent write with the same ts', async function () {
         let successes = 0;
         let failures = 0;
         let expectedVal
 
-        await axios.post('http://localhost:3000/kv/', {
-            key: 'test/concurrent',
-            value: 'some value',
-        })
-        res = await axios.get('http://localhost:3000/kv/test/concurrent');
-        const checkTs = res.data.ts;
-
+        await sdk.set('test/concurrent', 'some value')
+        const { ts: checkTs } = await sdk.get('test/concurrent', true)
 
         const promises = [];
         for (let i = 0; i < 10; i++) {
             promises.push(async function () {
                 try {
-                    await axios.post('http://localhost:3000/kv/', {
-                        key: 'test/concurrent',
-                        value: 'concurrent' + i,
-                        checkTs: checkTs,
-                    })
+                    await sdk.set('test/concurrent', 'concurrent' + i, checkTs)
                     expectedVal = 'concurrent' + i
                     successes++;
                 } catch (e) {
@@ -41,7 +32,6 @@ describe('Concurrent writes', () => {
         assert.equal(failures, 9, 'failures');
         assert.equal(successes, 1);
 
-        res = await axios.get('http://localhost:3000/kv/test/concurrent');
-        assert.strictEqual(res.data.value, expectedVal)
+        assert.strictEqual(await sdk.get('test/concurrent'), expectedVal)
     })
 })
