@@ -9,7 +9,7 @@ describe.only('Concurrent writes', () => {
         let expectedVal
 
         await sdk.set('test/concurrent', 'some value')
-        const { ts: checkTs } = await sdk.get('test/concurrent', true)
+        const { ts: checkTs } = await sdk.get('test/concurrent', { ts: true })
 
         const promises = [];
         for (let i = 0; i < 10; i++) {
