@@ -9,7 +9,7 @@ const config = {
     IS_TEST: undefined,
     IS_DEV: undefined,
     IS_PROD: undefined,
-    CONSUL_HOST: undefined,
+    KRAKENKV_HOST: undefined,
     REGISTRY_HOST: undefined,
     REGISTRY_STORAGE_S3_ACCESSKEY: process.env.REGISTRY_STORAGE_S3_ACCESSKEY,
     REGISTRY_STORAGE_S3_SECRETKEY: process.env.REGISTRY_STORAGE_S3_SECRETKEY,
@@ -35,9 +35,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 if (config.IS_DEV) {
-    config.CONSUL_HOST = 'localhost'
+    config.KRAKENKV_HOST = 'localhost'
 } else {
-    config.CONSUL_HOST = 'consul1'
+    config.KRAKENKV_HOST = 'krakenkv'
 }
 
 if (config.IS_DEV) {

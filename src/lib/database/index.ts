@@ -1,14 +1,14 @@
 import { DockerStack, StoredUser } from "../../types";
-import consulInstance from "./consul/consulInstance";
-import safePatch from "./consul/safepatch";
+import krakenKV from "./kraken/krakenKV";
+import safePatch from "./kraken/safepatch";
 import { uuid } from 'uuidv4';
 import { sha256 } from "../utils";
-import listenForUpdates from "./consul/listenForUpdates";
+import listenForUpdates from "./kraken/listenForUpdates";
 
 export async function getStack(stackName: string): Promise<DockerStack> {
-    const result = await consulInstance.kv.get(`stacks/${stackName}`)
+    const result = await krakenKV.get(`stacks/${stackName}`)
     console.log('getStack result', result)
-    return JSON.parse(result?.Value || JSON.stringify(getEmptyStack(stackName)))
+    return JSON.parse(result || JSON.stringify(getEmptyStack(stackName)))
 }
 
 function getEmptyStack(stackName: string): DockerStack {
@@ -40,11 +40,11 @@ export function updateUser(name: string, patch: (oldValue: StoredUser) => Stored
 }
 
 export async function getUser(name: string, returnEmptyByDefault = true): Promise<StoredUser> {
-    const result = await consulInstance.kv.get(`users/${name}`)
+    const result = await krakenKV.get(`users/${name}`)
     if (!result && !returnEmptyByDefault) {
         return null
     }
-    return JSON.parse(result?.Value || JSON.stringify(getEmptyUser(name)))
+    return JSON.parse(result || JSON.stringify(getEmptyUser(name)))
 }
 
 let usersCache: { [key: string]: StoredUser } = null

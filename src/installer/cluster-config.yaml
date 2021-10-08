@@ -71,52 +71,23 @@ services:
       REGISTRY_STORAGE: s3
       REGISTRY_HTTP_DEBUG_ADDR: "0.0.0.0:5001"
 
-#TODO: generate consul secret on the fly
-
-  consul1:
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-    image: consul:1.10.0
-    networks:
-      - containeros-system
-    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul2 -retry-join=consul3"
-
-  consul2:
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-    image: consul:1.10.0
+  krakenkv:
     <%#IS_DEV%>
     ports:
-      - 8500:8500
+      - 3000:3000
     <%/IS_DEV%>
-    networks:
-      - containeros-system
-    command: "agent -server -ui --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
-
-  consul3:
     environment:
-      CONSUL_BIND_INTERFACE: eth0
-    image: consul:1.10.0
+      - "KRAKENKV_STORES=krakenkv-store"
+    image: quay.io/containeros/krakenkv-gate:1.0.0
     networks:
       - containeros-system
-    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
 
-  consul4:
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-    image: consul:1.10.0
+  krakenkv-store:
+    image: quay.io/containeros/krakenkv-store:1.0.0
     networks:
       - containeros-system
-    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
- 
-  consul5:
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-    image: consul:1.10.0
-    networks:
-      - containeros-system
-    command: "agent -server --client 0.0.0.0 -datacenter=main -bootstrap-expect=3 -encrypt=NToZ3N7SjUSu3Wo3zzljo14hBFzzFR1n1HoZl7gzyko= -retry-join=consul1 -retry-join=consul2 -retry-join=consul3"
-
+    deploy:
+      replicas: 1
 
 networks:
   containeros-system:

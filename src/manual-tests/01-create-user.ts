@@ -8,7 +8,9 @@ const start = async function () {
         console.log(`Set token...`)
         let response
 
-        response = await axios.post(SERVER + '/v1/users/test@gmail.com/token', {
+        const url = SERVER + '/v1/users/test@gmail.com/token'
+        console.log('url', url)
+        response = await axios.post(url, {
             tokenHash: sha256('123')
         }, {
             auth: {
