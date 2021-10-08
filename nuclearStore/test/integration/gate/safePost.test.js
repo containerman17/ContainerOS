@@ -2,7 +2,7 @@ const assert = require('assert');
 const sdk = require('../../../sdk')
 
 
-describe.only('Concurrent writes', () => {
+describe('Concurrent writes', () => {
     it('should allow only one concurent write with the same ts', async function () {
         let successes = 0;
         let failures = 0;

@@ -1,6 +1,10 @@
 const storeLocator = require('./storeLocator')
 const axios = require('axios')
 const delay = require('delay')
+const EventEmitter = require('events');
+
+const emitter = new EventEmitter()
+
 let data = {}
 
 let syncComplete = false
@@ -60,6 +64,9 @@ async function set(key, value, ts = null, checkTs = null) {
 
         if (checks > 0) {
             data[key] = { value, ts }
+
+            emitter.emit('set', key)
+
             return { success: true }
         } else {
             return { success: false, error: 'All stores are down' }
@@ -81,6 +88,41 @@ async function getRecursive(prefix) {
     return result
 }
 
+async function getWatch(prefix, ts) {
+    const data = await getRecursive(prefix)
+    const response = {}
+    let sendNow = false
+    for (let [key, value] of Object.entries(data)) {
+        if (value.ts > ts) {
+            response[key] = value
+            sendNow = true
+        }
+    }
+    if (sendNow) {
+        return response
+    }
+
+    await new Promise(resolve => {
+        let timeout = setTimeout(() => {
+            emitter.off('set', cb)
+            resolve()
+        }, 29000)
+
+        let cb = async function (key) {
+            if (key.startsWith(prefix)) {
+                response[key] = await get(key)
+                emitter.off('set', cb)
+                clearTimeout(timeout)
+                resolve()
+            }
+        }
+
+        emitter.on('set', cb)
+    })
+
+    return response
+}
+
 async function get(key) {
     await awaitSync()
 
@@ -92,4 +134,4 @@ async function get(key) {
         }
     };
 }
-module.exports = { set, get, getRecursive }
+module.exports = { set, get, getRecursive, getWatch }

@@ -3,7 +3,7 @@ const axios = require('axios')
 const sdk = require('../../../sdk')
 
 
-describe.only('Recursive', () => {
+describe('Recursive', () => {
     it('should work for plain recursive requests', async function () {
         const myVal1 = 'testrec1' + String(new Date)
         const myVal2 = 'testrec2' + String(new Date)
