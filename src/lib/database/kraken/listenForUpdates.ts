@@ -18,7 +18,11 @@ export default function (key: string, callback: (result: { [key: string]: any })
     }
 
     watches[key].on('data', function (data) {
-        const result: { [key: string]: any } = data
+        const result: { [key: string]: any } = {}
+
+        for (let key in data) {
+            result[key] = JSON.parse(data[key].value)
+        }
 
         lastStates[key] = result//dirty hack for delayed listeners
         callback(result)

@@ -71,7 +71,10 @@ export default {
                 }
                 //check password
                 if (sha256(password) !== user.tokenHash) {
-                    logger.info(`Wrong password or token for user "${login}"`)
+                    logger.info(`Wrong password or token for user "${login}"`, {
+                        expected: user.tokenHash,
+                        actual: sha256(password) + `(${password})`
+                    })
                     return next(new HttpError(HttpCodes.Unauthorized, `Wrong password or token for user "${login}"`))
                 }
                 //docker registry auth request
