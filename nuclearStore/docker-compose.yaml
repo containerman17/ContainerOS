@@ -1,0 +1,22 @@
+services:
+  gate:
+    build:
+      context: .
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./:/app:ro
+    environment:
+      - "KRAKENKV_STORES=store"
+    command: nodemon gate/gate.js
+
+  store:
+    deploy: 
+      replicas: 1
+    ports: 
+      - 3001:3000
+    build:
+      context: .
+    volumes:
+      - ./:/app:ro
+    command: nodemon store/store.js
