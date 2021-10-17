@@ -23,12 +23,12 @@ export default async function (req: express.Request, res: express.Response) {
                 replicas: validatedBody.scale,
                 resources: {
                     limits: {
-                        cpus: '1',
-                        memory: '2000m'
+                        cpus: String(validatedBody.hardCpuLimit),
+                        memory: String(validatedBody.hardMemoryLimit) + 'm'
                     },
                     reservations: {
-                        cpus: '0.1',
-                        memory: '100m'
+                        cpus: String(validatedBody.hardCpuLimit / 4),
+                        memory: String(validatedBody.hardMemoryLimit / 4) + 'm'
                     }
                 },
                 update_config: {
