@@ -1,0 +1,7 @@
+apt install software-properties-common && \
+    add-apt-repository ppa:linbit/linbit-drbd9-stack
+
+
+apt install -y drbd-dkms drbd-utils && \
+    sudo apt install -y linux-headers-$(uname -r) && \
+    modprobe drbd

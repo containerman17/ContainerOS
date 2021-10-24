@@ -1,0 +1,17 @@
+drbdadm create-md r0
+drbdadm up r0
+drbdadm status r0
+drbdadm primary --force r0 # on one node
+drbdsetup events2 --now r0
+drbdsetup events2 r0
+drbdadm dstate r0
+
+# check about auto-promote feature
+
+
+resource r0 {
+  handlers {
+    before-resync-target "/usr/lib/drbd/snapshot-resync-target-lvm.sh";
+    after-resync-target "/usr/lib/drbd/unsnapshot-resync-target-lvm.sh";
+  }
+}
