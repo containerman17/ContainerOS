@@ -1,5 +1,6 @@
 //example https://github.com/LINBIT/linstor-docker-volume-go
-// service docker restart ;  docker volume create test --driver=cossds
+// service docker restart &&  docker volume create test --driver=cossds &&  docker container run -it --volume test:/data busybox sh
+
 
 const fs = require('fs');
 
@@ -9,6 +10,9 @@ if (!fs.existsSync(FAKE_DB_PATH)) {
     fs.writeFileSync(FAKE_DB_PATH, '{}')
 }
 const fakeDb = {
+    getAll: function () {
+        return JSON.parse(fs.readFileSync(FAKE_DB_PATH))
+    },
     get: key => {
         return JSON.parse(fs.readFileSync(FAKE_DB_PATH))[key]
     },
@@ -66,6 +70,53 @@ handlers['/VolumeDriver.Create'] = function ({ Name, Opts }) {
     }
 }
 
+handlers['/VolumeDriver.Remove'] = function ({ Name, Opts }) {
+    const vol = fakeDb.get(Name)
+    if (!vol) {
+        return {
+            Err: 'volume does not exists'
+        }
+    } else {
+        fakeDb.set(Name, undefined)
+        return {}
+    }
+}
+
+handlers['/VolumeDriver.List'] = function (body) {
+    return {
+        Volumes: Object.values(fakeDb.getAll())
+    }
+}
+
+handlers['/VolumeDriver.Mount'] = function ({ Name, ID }) {
+    const vol = fakeDb.get(Name)
+    if (!fs.existsSync(vol.Mountpoint)) {
+        fs.mkdirSync(vol.Mountpoint)
+    }
+    if (vol) {
+        return {
+            Mountpoint: vol.Mountpoint
+        }
+    } else {
+        return {
+            Err: 'no such volume'
+        }
+    }
+}
+
+handlers['/VolumeDriver.Path'] = handlers['/VolumeDriver.Mount']
+
+handlers['/VolumeDriver.Unmount'] = function ({ Name }) {
+    const vol = fakeDb.get(Name)
+    if (!vol) {
+        return {
+            Err: 'volume does not exists'
+        }
+    }
+    return {}
+}
+
+
 const UNIX_SOCKET_ADDR = '/run/docker/plugins/cossds.sock'
 if (fs.existsSync(UNIX_SOCKET_ADDR)) {
     fs.unlinkSync(UNIX_SOCKET_ADDR)
@@ -101,4 +152,3 @@ require('http').createServer(async function (req, res) {
         res.end(JSON.stringify(responseBody))
     }
 }).listen(UNIX_SOCKET_ADDR);
-
