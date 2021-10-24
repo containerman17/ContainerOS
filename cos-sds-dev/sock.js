@@ -3,15 +3,66 @@
 
 const fs = require('fs');
 
+//fakedb starts
+const FAKE_DB_PATH = __dirname + '/data.json'
+if (!fs.existsSync(FAKE_DB_PATH)) {
+    fs.writeFileSync(FAKE_DB_PATH, '{}')
+}
+const fakeDb = {
+    get: key => {
+        return JSON.parse(fs.readFileSync(FAKE_DB_PATH))[key]
+    },
+    set: (key, value) => {
+        let db = JSON.parse(fs.readFileSync(FAKE_DB_PATH))
+        db[key] = value
+        fs.writeFileSync(FAKE_DB_PATH, JSON.stringify(db))
+    }
+}
+//fakedb ends
+
 const handlers = {}
 handlers['/Plugin.Activate'] = function (body) {
     return {
-        code: 200,
-        body: {
-            Implements: [
-                'VolumeDriver'
-            ],
+        Implements: [
+            'VolumeDriver'
+        ],
+    }
+}
+
+handlers['/VolumeDriver.Capabilities'] = function (body) {
+    return {
+        Capabilities: {
+            Scope: 'global'
         }
+    }
+}
+
+handlers['/VolumeDriver.Get'] = function ({ Name }) {
+    const vol = fakeDb.get(Name)
+    if (vol) {
+        return {
+            Volume: vol
+        }
+    } else {
+        return {
+            Err: 'no such volume'
+        }
+    }
+}
+
+handlers['/VolumeDriver.Create'] = function ({ Name, Opts }) {
+    const vol = fakeDb.get(Name)
+    if (vol) {
+        return {
+            Err: 'volume already exists'
+        }
+    } else {
+        fakeDb.set(Name, {
+            Name,
+            Mountpoint: '/tmp/' + Name,
+            Status: {},
+        })
+        return fakeDb.get(Name)
     }
 }
 
@@ -25,7 +76,6 @@ require('http').createServer(async function (req, res) {
     console.log('method', req.method)
 
     let responseBody = {}
-    let responseCode = 200
 
     try {
         let body = ""
@@ -36,15 +86,18 @@ require('http').createServer(async function (req, res) {
             req.on('error', err => reject(err))
         })
 
-        const result = await handlers[req.url](JSON.parse(body || '{}'))
-        responseBody = result.body
-        responseCode = result.code
+        console.log('Request:', {
+            url: req.url,
+            method: req.method,
+            body
+        })
+
+        responseBody = await handlers[req.url](JSON.parse(body || '{}'))
     } catch (e) {
-        console.error(e)
         responseBody = { "err": e.message }
-        responseCode = 500
     } finally {
-        res.writeHead(responseCode, { 'Content-Type': 'application/json' })
+        console.log('Response:', responseBody)
+        res.writeHead(200, { 'Content-Type': 'application/json' })
         res.end(JSON.stringify(responseBody))
     }
 }).listen(UNIX_SOCKET_ADDR);
