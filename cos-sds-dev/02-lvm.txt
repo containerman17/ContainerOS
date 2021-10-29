@@ -27,5 +27,11 @@ pvcreate /dev/loop0
 vgcreate vg /dev/loop0
 lvcreate -l 100%FREE  --thinpool vg/lvmthinpool
 
+lvcreate -V1G -T vg/lvmthinpool -n r0
+lvcreate -V1G -T vg/lvmthinpool -n r1
+lvcreate -V1G -T vg/lvmthinpool -n r2
+lvcreate -V1G -T vg/lvmthinpool -n r3
 
-#/dev/vg/lvmthinpool
+sleep 3
+
+reboot now
