@@ -21,9 +21,11 @@ docker run -it --rm \
     --name drbdadm \
     --hostname=$(hostname) \
     -v /etc/drbd.d:/etc/drbd.d \
+    -v /run:/run \
     --net=host \
     --privileged \
     drbdadm \
-    /bin/bash -c "drbdadm status all; drbdadm primary r0; sleep 1; drbdadm status all; drbdadm secondary r0; sleep 1; drbdadm status r0"
+    /bin/bash -c "echo 'FROM DOCKER'; drbdadm status all; drbdadm primary r0; sleep 1; drbdadm status all;"; echo "FROM HOST:"; drbdadm status all
+    #/bin/bash -c "drbdadm status all; drbdadm primary r0; sleep 1; drbdadm status all; drbdadm secondary r0; sleep 1; drbdadm status r0"
 
 #docker run --rm --net=host--pid=host -v /usr:/usr -v /etc:/etc -v /run:/run --privileged ubuntu:focal bash -c "drbdadm status"
