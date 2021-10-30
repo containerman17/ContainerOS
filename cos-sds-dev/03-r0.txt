@@ -8,6 +8,13 @@ drbdadm dstate r0
 
 # check about auto-promote feature
 
+mkfs.ext4 /dev/drbd0
+
+drbdadm primary r0; mkdir /data; mount /dev/drbd0 /data
+
+
+umount /dev/drbd0
+
 
 resource r0 {
   handlers {

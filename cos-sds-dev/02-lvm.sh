@@ -35,3 +35,5 @@ lvcreate -V1G -T vg/lvmthinpool -n r3
 sleep 3
 
 reboot now
+
+
