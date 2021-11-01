@@ -1,10 +1,8 @@
 const assert = require('assert');
-// const axios = require('axios')
-// const execa = require('execa')
 const delay = require('../delay')
 const { Database, BackupNode } = require('../');
 
-describe.only('Database basic functions', function () {
+describe('Database basic functions', function () {
     let db = null
     let backupNodes = []
     this.beforeAll(async () => {
@@ -12,8 +10,13 @@ describe.only('Database basic functions', function () {
         db = new Database({ port: 9999 })
         backupNodes.push(new BackupNode({ dbHost: 'localhost', dbPort: 9999, logFunction: null }))
     })
+    this.afterAll(async () => {
+        await db.kill()
+        backupNodes
+            .map(node => node.kill())
+    })
 
-    it.only('should update value', async function () {
+    it('should update value', async function () {
         const myVal = 'woop' + String(new Date)
         await db.set('myKey', myVal)
 
@@ -21,7 +24,7 @@ describe.only('Database basic functions', function () {
         assert.strictEqual(value, myVal)
     });
 
-    it.only('should deliver data to store', async function () {
+    it('should deliver data to store', async function () {
         const myVal = 'testdeliver' + String(new Date)
         await db.set('test/deliver', myVal)
         await delay(200)
@@ -29,7 +32,7 @@ describe.only('Database basic functions', function () {
         const backupStoreState = backupNodes[0].getStoreSnapshot()
         assert.strictEqual(backupStoreState['test/deliver'].value, myVal)
     })
-    it.only('should survive gate and store restart', async function () {
+    it('should survive gate and store restart', async function () {
         const oldServerId = db.getServerId()
         const myVal = 'testsurvive' + String(new Date)
         await db.set('test/survive', 'oldval')

@@ -102,6 +102,16 @@ class Database {
         return this.store[key];
     }
 
+    async getRecurse(prefix) {
+        const result = {}
+        for (const [key, { value, ts }] of Object.entries(this.store)) {
+            if (key.startsWith(prefix)) {
+                result[key] = { value, ts };
+            }
+        }
+        return result;
+    }
+
     async getValue(key) {
         return (await this.get(key)).value;
     }
