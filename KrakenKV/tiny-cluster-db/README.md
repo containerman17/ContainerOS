@@ -30,8 +30,6 @@ const {ts, value} = await db.get('my/key2')
 // get only value
 const onlyValue = await db.getValue('my/key') 
 
-//set a value only if it hasn't changed since ts
-await db.set('my/key1', 'somenewValue', ts)
 //get all values with key starting with 'my/'
 const allMyVals = await db.getRecurse('my/')
 
