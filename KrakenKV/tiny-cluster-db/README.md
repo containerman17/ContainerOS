@@ -42,8 +42,18 @@ const updaterFunc = function (val) {//accept old value
     return val+1//return new value
 }
 for (let i = 0; i < 30; i++) {
-    db.safeUpdate('my/safepatch', updaterFunc) //Of course you have to handle a promise rejection
+    //Can be executed concurrently
+    //Of course you have to handle a promise rejection
+    db.safeUpdate('my/safepatch', updaterFunc) 
 }
+
+//safeUpdate also great for lists
+await db.set('my/list', []) 
+//...
+await db.safeUpdate('my/list', function(someList){
+    someList.push({name: 'someName', age: 10})
+    return someList
+})
 ```
 
 `backupNode.js`
