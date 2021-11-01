@@ -1,31 +1,32 @@
 const http = require('http');
 const delay = require('./delay');
-
+const { createHttpTerminator } = require('http-terminator')
 const LONG_POLLING_LIMIT = 10 * 1000
 
 function createSimpleHttpPostServer(handler, port) {
-    http.createServer(function (req, res) {
+    const server = http.createServer(async function (req, res) {
         let data = '';
         req.on('data', chunk => {
             data += chunk;
         })
-        req.on('end', () => {
-            console.log(JSON.parse(data).todo); // 'Buy the milk'
-            res.end();
+        req.on('end', async () => {
+
+            let response
+
+            try {
+                response = await handler(JSON.parse(data));
+            } catch (e) {
+                response = { error: e.message || String(e) }
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(response));
         })
 
-        let response
 
-        try {
-            response = await handler(JSON.parse(data));
-        } catch (e) {
-            console.log(e);
-            response = { error: e.message || String(e) }
-        }
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(response));
-    }).listen(port);
+    })
+    server.listen(port);
+    return server
 }
 
 class Database {
@@ -37,13 +38,27 @@ class Database {
 
         //For workers to detect server restart
         this.serverId = Math.random().toString(36).substring(2, 15)
-        createSimpleHttpPostServer(this.onRequest.bind(this), port);
+        this.server = createSimpleHttpPostServer(this.onRequest.bind(this), port);
+        this.serverTerminator = createHttpTerminator({ server: this.server })
+    }
+
+    getServerId() {
+        return this.serverId
+    }
+
+    async kill() {
+        await this.serverTerminator.terminate();
     }
 
     async onRequest(data) {
+        if (data.expectedServerId !== this.serverId) {
+            return { serverId: this.serverId, updates: {} }
+        }
+
         if (this.store == null) {
             this.store = {};
         }
+
         //get updates from backup node
         for (const [key, { value, ts }] of Object.entries(data.items || {})) {
             if (this.store[key] && this.store[key].ts > ts) {
@@ -54,6 +69,8 @@ class Database {
         //send updates to backup node
         let updates = {}
 
+        //wait only if communication already established
+        let lastDelay = 100
         const stopWaitingAt = Date.now() + LONG_POLLING_LIMIT;
 
         while (stopWaitingAt > Date.now()) {
@@ -63,14 +80,19 @@ class Database {
                     updates[key] = { value, ts };
                 }
             }
+
             if (Object.keys(updates).length == 0) {
-                await delay(1000);
+                await delay(lastDelay);
+                lastDelay *= 2;
             } else {
                 break;
             }
         }
 
-        return { serverId: this.serverId, updates }
+
+        const response = { serverId: this.serverId, updates }
+
+        return response
     }
 
     async get(key) {

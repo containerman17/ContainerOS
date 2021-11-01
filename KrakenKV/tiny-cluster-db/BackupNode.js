@@ -17,7 +17,6 @@ function makeJsonPost(host, port, data) {
         }
 
         const req = http.request(options, res => {
-            console.log(`statusCode: ${res.statusCode}`)
             let responseCollected = ''
 
             res.on('data', d => {
@@ -37,7 +36,7 @@ function makeJsonPost(host, port, data) {
             reject(error)
         })
 
-        req.write(data)
+        req.write(dataString)
         req.end()
     })
 }
@@ -48,37 +47,60 @@ class BackupNode {
         let lastUpdate = 0
         let lastStoredServerId = ''
         let masterNeedsMyData = false
+        this.startComplete = false
 
-        while (true) {
-            try {
-                if (masterNeedsMyData && logFunction) {
-                    logFunction('Info', 'Dumping data to the master')
-                }
+        const start = async () => {
 
-                const { serverId, updates } = await makeJsonPost(dbHost, dbPort, {
-                    lastUpdate: this.lastUpdate,
-                    items: masterNeedsMyData ? this.store : {}
-                })
-                masterNeedsMyData = false
-
-                if (lastStoredServerId !== serverId) {
-                    lastStoredServerId = serverId
-                    masterNeedsMyData = true
-                }
-
-                for (const [key, { value, ts }] of Object.entries(updates || {})) {
-                    if (this.store[key] && this.store[key].ts > ts) {
-                        continue;
+            while (!this.killed) {
+                try {
+                    if (masterNeedsMyData && logFunction) {
+                        logFunction('Info', 'Dumping data to the master')
                     }
-                    this.store[key] = { value, ts };
-                    if (ts > lastUpdate) {
-                        lastUpdate = ts
+
+                    const { serverId, updates } = await makeJsonPost(dbHost, dbPort, {
+                        lastUpdate: lastUpdate,
+                        items: masterNeedsMyData ? this.store : {},
+                        expectedServerId: lastStoredServerId
+                    })
+                    masterNeedsMyData = false
+
+                    if (lastStoredServerId !== serverId) {
+                        lastStoredServerId = serverId
+                        masterNeedsMyData = true
                     }
+
+                    for (const [key, { value, ts }] of Object.entries(updates || {})) {
+                        if (this.store[key] && this.store[key].ts > ts) {
+                            continue;
+                        }
+                        this.store[key] = { value, ts };
+                        logFunction && logFunction('Info', 'Store update', key, value)
+
+                        if (ts > lastUpdate) {
+                            lastUpdate = ts
+                        }
+                    }
+                    this.startComplete = true
+                } catch (e) {
+                    logFunction && logFunction('Error', e)
+                    await delay(100)
                 }
-            } catch (e) {
-                logFunction && logFunction('Error', e)
-                await delay(1000)
             }
+        }
+        start()
+    }
+
+    getStoreSnapshot() {
+        return Object.assign({}, this.store)
+    }
+
+    kill() {
+        this.killed = true
+    }
+
+    async waitForStart() {
+        while (!this.startComplete) {
+            await delay(100)
         }
     }
 }

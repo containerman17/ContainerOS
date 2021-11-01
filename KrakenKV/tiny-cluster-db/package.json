@@ -1,13 +1,19 @@
 {
-  "name": "tiny-cluster-db",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {}
+    "name": "tiny-cluster-db",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha --recursive --timeout 3000 --exit",
+        "dev": "nodemon --exec npm test"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "http-terminator": "^3.0.3"
+    },
+    "devDependencies": {
+        "mocha": "^9.1.3"
+    }
 }
