@@ -1,6 +1,7 @@
 const http = require('http');
 const delay = require('./delay');
-const { createHttpTerminator } = require('http-terminator')
+const { createHttpTerminator } = require('http-terminator');
+const EventEmitter = require('events');
 const LONG_POLLING_LIMIT = 10 * 1000
 
 function createSimpleHttpPostServer(handler, port) {
@@ -40,6 +41,7 @@ class Database {
         this.serverId = Math.random().toString(36).substring(2, 15)
         this.server = createSimpleHttpPostServer(this.onRequest.bind(this), port);
         this.serverTerminator = createHttpTerminator({ server: this.server })
+        this.watchers = []
     }
 
     getServerId() {
@@ -145,6 +147,25 @@ class Database {
             value: value,
             ts: Date.now()
         };
+        //notify watchers
+        for (let { watcher, prefix } of this.watchers) {
+            if (key.startsWith(prefix)) {
+                watcher.emit('data', await this.getRecurse(prefix))
+            }
+        }
+    }
+
+    watch(prefix) {
+        const watcher = new EventEmitter()
+        watcher.stop = () => {
+            this.watchers = this.watchers.filter(w => w.watcher !== watcher)
+        }
+        this.watchers.push({ watcher, prefix })
+
+        this.getRecurse(prefix)
+            .then(values => watcher.emit('data', values))
+
+        return watcher
     }
 }
 

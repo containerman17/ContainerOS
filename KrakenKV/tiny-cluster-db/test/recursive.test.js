@@ -2,7 +2,7 @@ const assert = require('assert');
 const { Database, BackupNode } = require('../');
 
 
-describe.only('Recursive', function () {
+describe('Recursive', function () {
     let db = null
     let backupNodes = []
     this.beforeAll(async () => {

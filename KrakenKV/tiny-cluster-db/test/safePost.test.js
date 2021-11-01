@@ -2,7 +2,7 @@ const assert = require('assert');
 const { Database, BackupNode } = require('../');
 
 
-describe.only('Concurrent writes', function () {
+describe('Concurrent writes', function () {
     let db = null
     let backupNodes = []
     this.beforeAll(async () => {
