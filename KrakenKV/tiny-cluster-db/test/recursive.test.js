@@ -16,7 +16,7 @@ describe.only('Recursive', function () {
             .map(node => node.kill())
     })
 
-    it.only('should work for plain recursive requests', async function () {
+    it('should work for plain recursive requests', async function () {
         const myVal1 = 'testrec1' + String(new Date)
         const myVal2 = 'testrec2' + String(new Date)
 

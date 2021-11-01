@@ -2,7 +2,7 @@ const assert = require('assert');
 const delay = require('../delay')
 const { Database, BackupNode } = require('../');
 
-describe('Database basic functions', function () {
+describe.only('Database basic functions', function () {
     let db = null
     let backupNodes = []
     this.beforeAll(async () => {

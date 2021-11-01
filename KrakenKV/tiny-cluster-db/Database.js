@@ -116,10 +116,25 @@ class Database {
         return (await this.get(key)).value;
     }
 
+    async safeUpdate(key, callback) {
+        for (let i = 0; i < 100; i++) {
+            try {
+                let { value, ts } = await this.get(key)
+                const newValue = await callback(value)
+                await this.set(key, newValue, ts)
+                return
+            } catch (e) {
+                await delay(10 * i + 10 * Math.random())
+            }
+        }
+        throw new Error(`Failed to update key '${key}'`)
+    }
+
     async set(key, value, expectedTs = null) {
         while (this.store == null) {
             await delay(100);
         }
+        await delay(3)//Dirty hack allowing us to use timestamp as a unique id for concurrent writes
         if (expectedTs === 0 && this.store[key]) {
             throw new Error(`Key '${key}' already exists but got expectedTs = 0`);
         }
