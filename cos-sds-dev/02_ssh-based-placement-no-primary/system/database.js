@@ -37,6 +37,6 @@ module.exports = {
         return result
     },
     async safeUpdate(key, callback) {
-        return this.set(key, callback(await this.getValue(key)))
+        return this.set(key, await callback(await this.getValue(key)))
     }
 }

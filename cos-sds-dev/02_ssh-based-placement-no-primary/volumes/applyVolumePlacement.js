@@ -6,25 +6,27 @@ const getVolumePort = require('./getVolumePort')
 module.exports = async function applyVolumePlacement(volName) {
     console.log(`   - applyVolumePlacement`)
     //regenerate config
+    const port = await getVolumePort(volName)
 
-    const vol = await db.getValue(`volumes/${volName}`)
+    await db.safeUpdate(`volumes/${volName}`, async function (vol) {
+        const configSource = {
+            nodes: [],
+            port,
+            device: `/dev/cossds-${volName}`,
+            disk: `/dev/vg/${volName}`
+        }
 
-    const configSource = {
-        nodes: [],
-        port: await getVolumePort(volName),
-        device: `/dev/cossds-${volName}`,
-        disk: `/dev/vg/${volName}`
-    }
+        for (let nodeName of vol.placement) {
+            configSource.nodes.push({
+                name: nodeName,
+                diskless: false,
+                id: await getNodeId(nodeName),
+                ip: (await db.getValue('nodes'))[nodeName].ip
+            })
+        }
 
-    for (let nodeName of vol.placement) {
-        configSource.nodes.push({
-            name: nodeName,
-            diskless: false,
-            id: await getNodeId(nodeName),
-            ip: (await db.getValue('nodes'))[nodeName].ip
-        })
-    }
+        vol.drbdConfig = await genDrbdConfig(configSource)
+        return vol
+    })
 
-    const volConfig = await genDrbdConfig(configSource)
-    console.log(`volConfig`, volConfig)
 }
