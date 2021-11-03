@@ -1,0 +1,53 @@
+{
+  "desiredVolumes": {
+    "value": [
+      "testvol"
+    ],
+    "ts": 1635969264767
+  },
+  "nodes": {
+    "value": {
+      "linstor-test-1": {
+        "ip": "95.217.131.185"
+      },
+      "linstor-test-2": {
+        "ip": "65.108.86.219"
+      },
+      "linstor-test-3": {
+        "ip": "135.181.192.104"
+      },
+      "linstor-test-4": {
+        "ip": "65.21.48.216"
+      }
+    },
+    "ts": 1635969264768
+  },
+  "volumes/testvol": {
+    "value": {
+      "placement": [
+        "linstor-test-1"
+      ],
+      "initCompleted": false
+    },
+    "ts": 1635969288681
+  },
+  "volumePorts": {
+    "value": {
+      "ports": {
+        "testvol2": 7791,
+        "testvol": 7792
+      },
+      "lastPort": 7792
+    },
+    "ts": 1635968815674
+  },
+  "nodeIds": {
+    "value": {
+      "ids": {
+        "linstor-test-1": 1
+      },
+      "lastId": 1
+    },
+    "ts": 1635969200916
+  }
+}

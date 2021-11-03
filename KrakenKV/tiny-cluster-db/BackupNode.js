@@ -1,5 +1,5 @@
 const http = require('http')
-const delay = require('./delay')
+const delay = require('waitms')
 
 function makeJsonPost(host, port, data) {
     return new Promise((resolve, reject) => {

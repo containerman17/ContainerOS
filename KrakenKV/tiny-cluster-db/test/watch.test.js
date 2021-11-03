@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { Database, BackupNode } = require('../');
-const delay = require('../delay')
+const delay = require('waitms')
 
 describe('Watch changes', function () {
     let db = null

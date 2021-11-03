@@ -1,5 +1,5 @@
 const http = require('http');
-const delay = require('./delay');
+const delay = require('waitms');
 const { createHttpTerminator } = require('http-terminator');
 const EventEmitter = require('events');
 const LONG_POLLING_LIMIT = 10 * 1000

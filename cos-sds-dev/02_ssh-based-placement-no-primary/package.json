@@ -1,0 +1,13 @@
+{
+    "dependencies": {
+        "node-ssh": "^12.0.1",
+        "tiny-cluster-db": "^1.0.5",
+        "waitms": "^1.0.3"
+    },
+    "scripts": {
+        "dev": "nodemon server.js --ignore '*.json'"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.14"
+    }
+}

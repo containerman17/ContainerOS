@@ -1,5 +1,5 @@
 const assert = require('assert');
-const delay = require('../delay')
+const delay = require('waitms')
 const { Database, BackupNode } = require('../');
 
 describe('Database basic functions', function () {
