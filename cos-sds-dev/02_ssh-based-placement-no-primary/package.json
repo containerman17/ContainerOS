@@ -2,6 +2,7 @@
     "dependencies": {
         "node-ssh": "^12.0.1",
         "tiny-cluster-db": "^1.0.5",
+        "tmp": "^0.2.1",
         "waitms": "^1.0.3"
     },
     "scripts": {

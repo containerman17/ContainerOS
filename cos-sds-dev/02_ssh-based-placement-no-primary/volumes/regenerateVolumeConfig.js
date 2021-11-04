@@ -2,18 +2,19 @@ const getNodeId = require('../nodes/getNodeId')
 const db = require('../system/database')
 const genDrbdConfig = require('./genDRBDConfig')
 const getVolumePort = require('./getVolumePort')
+const getDrbdDeviceName = require('./getDrbdDeviceName')
 
-module.exports = async function applyVolumePlacement(volName) {
+module.exports = async function regenerateVolumeConfig(volName) {
     console.log(`   - applyVolumePlacement`)
-    //regenerate config
-    const port = await getVolumePort(volName)
 
+    //regenerate config
     await db.safeUpdate(`volumes/${volName}`, async function (vol) {
         const configSource = {
             nodes: [],
-            port,
-            device: `/dev/cossds-${volName}`,
-            disk: `/dev/vg/${volName}`
+            port: await getVolumePort(volName),
+            device: await getDrbdDeviceName(volName),
+            disk: `/dev/vg/${volName}`,
+            volName,
         }
 
         for (let nodeName of vol.placement) {
@@ -28,5 +29,4 @@ module.exports = async function applyVolumePlacement(volName) {
         vol.drbdConfig = await genDrbdConfig(configSource)
         return vol
     })
-
 }

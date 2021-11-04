@@ -1,11 +1,12 @@
 module.exports = function ({
+    volName,
     nodes,
     port,
     device,
     disk
 }) {
     let config = `
-resource r0 {
+resource ${volName} {
     device    ${device};
     disk      ${disk};
     meta-disk internal;

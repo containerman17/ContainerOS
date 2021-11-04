@@ -2,9 +2,8 @@ const db = require('./system/database')
 const delay = require('waitms')
 const volumeInit = require('./volumes/initVolume')
 
-db.set('desiredVolumes', ['testvol'])
-
-db.set('nodes', {
+db.safeUpdate('desiredVolumes', val => val || ['testvol'])
+db.safeUpdate('nodes', val => val || {
     'linstor-test-1': { ip: '95.217.131.185' },
     'linstor-test-2': { ip: '65.108.86.219' },
     'linstor-test-3': { ip: '135.181.192.104' },
@@ -17,19 +16,21 @@ async function placementLoop() {
 
     for (let volName of desiredVolumesList) {
         console.log(`\n${volName}:`)
-        const volInfo = await db.getValue(`volumes/${volName}`) || {}
+        const volInfo = await db.getValue(`volumes/${volName}`)
 
-        if (!volInfo.initCompleted) {
-            //init with empty value
+        //initialize value
+        if (!volInfo?.initCompleted) {
             await db.safeUpdate(`volumes/${volName}`, vol => vol || {
                 placement: [],
                 initCompleted: false
             })
 
             await volumeInit(volName)
-            //place on one node
+            await db.safeUpdate(`volumes/${volName}`, function (vol) {
+                return Object.assign({}, vol, { initCompleted: true })
+            })
         }
-
+        //place volumes
     }
 }
 
