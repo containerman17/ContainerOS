@@ -1,6 +1,7 @@
 const db = require('../system/database')
 const copyFileToServer = require('../system/copyFileToServer')
 const executeOnServer = require('../system/executeOnServer')
+const createLvIfNotExists = require('../volumes/createLvIfNotExists')
 
 module.exports = async function (execute = true) {
     //1. Update desired configs
@@ -14,6 +15,7 @@ module.exports = async function (execute = true) {
         }
 
         for (let [volname, vol] of Object.entries(allVolumes)) {
+            if (vol === null) continue
             for (let nodeName of vol.placement) {
                 nodes[nodeName].desiredConfig += vol.drbdConfig
             }
@@ -28,7 +30,7 @@ module.exports = async function (execute = true) {
         const promiseGen = async function (nodeName) {
             if (nodes[nodeName].appliedConfig !== nodes[nodeName].desiredConfig) {
                 try {
-                    console.log(`       - applying new config for ${nodeName}`)
+                    console.log(`   - applying new config for ${nodeName}`)
                     await copyFileToServer(nodes[nodeName].ip, `/etc/drbd.d/r0.res`, nodes[nodeName].desiredConfig)
                     if (execute) {
                         await executeOnServer(nodes[nodeName].ip, `drbdadm adjust all`)

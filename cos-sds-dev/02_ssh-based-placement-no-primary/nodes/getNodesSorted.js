@@ -3,5 +3,5 @@ const db = require('../system/database')
 module.exports = async function getNodesSorted() {
     const nodes = await db.getValue('nodes')
     const allNodes = Object.keys(nodes)
-    return allNodes.sort(() => .5 - Math.random());
+    return allNodes.sort((a, b) => a > b ? -1 : 1);
 }

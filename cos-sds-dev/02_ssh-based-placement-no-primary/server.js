@@ -4,19 +4,16 @@ const volumeInit = require('./volumes/initVolume')
 const getNodesSorted = require('./nodes/getNodesSorted')
 const applyNodeConfigs = require('./nodes/applyNodeConfigs')
 const regenerateVolumeConfig = require('./volumes/regenerateVolumeConfig')
-db.safeUpdate('desiredVolumes', val => val || ['testvol'])
-db.safeUpdate('nodes', val => val || {
-    'linstor-test-1': { ip: '95.217.131.185' },
-    'linstor-test-2': { ip: '65.108.86.219' },
-    'linstor-test-3': { ip: '135.181.192.104' },
-    'linstor-test-4': { ip: '65.21.48.216' },
-})
+const createLvIfNotExists = require('./volumes/createLvIfNotExists')
+
 
 const REPLICAS = 3
 
 async function placementLoop() {
+
     console.log(`\n\nPlacement loop:`)
     const desiredVolumesList = await db.getValue('desiredVolumes') || []
+    const nodes = await db.getValue('nodes')
 
     for (let volName of desiredVolumesList) {
         console.log(`\n${volName}:`)
@@ -49,14 +46,49 @@ async function placementLoop() {
                 return vol
             })
             await regenerateVolumeConfig(volName)
+            volInfo = await db.getValue(`volumes/${volName}`)
+
+            console.log({ volName, 'volInfo.placement': volInfo.placement })
+
+            for (let nodeName of volInfo.placement) {
+                console.log(`   - Checking volume ${volName} exists on ${nodeName}`)
+                await createLvIfNotExists(volName, nodes[nodeName].ip)
+            }
+        } else {
+            console.log(`   - No volume placement required`)
         }
+
     }
+
     await applyNodeConfigs()
 }
 
+async function init() {
 
+    await db.safeUpdate('desiredVolumes', val => val || ['testvol'])
+    await db.safeUpdate('nodes', function (val) {
+        // if (!val)
+        val = {}
+
+        if (!val['linstor-test-1'])
+            val['linstor-test-1'] = { ip: '95.217.131.185' }
+        if (!val['linstor-test-2'])
+            val['linstor-test-2'] = { ip: '65.108.86.219' }
+        if (!val['linstor-test-3'])
+            val['linstor-test-3'] = { ip: '135.181.192.104' }
+        if (!val['linstor-test-4'])
+            val['linstor-test-4'] = { ip: '65.21.48.216' }
+        return val
+    })
+
+    await db.set(`volumes/testvol`, null)
+
+    await applyNodeConfigs(false)
+}
 
 async function run() {
+    await init()
+
     while (true) {
         await placementLoop()
         await delay(4000)
