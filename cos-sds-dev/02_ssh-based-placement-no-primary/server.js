@@ -5,73 +5,55 @@ const getNodesSorted = require('./nodes/getNodesSorted')
 const applyNodeConfigs = require('./nodes/applyNodeConfigs')
 const regenerateVolumeConfig = require('./volumes/regenerateVolumeConfig')
 const createLvIfNotExists = require('./volumes/createLvIfNotExists')
-
-
+const addNodesToPlacement = require('./volumes/addNodesToPlacement')
+const getNodeInfo = require('./nodes/getNodeInfo')
 const REPLICAS = 3
 
 async function placementLoop() {
-
     console.log(`\n\nPlacement loop:`)
     const desiredVolumesList = await db.getValue('desiredVolumes') || []
     const nodes = await db.getValue('nodes')
 
     for (let volName of desiredVolumesList) {
-        console.log(`\n${volName}:`)
+        //create empty volume config
+        console.log(`\n\nPlacing volume ${volName}`)
         let volInfo = await db.getValue(`volumes/${volName}`)
 
-        //initialize value
-        if (!volInfo?.initCompleted) {
-            await db.safeUpdate(`volumes/${volName}`, vol => vol || {
-                placement: [],
-                initCompleted: false
-            })
-
-            await volumeInit(volName)
-            await db.safeUpdate(`volumes/${volName}`, function (vol) {
-                return Object.assign({}, vol, { initCompleted: true })
-            })
-        }
-        //place volumes
-        volInfo = await db.getValue(`volumes/${volName}`)
-        if (volInfo.placement.length < REPLICAS) {
-            const nodesToPlace = await getNodesSorted()
-
-            await db.safeUpdate(`volumes/${volName}`, function (vol) {
-                for (let node of nodesToPlace) {
-                    if (vol.placement.length < REPLICAS && !vol.placement.includes(node)) {
-                        vol.placement.push(node)
-                        console.log(`   - Placing on node ${node}`)
-                    }
-                }
-                return vol
-            })
-            await regenerateVolumeConfig(volName)
+        if (!volInfo || !volInfo.placement) {
+            await db.set(`volumes/${volName}`, { placement: {} })
             volInfo = await db.getValue(`volumes/${volName}`)
-
-            console.log({ volName, 'volInfo.placement': volInfo.placement })
-
-            for (let nodeName of volInfo.placement) {
-                console.log(`   - Checking volume ${volName} exists on ${nodeName}`)
-                await createLvIfNotExists(volName, nodes[nodeName].ip)
-            }
-        } else {
-            console.log(`   - No volume placement required`)
         }
 
-    }
+        //assign nodes to volumes
+        if (Object.keys(volInfo.placement).length < REPLICAS) {
+            await addNodesToPlacement(volName, REPLICAS)
+            volInfo = await db.getValue(`volumes/${volName}`)
+        }
 
-    await applyNodeConfigs()
+        //create lv if not exists
+        for (let nodeName in volInfo.placement) {
+            if (!volInfo.placement[nodeName].lvCreated) {
+                const { ip: nodeIp } = await getNodeInfo(nodeName)
+                console.log(volName, nodeName, 'Creating LV ', nodeIp)
+
+                await createLvIfNotExists(volName, nodeIp)
+                await db.safeUpdate(`volumes/${volName}`, function (vol) {
+                    vol.placement[nodeName].lvCreated = true
+                    return vol
+                })
+            }
+        }
+    }
 }
 
 async function init() {
 
-    await db.safeUpdate('desiredVolumes', val => val || ['testvol'])
     await db.safeUpdate('nodes', function (val) {
         // if (!val)
         val = {}
 
-        if (!val['linstor-test-1'])
-            val['linstor-test-1'] = { ip: '95.217.131.185' }
+        // if (!val['linstor-test-1'])
+        //     val['linstor-test-1'] = { ip: '95.217.131.185' }
         if (!val['linstor-test-2'])
             val['linstor-test-2'] = { ip: '65.108.86.219' }
         if (!val['linstor-test-3'])
@@ -81,9 +63,9 @@ async function init() {
         return val
     })
 
-    await db.set(`volumes/testvol`, null)
+    // await applyNodeConfigs(true)
+    await db.safeUpdate('desiredVolumes', val => val || ['testvol3'])
 
-    await applyNodeConfigs(false)
 }
 
 async function run() {

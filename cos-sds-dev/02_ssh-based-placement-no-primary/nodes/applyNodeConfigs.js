@@ -33,7 +33,9 @@ module.exports = async function (execute = true) {
                     console.log(`   - applying new config for ${nodeName}`)
                     await copyFileToServer(nodes[nodeName].ip, `/etc/drbd.d/r0.res`, nodes[nodeName].desiredConfig)
                     if (execute) {
-                        await executeOnServer(nodes[nodeName].ip, `drbdadm adjust all`)
+                        const adjustOut = await executeOnServer(nodes[nodeName].ip, `drbdadm adjust all; drbdadm status all`)
+                        console.debug("STDOUT: " + adjustOut.stdout)
+                        console.debug("STDERR:", adjustOut.stderr)
                         nodes[nodeName].appliedConfig = nodes[nodeName].desiredConfig
                         console.log(`       - config for ${nodeName} applied`)
                     } else {

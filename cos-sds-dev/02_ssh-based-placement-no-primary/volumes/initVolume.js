@@ -30,13 +30,15 @@ module.exports = async function volumeInit(volName) {
     await applyNodeConfigs(false)
 
     //initialize drbd
-    await executeOnServer(serverIp, `
+    const result = await executeOnServer(serverIp, `
         drbdadm -v --max-peers=5  -- --force create-md ${volName}
         drbdadm up ${volName};
         drbdadm primary ${volName} --force;
         mkfs.ext4 ${await getDrbdDeviceName(volName)} -F;
         drbdadm secondary ${volName};
     `)
+    console.debug("STDOUT: " + result.stdout)
+    console.debug("STDERR: " + result.stderr)
 
     console.log(`   - init completed`)
 }
