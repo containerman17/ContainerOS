@@ -2,7 +2,7 @@ const getNodesSorted = require('../nodes/getNodesSorted')
 const db = require('../system/database')
 const createLvIfNotExists = require('./createLvIfNotExists')
 const regenerateVolumeConfig = require('./regenerateVolumeConfig')
-const applyNodeConfigs = require('../nodes/applyNodeConfigs')
+const applyNodeConfigs = require('../nodes/spreadConfigsToServers')
 const executeOnServer = require('../system/executeOnServer')
 const getDrbdDeviceName = require('./getDrbdDeviceName')
 

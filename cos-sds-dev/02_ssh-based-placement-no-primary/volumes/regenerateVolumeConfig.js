@@ -5,7 +5,7 @@ const getVolumePort = require('./getVolumePort')
 const getDrbdDeviceName = require('./getDrbdDeviceName')
 
 module.exports = async function regenerateVolumeConfig(volName) {
-    console.log(`   - applyVolumePlacement`)
+    console.log(`   - regenerateVolumeConfig`)
 
     //regenerate config
     await db.safeUpdate(`volumes/${volName}`, async function (vol) {
@@ -17,7 +17,7 @@ module.exports = async function regenerateVolumeConfig(volName) {
             volName,
         }
 
-        for (let nodeName of vol.placement) {
+        for (let nodeName of Object.keys(vol.placement)) {
             configSource.nodes.push({
                 name: nodeName,
                 diskless: false,

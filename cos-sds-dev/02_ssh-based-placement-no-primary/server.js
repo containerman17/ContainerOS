@@ -1,12 +1,14 @@
 const db = require('./system/database')
 const delay = require('waitms')
-const volumeInit = require('./volumes/initVolume')
-const getNodesSorted = require('./nodes/getNodesSorted')
-const applyNodeConfigs = require('./nodes/applyNodeConfigs')
+// const volumeInit = require('./volumes/initVolume')
+// const getNodesSorted = require('./nodes/getNodesSorted')
+const spreadConfigsToServers = require('./nodes/spreadConfigsToServers')
 const regenerateVolumeConfig = require('./volumes/regenerateVolumeConfig')
 const createLvIfNotExists = require('./volumes/createLvIfNotExists')
 const addNodesToPlacement = require('./volumes/addNodesToPlacement')
 const getNodeInfo = require('./nodes/getNodeInfo')
+const executeOnServer = require('./system/executeOnServer')
+const getDrbdDeviceName = require('./volumes/getDrbdDeviceName')
 const REPLICAS = 3
 
 async function placementLoop() {
@@ -30,8 +32,13 @@ async function placementLoop() {
             volInfo = await db.getValue(`volumes/${volName}`)
         }
 
+        //TODO: spread out configs
+        await regenerateVolumeConfig(volName)
+        await spreadConfigsToServers()
+
         //create lv if not exists
         for (let nodeName in volInfo.placement) {
+
             if (!volInfo.placement[nodeName].lvCreated) {
                 const { ip: nodeIp } = await getNodeInfo(nodeName)
                 console.log(volName, nodeName, 'Creating LV ', nodeIp)
@@ -41,7 +48,42 @@ async function placementLoop() {
                     vol.placement[nodeName].lvCreated = true
                     return vol
                 })
+                volInfo = await db.getValue(`volumes/${volName}`)
+
             }
+        }
+        //create md if not exists
+
+        for (let nodeName in volInfo.placement) {
+
+            //create md if not exists
+
+            if (!volInfo.placement[nodeName].mdCreated) {
+                const { ip: nodeIp } = await getNodeInfo(nodeName)
+                console.log(volName, nodeName, 'Creating MD ', nodeIp)
+
+                const result = await executeOnServer(nodeIp, `drbdadm create-md ${volName} --force; drbdadm up ${volName}`)
+                await db.safeUpdate(`volumes/${volName}`, function (vol) {
+                    vol.placement[nodeName].mdCreated = true
+                    return vol
+                })
+                volInfo = await db.getValue(`volumes/${volName}`)
+                console.log(`Create md result`, result.stdout + "\n\n\n" + result.stderr)
+            }
+        }
+
+        //TODO: init first node
+        if (!volInfo.initialized) {
+            const { ip: nodeIp } = await getNodeInfo(Object.keys(volInfo.placement)[0])
+
+            await executeOnServer(nodeIp, `drbdadm primary --force ${volName}`)
+            await executeOnServer(nodeIp, `mkfs.ext4 ${await getDrbdDeviceName(volName)} -F`)
+            await executeOnServer(nodeIp, `drbdadm secondary ${volName}`)
+
+            await db.safeUpdate(`volumes/${volName}`, function (vol) {
+                vol.initialized = true
+                return vol
+            })
         }
     }
 }

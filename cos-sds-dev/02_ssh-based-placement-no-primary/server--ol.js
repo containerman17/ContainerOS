@@ -2,7 +2,7 @@ const db = require('./system/database')
 const delay = require('waitms')
 const volumeInit = require('./volumes/initVolume')
 const getNodesSorted = require('./nodes/getNodesSorted')
-const applyNodeConfigs = require('./nodes/applyNodeConfigs')
+// const applyNodeConfigs = require('./nodes/applyNodeConfigs')
 const regenerateVolumeConfig = require('./volumes/regenerateVolumeConfig')
 const createLvIfNotExists = require('./volumes/createLvIfNotExists')
 
