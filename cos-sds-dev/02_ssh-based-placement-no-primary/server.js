@@ -49,7 +49,6 @@ async function placementLoop() {
                     return vol
                 })
                 volInfo = await db.getValue(`volumes/${volName}`)
-
             }
         }
         //create md if not exists
@@ -84,6 +83,7 @@ async function placementLoop() {
                 vol.initialized = true
                 return vol
             })
+            volInfo = await db.getValue(`volumes/${volName}`)
         }
     }
 }
