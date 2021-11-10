@@ -9,6 +9,8 @@ const addNodesToPlacement = require('./volumes/addNodesToPlacement')
 const getNodeInfo = require('./nodes/getNodeInfo')
 const executeOnServer = require('./system/executeOnServer')
 const getDrbdDeviceName = require('./volumes/getDrbdDeviceName')
+const getNodesSorted = require('./nodes/getNodesSorted')
+
 const REPLICAS = 3
 
 async function placementLoop() {
@@ -136,6 +138,22 @@ async function init() {
 
     // await applyNodeConfigs(true)
     await db.safeUpdate('desiredVolumes', val => val || ['testvol3'])
+
+    await db.safeUpdate('desiredVolumes', val => {
+        if (!val.includes('nowvol')) {
+            val.push('nowvol')
+        }
+        return val
+    })
+
+    await db.safeUpdate(`volumes/nowvol`, async val => {
+        if (!val) val = {}
+
+        if (!val.desiredPrimary) {
+            val.desiredPrimary = (await getNodesSorted())[0]
+        }
+        return val
+    })
 
 }
 
