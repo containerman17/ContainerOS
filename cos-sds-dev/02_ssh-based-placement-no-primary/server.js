@@ -22,7 +22,11 @@ async function placementLoop() {
         let volInfo = await db.getValue(`volumes/${volName}`)
 
         if (!volInfo || !volInfo.placement) {
-            await db.set(`volumes/${volName}`, { placement: {} })
+            await db.set(`volumes/${volName}`, { placement: {}, })
+            volInfo = await db.getValue(`volumes/${volName}`)
+        }
+        if (!volInfo.desiredPrimary) {
+            await db.safeUpdate(`volumes/${volName}`, val => Object.assign(val || {}, { desiredPrimary: null }))
             volInfo = await db.getValue(`volumes/${volName}`)
         }
 
@@ -84,6 +88,31 @@ async function placementLoop() {
                 return vol
             })
             volInfo = await db.getValue(`volumes/${volName}`)
+        }
+        if (volInfo.desiredPrimary !== volInfo.primary) {
+            for (let nodeName in volInfo.placement) {
+                if (volInfo.desiredPrimary !== nodeName) {
+                    const { ip: nodeIp } = await getNodeInfo(nodeName)
+
+                    console.log(volName, nodeName, 'Setting secondary')
+                    await executeOnServer(nodeIp, `umount ${await getDrbdDeviceName(volName)}`)
+                    await executeOnServer(nodeIp, `drbdadm secondary ${volName}`)
+                }
+            }
+            for (let nodeName in volInfo.placement) {
+                if (volInfo.desiredPrimary === nodeName) {
+                    const { ip: nodeIp } = await getNodeInfo(nodeName)
+
+                    console.log(volName, nodeName, 'Setting primary')
+                    await executeOnServer(nodeIp, `drbdadm primary ${volName}`)
+                    await executeOnServer(nodeIp, `mkdir -p /data/${volName}`)
+                    await executeOnServer(nodeIp, `mount ${await getDrbdDeviceName(volName)} /data/${volName}`)
+                }
+            }
+            await db.safeUpdate(`volumes/${volName}`, function (vol) {
+                vol.primary = vol.desiredPrimary
+                return vol
+            })
         }
     }
 }
