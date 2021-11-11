@@ -125,8 +125,8 @@ async function init() {
         // if (!val)
         val = {}
 
-        // if (!val['linstor-test-1'])
-        //     val['linstor-test-1'] = { ip: '95.217.131.185' }
+        if (!val['linstor-test-1'])
+            val['linstor-test-1'] = { ip: '95.217.131.185' }
         if (!val['linstor-test-2'])
             val['linstor-test-2'] = { ip: '65.108.86.219' }
         if (!val['linstor-test-3'])
