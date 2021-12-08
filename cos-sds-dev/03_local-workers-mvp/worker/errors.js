@@ -1,0 +1,1 @@
+const LvCreateError = new Error()
